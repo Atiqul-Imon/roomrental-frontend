@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { getDefaultRedirectPath } from '@/lib/navigation';
@@ -8,10 +8,11 @@ import { Header } from '@/components/layout/Header';
 import { Button } from '@/components/ui/Button';
 import Link from 'next/link';
 import { Mail, Lock, AlertCircle } from 'lucide-react';
+import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 
 export const dynamic = 'force-dynamic';
 
-export default function LoginPage() {
+function LoginFormContent() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -133,4 +134,23 @@ export default function LoginPage() {
       </main>
     </>
   );
+}
+
+function LoginForm() {
+  return (
+    <Suspense fallback={
+      <>
+        <Header />
+        <main className="min-h-screen flex items-center justify-center py-12 px-4">
+          <LoadingSpinner size="lg" text="Loading..." />
+        </main>
+      </>
+    }>
+      <LoginFormContent />
+    </Suspense>
+  );
+}
+
+export default function LoginPage() {
+  return <LoginForm />;
 }
