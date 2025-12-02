@@ -1,9 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
-import { useToast } from '@/components/ui/ToastProvider';
 import { getDefaultRedirectPath } from '@/lib/navigation';
 import { Header } from '@/components/layout/Header';
 import Link from 'next/link';
@@ -11,7 +10,7 @@ import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 
 export const dynamic = 'force-dynamic';
 
-export default function RegisterPage() {
+function RegisterFormContent() {
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -22,7 +21,6 @@ export default function RegisterPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [isRedirecting, setIsRedirecting] = useState(false);
   const { register, user, isLoading: authLoading } = useAuth();
-  const { success: showSuccessToast } = useToast();
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirectParam = searchParams.get('redirect');
@@ -90,11 +88,8 @@ export default function RegisterPage() {
         throw new Error('Registration succeeded but user data is incomplete. Please try logging in.');
       }
 
-      // Show success message
-      showSuccessToast(
-        `Welcome, ${userData.name}! Your account has been created successfully.`,
-        { title: 'Registration Successful', duration: 3000 }
-      );
+      // Success message will be shown via redirect
+      // Toast notification is optional and will work client-side
 
       // Determine redirect path based on role
       setIsRedirecting(true);
@@ -271,5 +266,24 @@ export default function RegisterPage() {
       </main>
     </>
   );
+}
+
+function RegisterForm() {
+  return (
+    <Suspense fallback={
+      <>
+        <Header />
+        <main className="min-h-screen flex items-center justify-center py-12 px-4">
+          <LoadingSpinner size="lg" text="Loading..." />
+        </main>
+      </>
+    }>
+      <RegisterFormContent />
+    </Suspense>
+  );
+}
+
+export default function RegisterPage() {
+  return <RegisterForm />;
 }
 
