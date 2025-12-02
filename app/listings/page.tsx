@@ -1,8 +1,6 @@
 'use client';
 
 import { useState, Suspense } from 'react';
-
-export const dynamic = 'force-dynamic';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { ListingList } from '@/components/listings/ListingList';
@@ -11,8 +9,23 @@ import { FilterSidebar } from '@/components/filters/FilterSidebar';
 import { FilterChips } from '@/components/filters/FilterChips';
 import { SlidersHorizontal } from 'lucide-react';
 
-function SearchBarWrapper() {
+export const dynamic = 'force-dynamic';
+
+// Wrapper components that use useSearchParams - must be in Suspense
+function SearchBarContent() {
   return <SearchBar />;
+}
+
+function FilterChipsContent() {
+  return <FilterChips />;
+}
+
+function ListingListContent() {
+  return <ListingList />;
+}
+
+function FilterSidebarContent({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
+  return <FilterSidebar isOpen={isOpen} onClose={onClose} />;
 }
 
 export default function ListingsPage() {
@@ -34,7 +47,7 @@ export default function ListingsPage() {
               {/* Enhanced Search Bar */}
               <div className="mb-6">
                 <Suspense fallback={<div className="h-12" />}>
-                  <SearchBarWrapper />
+                  <SearchBarContent />
                 </Suspense>
               </div>
             </div>
@@ -52,7 +65,9 @@ export default function ListingsPage() {
                 <SlidersHorizontal className="w-5 h-5" />
                 <span className="font-medium">Filters</span>
               </button>
-              <FilterChips />
+              <Suspense fallback={null}>
+                <FilterChipsContent />
+              </Suspense>
             </div>
             
           </div>
@@ -60,11 +75,15 @@ export default function ListingsPage() {
           {/* Content with Sidebar */}
           <div className="flex gap-6 relative">
             {/* Filter Sidebar */}
-            <FilterSidebar isOpen={isFilterOpen} onClose={() => setIsFilterOpen(false)} />
+            <Suspense fallback={null}>
+              <FilterSidebarContent isOpen={isFilterOpen} onClose={() => setIsFilterOpen(false)} />
+            </Suspense>
 
             {/* Main Content */}
             <div className="flex-1 min-w-0">
-              <ListingList />
+              <Suspense fallback={<div className="text-center py-12">Loading listings...</div>}>
+                <ListingListContent />
+              </Suspense>
             </div>
           </div>
         </div>
