@@ -1,0 +1,197 @@
+'use client';
+
+export const dynamic = 'force-dynamic';
+
+import { useQuery } from '@tanstack/react-query';
+import { api } from '@/lib/api';
+import { Users, Building2, MessageSquare, TrendingUp, DollarSign, Activity } from 'lucide-react';
+import { MiniChart } from '@/components/charts/MiniChart';
+
+interface DashboardStats {
+  totalUsers: number;
+  totalListings: number;
+  totalReviews: number;
+  activeListings: number;
+  pendingListings: number;
+  totalRevenue: number;
+  newUsersThisMonth: number;
+  newListingsThisMonth: number;
+  userTrendData: Array<{ name: string; value: number }>;
+  listingTrendData: Array<{ name: string; value: number }>;
+  reviewTrendData: Array<{ name: string; value: number }>;
+  revenueTrendData: Array<{ name: string; value: number }>;
+}
+
+export default function AdminDashboard() {
+  const { data: stats, isLoading } = useQuery<DashboardStats>({
+    queryKey: ['admin-stats'],
+    queryFn: async () => {
+      // This will be implemented when backend analytics endpoint is ready
+      // For now, return mock data structure with trend data
+      return {
+        totalUsers: 1250,
+        totalListings: 342,
+        totalReviews: 89,
+        activeListings: 298,
+        pendingListings: 44,
+        totalRevenue: 125000,
+        newUsersThisMonth: 45,
+        newListingsThisMonth: 12,
+        userTrendData: [
+          { name: 'W1', value: 100 },
+          { name: 'W2', value: 120 },
+          { name: 'W3', value: 110 },
+          { name: 'W4', value: 130 },
+        ],
+        listingTrendData: [
+          { name: 'W1', value: 50 },
+          { name: 'W2', value: 65 },
+          { name: 'W3', value: 60 },
+          { name: 'W4', value: 70 },
+        ],
+        reviewTrendData: [
+          { name: 'W1', value: 20 },
+          { name: 'W2', value: 25 },
+          { name: 'W3', value: 22 },
+          { name: 'W4', value: 28 },
+        ],
+        revenueTrendData: [
+          { name: 'W1', value: 25000 },
+          { name: 'W2', value: 30000 },
+          { name: 'W3', value: 28000 },
+          { name: 'W4', value: 32000 },
+        ],
+      };
+    },
+  });
+
+  const statCards = [
+    {
+      title: 'Total Users',
+      value: stats?.totalUsers || 0,
+      icon: Users,
+      color: 'bg-blue-500',
+      chartColor: '#3B82F6',
+      change: `+${stats?.newUsersThisMonth || 0} this month`,
+      trendData: stats?.userTrendData || [],
+    },
+    {
+      title: 'Total Listings',
+      value: stats?.totalListings || 0,
+      icon: Building2,
+      color: 'bg-green-500',
+      chartColor: '#10B981',
+      change: `+${stats?.newListingsThisMonth || 0} this month`,
+      trendData: stats?.listingTrendData || [],
+    },
+    {
+      title: 'Active Listings',
+      value: stats?.activeListings || 0,
+      icon: Activity,
+      color: 'bg-purple-500',
+      chartColor: '#8B5CF6',
+      change: `${stats?.pendingListings || 0} pending`,
+      trendData: stats?.listingTrendData || [],
+    },
+    {
+      title: 'Total Reviews',
+      value: stats?.totalReviews || 0,
+      icon: MessageSquare,
+      color: 'bg-orange-500',
+      chartColor: '#F59E0B',
+      change: 'All time',
+      trendData: stats?.reviewTrendData || [],
+    },
+  ];
+
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div>
+        <h1 className="text-3xl font-bold text-dark-text-primary mb-2">Dashboard</h1>
+        <p className="text-dark-text-secondary">Welcome back! Here&apos;s what&apos;s happening with your platform.</p>
+      </div>
+
+      {/* Stats Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {statCards.map((stat, index) => {
+          const Icon = stat.icon;
+          return (
+            <div
+              key={index}
+              className="bg-dark-bg-secondary rounded-xl p-6 shadow-dark-medium border border-dark-border-default hover:shadow-dark-large hover:border-primary-500/30 transition-all duration-200"
+            >
+              <div className="flex items-center justify-between mb-4">
+                <div className={`p-3 rounded-lg ${stat.color} bg-opacity-20`}>
+                  <Icon className={`w-6 h-6 ${stat.color.replace('bg-', 'text-')}`} />
+                </div>
+              </div>
+              <h3 className="text-2xl font-bold text-dark-text-primary mb-1">{stat.value.toLocaleString()}</h3>
+              <p className="text-sm font-medium text-dark-text-secondary mb-2">{stat.title}</p>
+              <p className="text-xs text-dark-text-muted mb-3">{stat.change}</p>
+              {stat.trendData.length > 0 && (
+                <div className="h-16 -mx-2">
+                  <MiniChart
+                    type="area"
+                    data={stat.trendData}
+                    dataKey="value"
+                    color={stat.chartColor}
+                    height={60}
+                  />
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Quick Actions */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Recent Activity */}
+        <div className="bg-dark-bg-secondary rounded-xl p-6 shadow-dark-medium border border-dark-border-default">
+          <h2 className="text-xl font-bold text-dark-text-primary mb-4">Recent Activity</h2>
+          <div className="space-y-4">
+            <div className="flex items-center gap-4 p-3 bg-dark-bg-tertiary rounded-lg hover:bg-dark-bg-elevated transition-colors">
+              <div className="w-10 h-10 bg-primary-500/20 rounded-full flex items-center justify-center">
+                <Users className="w-5 h-5 text-primary-400" />
+              </div>
+              <div className="flex-1">
+                <p className="text-sm font-medium text-dark-text-primary">New user registered</p>
+                <p className="text-xs text-dark-text-muted">2 minutes ago</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-4 p-3 bg-dark-bg-tertiary rounded-lg hover:bg-dark-bg-elevated transition-colors">
+              <div className="w-10 h-10 bg-green-500/20 rounded-full flex items-center justify-center">
+                <Building2 className="w-5 h-5 text-green-400" />
+              </div>
+              <div className="flex-1">
+                <p className="text-sm font-medium text-dark-text-primary">New listing created</p>
+                <p className="text-xs text-dark-text-muted">15 minutes ago</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Quick Stats */}
+        <div className="bg-dark-bg-secondary rounded-xl p-6 shadow-dark-medium border border-dark-border-default">
+          <h2 className="text-xl font-bold text-dark-text-primary mb-4">Quick Stats</h2>
+          <div className="space-y-4">
+            <div className="flex items-center justify-between p-3 bg-dark-bg-tertiary rounded-lg hover:bg-dark-bg-elevated transition-colors">
+              <span className="text-sm font-medium text-dark-text-secondary">Pending Approvals</span>
+              <span className="text-lg font-bold text-primary-400">{stats?.pendingListings || 0}</span>
+            </div>
+            <div className="flex items-center justify-between p-3 bg-dark-bg-tertiary rounded-lg hover:bg-dark-bg-elevated transition-colors">
+              <span className="text-sm font-medium text-dark-text-secondary">Active Users Today</span>
+              <span className="text-lg font-bold text-green-400">0</span>
+            </div>
+            <div className="flex items-center justify-between p-3 bg-dark-bg-tertiary rounded-lg hover:bg-dark-bg-elevated transition-colors">
+              <span className="text-sm font-medium text-dark-text-secondary">System Health</span>
+              <span className="text-lg font-bold text-green-400">100%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
