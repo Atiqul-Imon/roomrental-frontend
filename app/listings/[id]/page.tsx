@@ -1,6 +1,7 @@
 'use client';
 
-export const dynamic = 'force-dynamic';
+// ISR: Revalidate every 5 minutes
+export const revalidate = 300;
 
 import { use } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
@@ -8,6 +9,7 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { api } from '@/lib/api';
 import { Listing } from '@/types';
+import { queryConfig } from '@/lib/query-config';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { ImageGallery } from '@/components/listings/ImageGallery';
@@ -33,6 +35,7 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
 
   const { data, isLoading, error } = useQuery({
     queryKey: ['listing', listingId],
+    ...queryConfig.listingDetail,
     queryFn: async () => {
       const response = await api.get(`/listings/${listingId}`);
       if (!response.data.success) {

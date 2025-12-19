@@ -10,6 +10,7 @@ import { SortDropdown } from './SortDropdown';
 import { ListingCardSkeleton } from '@/components/LoadingSkeleton';
 import { ErrorState } from '@/components/ui/ErrorState';
 import { EmptyState } from '@/components/ui/EmptyState';
+import { queryConfig } from '@/lib/query-config';
 
 export function ListingList() {
   const searchParams = useSearchParams();
@@ -22,6 +23,7 @@ export function ListingList() {
 
   const { data, isLoading, error } = useQuery({
     queryKey: ['listings', searchParams.toString()],
+    ...queryConfig.listings,
     queryFn: async () => {
       const response = await api.get('/listings', { params: queryParams });
       // Handle nested response structure

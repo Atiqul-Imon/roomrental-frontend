@@ -4,6 +4,7 @@ export const dynamic = 'force-dynamic';
 
 import { use } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { queryConfig } from '@/lib/query-config';
 import { useParams } from 'next/navigation';
 import Image from 'next/image';
 import { api } from '@/lib/api';
@@ -23,6 +24,7 @@ export default function ProfilePage({ params }: { params: Promise<{ id: string }
 
   const { data: profile, isLoading } = useQuery({
     queryKey: ['profile', userId],
+    ...queryConfig.userProfile,
     queryFn: async () => {
       const response = await api.get(`/profile/${userId}`);
       if (!response.data.success) {

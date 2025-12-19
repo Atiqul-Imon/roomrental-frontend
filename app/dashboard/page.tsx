@@ -4,6 +4,7 @@ export const dynamic = 'force-dynamic';
 
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { queryConfig } from '@/lib/query-config';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { api } from '@/lib/api';
@@ -24,6 +25,7 @@ export default function DashboardPage() {
 
   const { data, isLoading } = useQuery({
     queryKey: ['my-listings', statusFilter, page],
+    ...queryConfig.dashboard,
     queryFn: async () => {
       const params: any = { page, limit: 12 };
       if (statusFilter !== 'all') {

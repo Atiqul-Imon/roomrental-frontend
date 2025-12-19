@@ -1,6 +1,7 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
+import { queryConfig } from '@/lib/query-config';
 import { api } from '@/lib/api';
 import { Review } from '@/types';
 import { ReviewCard } from './ReviewCard';
@@ -16,6 +17,7 @@ export function ReviewList({ userId, listingId }: ReviewListProps) {
 
   const { data, isLoading } = useQuery({
     queryKey: ['reviews', userId, listingId, page],
+    ...queryConfig.reviews,
     queryFn: async () => {
       const response = await api.get('/reviews', {
         params: { revieweeId: userId, listingId, page, limit: 10 },

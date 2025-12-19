@@ -4,6 +4,7 @@ export const dynamic = 'force-dynamic';
 
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { queryConfig } from '@/lib/query-config';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { useAuth } from '@/lib/auth-context';
@@ -22,6 +23,7 @@ export default function FavoritesPage() {
 
   const { data, isLoading } = useQuery({
     queryKey: ['favorites', page],
+    ...queryConfig.favorites,
     queryFn: async () => {
       const response = await api.get('/favorites', {
         params: { page, limit: 12 },
