@@ -106,8 +106,15 @@ function RegisterFormContent() {
       setTimeout(() => {
         try {
           router.push(redirectPath);
+          // Reset loading state after navigation starts
+          setTimeout(() => {
+            setIsLoading(false);
+            setIsRedirecting(false);
+          }, 1000);
         } catch (navError) {
           console.error('Navigation error:', navError);
+          setIsLoading(false);
+          setIsRedirecting(false);
           // Fallback to dashboard if navigation fails
           router.push('/dashboard');
         }
