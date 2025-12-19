@@ -1,16 +1,19 @@
 import Link from 'next/link';
-import Image from 'next/image';
 import { Listing } from '@/types';
 import { format } from 'date-fns';
 import { useState } from 'react';
 import { MapPin, Calendar, Sparkles } from 'lucide-react';
+import { imageKitPresets } from '@/lib/imagekit';
 
 interface ListingCardProps {
   listing: Listing;
 }
 
 export function ListingCard({ listing }: ListingCardProps) {
-  const imageUrl = listing.images[0] || '/placeholder-room.jpg';
+  const originalImageUrl = listing.images[0] || '/placeholder-room.jpg';
+  const imageUrl = originalImageUrl.includes('ik.imagekit.io')
+    ? imageKitPresets.card(originalImageUrl)
+    : originalImageUrl;
   const formattedDate = format(new Date(listing.availabilityDate), 'MMM dd, yyyy');
   const [imageError, setImageError] = useState(false);
 
@@ -24,12 +27,10 @@ export function ListingCard({ listing }: ListingCardProps) {
         {/* Image Container */}
         <div className="relative w-full h-56 bg-gradient-to-br from-grey-100 to-grey-200 overflow-hidden">
           {listing.images[0] && !imageError ? (
-            <Image
+            <img
               src={imageUrl}
               alt={listing.title}
-              fill
-              className="object-cover group-hover:scale-110 transition-transform duration-500"
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
               loading="lazy"
               onError={() => setImageError(true)}
             />

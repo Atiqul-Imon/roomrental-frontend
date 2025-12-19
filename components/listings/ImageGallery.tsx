@@ -1,9 +1,9 @@
 'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
-import Image from 'next/image';
 import { ChevronLeft, ChevronRight, X, ZoomIn, Maximize2, Grid3x3 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { imageKitPresets, transformImageKitUrl } from '@/lib/imagekit';
 
 interface ImageGalleryProps {
   images: string[];
@@ -22,7 +22,13 @@ export function ImageGallery({ images, title = 'Listing' }: ImageGalleryProps) {
   // Minimum swipe distance (in px)
   const minSwipeDistance = 50;
 
-  const currentImage = images[selectedIndex] || '/placeholder-room.jpg';
+  const originalImage = images[selectedIndex] || '/placeholder-room.jpg';
+  const currentImage = originalImage.includes('ik.imagekit.io')
+    ? imageKitPresets.gallery(originalImage)
+    : originalImage;
+  const lightboxImage = originalImage.includes('ik.imagekit.io')
+    ? imageKitPresets.lightbox(originalImage)
+    : originalImage;
   const hasMultipleImages = images.length > 1;
 
   // Keyboard navigation
@@ -130,14 +136,10 @@ export function ImageGallery({ images, title = 'Listing' }: ImageGalleryProps) {
             }
           }}
         >
-          <Image
+          <img
             src={currentImage}
             alt={`${title} - Image ${selectedIndex + 1}`}
-            fill
-            className="object-cover transition-transform duration-500 group-hover:scale-105"
-            priority
-            sizes="100vw"
-            quality={90}
+            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
           />
           
           {/* Overlay with controls hint */}
@@ -198,12 +200,10 @@ export function ImageGallery({ images, title = 'Listing' }: ImageGalleryProps) {
                   )}
                   aria-label={`View image ${index + 1}`}
                 >
-                  <Image
-                    src={image}
+                  <img
+                    src={image.includes('ik.imagekit.io') ? imageKitPresets.thumbnail(image) : image}
                     alt={`${title} thumbnail ${index + 1}`}
-                    fill
-                    className="object-cover"
-                    sizes="112px"
+                    className="w-full h-full object-cover"
                   />
                   {selectedIndex === index && (
                     <div className="absolute inset-0 bg-primary-500/20 border-2 border-primary-500" />
@@ -258,14 +258,10 @@ export function ImageGallery({ images, title = 'Listing' }: ImageGalleryProps) {
                 isZoomed ? 'scale-150' : 'scale-100'
               )}
             >
-              <Image
-                src={currentImage}
+              <img
+                src={lightboxImage}
                 alt={`${title} - Image ${selectedIndex + 1} (full screen)`}
-                fill
-                className="object-contain"
-                quality={100}
-                priority
-                sizes="100vw"
+                className="w-full h-full object-contain"
               />
             </div>
 
@@ -324,12 +320,10 @@ export function ImageGallery({ images, title = 'Listing' }: ImageGalleryProps) {
                       )}
                       aria-label={`Go to image ${index + 1}`}
                     >
-                      <Image
-                        src={image}
+                      <img
+                        src={image.includes('ik.imagekit.io') ? imageKitPresets.thumbnail(image) : image}
                         alt={`Thumbnail ${index + 1}`}
-                        fill
-                        className="object-cover"
-                        sizes="64px"
+                        className="w-full h-full object-cover"
                       />
                     </button>
                   ))}
