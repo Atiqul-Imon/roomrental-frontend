@@ -5,18 +5,19 @@ import { cn } from '@/lib/utils';
 
 interface BadgeProps {
   children: ReactNode;
-  variant?: 'default' | 'primary' | 'success' | 'warning' | 'danger' | 'info';
+  variant?: 'default' | 'primary' | 'success' | 'warning' | 'danger' | 'info' | 'outline';
   size?: 'sm' | 'md' | 'lg';
   className?: string;
 }
 
 const variantClasses = {
-  default: 'bg-dark-bg-tertiary text-dark-text-secondary border-dark-border-default',
-  primary: 'bg-primary-500/20 text-primary-400 border-primary-500/30',
-  success: 'bg-green-500/20 text-green-400 border-green-500/30',
-  warning: 'bg-warning/20 text-warning border-warning/30',
-  danger: 'bg-red-500/20 text-red-400 border-red-500/30',
-  info: 'bg-blue-500/20 text-blue-400 border-blue-500/30',
+  default: 'bg-grey-100 text-grey-700 border-grey-300',
+  primary: 'bg-primary-50 text-primary-700 border-primary-200',
+  success: 'bg-success-50 text-success-700 border-success-200',
+  warning: 'bg-warning-50 text-warning-700 border-warning-200',
+  danger: 'bg-error-50 text-error-700 border-error-200',
+  info: 'bg-info-50 text-info-700 border-info-200',
+  outline: 'bg-transparent text-grey-700 border-grey-300',
 };
 
 const sizeClasses = {

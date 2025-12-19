@@ -120,7 +120,7 @@ export function EditListingForm({ listing, onSuccess }: EditListingFormProps) {
         availabilityDate: new Date(data.availabilityDate).toISOString(),
       };
 
-      const response = await api.put(`/listings/${listing._id}`, listingData);
+      const response = await api.patch(`/listings/${listing._id}`, listingData);
 
       if (response.data.success) {
         if (onSuccess) {

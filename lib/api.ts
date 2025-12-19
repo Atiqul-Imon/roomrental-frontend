@@ -50,6 +50,7 @@ api.interceptors.response.use(
       } catch (refreshError) {
         localStorage.removeItem('accessToken');
         localStorage.removeItem('refreshToken');
+        localStorage.removeItem('user');
         if (typeof window !== 'undefined') {
           window.location.href = '/auth/login';
         }

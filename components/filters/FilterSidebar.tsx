@@ -37,15 +37,26 @@ export function FilterSidebar({ isOpen, onClose }: FilterSidebarProps) {
         ]);
 
         if (amenitiesRes.data.success) {
-          setAmenities(amenitiesRes.data.data.amenities);
+          // Handle nested response structure
+          const amenitiesData = amenitiesRes.data.data;
+          const amenitiesArray = Array.isArray(amenitiesData) 
+            ? amenitiesData 
+            : (amenitiesData?.data || amenitiesData || []);
+          setAmenities(Array.isArray(amenitiesArray) ? amenitiesArray : []);
         }
         if (priceRes.data.success) {
-          setPriceRange(priceRes.data.data);
+          // Handle nested response structure
+          const priceData = priceRes.data.data;
+          const priceInfo = priceData?.data || priceData;
+          setPriceRange({ 
+            min: priceInfo?.min || 0, 
+            max: priceInfo?.max || 10000 
+          });
           if (!filters.minPrice && !filters.maxPrice) {
             setFilters((prev) => ({
               ...prev,
-              minPrice: priceRes.data.data.min.toString(),
-              maxPrice: priceRes.data.data.max.toString(),
+              minPrice: (priceInfo?.min || 0).toString(),
+              maxPrice: (priceInfo?.max || 10000).toString(),
             }));
           }
         }
@@ -228,8 +239,8 @@ export function FilterSidebar({ isOpen, onClose }: FilterSidebarProps) {
                 <Sparkles className="w-4 h-4 text-primary-600" />
                 <h3 className="font-semibold text-grey-900">Amenities</h3>
               </div>
-              <div className="space-y-2 max-h-64 overflow-y-auto">
-                {amenities.map((amenity) => {
+              <div className="space-y-2 max-h-64 overflow-y-auto" role="group" aria-label="Amenities filter">
+                {Array.isArray(amenities) && amenities.length > 0 ? amenities.map((amenity) => {
                   const isChecked = Array.isArray(filters.amenities) && filters.amenities.includes(amenity);
                   return (
                     <label
@@ -242,6 +253,7 @@ export function FilterSidebar({ isOpen, onClose }: FilterSidebarProps) {
                           checked={isChecked}
                           onChange={() => handleAmenityToggle(amenity)}
                           className="sr-only"
+                          aria-label={`Filter by ${amenity} amenity`}
                         />
                         <div
                           className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-all duration-200 ${
@@ -258,7 +270,9 @@ export function FilterSidebar({ isOpen, onClose }: FilterSidebarProps) {
                       </span>
                     </label>
                   );
-                })}
+                }) : (
+                  <p className="text-sm text-grey-500 text-center py-4">No amenities available</p>
+                )}
               </div>
             </div>
           )}

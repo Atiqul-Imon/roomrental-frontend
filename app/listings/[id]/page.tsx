@@ -38,7 +38,37 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
       if (!response.data.success) {
         throw new Error(response.data.error || 'Failed to fetch listing');
       }
-      return response.data.data as Listing;
+      const listing = response.data.data;
+      return {
+        _id: listing.id,
+        landlordId: {
+          _id: listing.landlord?.id || listing.landlordId,
+          name: listing.landlord?.name || '',
+          email: listing.landlord?.email || '',
+          profileImage: listing.landlord?.profileImage,
+        },
+        title: listing.title,
+        description: listing.description,
+        price: listing.price,
+        bedrooms: listing.bedrooms,
+        bathrooms: listing.bathrooms,
+        squareFeet: listing.squareFeet,
+        location: {
+          city: listing.city,
+          state: listing.state,
+          zip: listing.zip,
+          address: listing.address,
+          coordinates: listing.latitude && listing.longitude
+            ? { lat: listing.latitude, lng: listing.longitude }
+            : undefined,
+        },
+        images: listing.images || [],
+        amenities: listing.amenities || [],
+        availabilityDate: listing.availabilityDate,
+        status: listing.status,
+        createdAt: listing.createdAt,
+        updatedAt: listing.updatedAt,
+      } as Listing;
     },
   });
 

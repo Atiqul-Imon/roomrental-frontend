@@ -17,13 +17,41 @@ export function ReviewList({ userId, listingId }: ReviewListProps) {
   const { data, isLoading } = useQuery({
     queryKey: ['reviews', userId, listingId, page],
     queryFn: async () => {
-      const endpoint = listingId ? `/reviews/listing/${listingId}` : `/reviews/user/${userId}`;
-      const response = await api.get(endpoint, {
-        params: listingId ? {} : { page, limit: 10 },
+      const response = await api.get('/reviews', {
+        params: { revieweeId: userId, listingId, page, limit: 10 },
       });
-      return response.data.data as
-        | { reviews: Review[]; total: number; page: number; limit: number; totalPages: number; averageRating: number }
-        | Review[];
+      const backendData = response.data.data;
+      return {
+        reviews: (backendData.reviews || []).map((r: any) => ({
+          _id: r.id,
+          reviewerId: {
+            _id: r.reviewer?.id || r.reviewerId,
+            name: r.reviewer?.name || '',
+            email: r.reviewer?.email || '',
+            profileImage: r.reviewer?.profileImage,
+          },
+          revieweeId: {
+            _id: r.reviewee?.id || r.revieweeId,
+            name: r.reviewee?.name || '',
+            email: r.reviewee?.email || '',
+            profileImage: r.reviewee?.profileImage,
+          },
+          listingId: r.listing
+            ? {
+                _id: r.listing.id,
+                title: r.listing.title,
+              }
+            : undefined,
+          rating: r.rating,
+          comment: r.comment || '',
+          createdAt: r.createdAt,
+          updatedAt: r.updatedAt,
+        })) as Review[],
+        total: backendData.pagination?.total || 0,
+        page: backendData.pagination?.page || 1,
+        limit: backendData.pagination?.limit || 10,
+        totalPages: backendData.pagination?.totalPages || 0,
+      };
     },
   });
 

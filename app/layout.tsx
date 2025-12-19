@@ -1,10 +1,34 @@
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
+import { Inter, PT_Serif } from 'next/font/google';
 import './globals.css';
 import { Providers } from './providers';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
+import { MobileNavigation } from '@/components/mobile/MobileNavigation';
+import { SkipLink } from '@/components/accessibility/SkipLink';
 
-const inter = Inter({ subsets: ['latin'] });
+// UI Font - System fonts for performance
+const inter = Inter({ 
+  subsets: ['latin'],
+  variable: '--font-ui',
+  display: 'swap',
+});
+
+// Body Font - PT Serif for readable, professional text
+const ptSerif = PT_Serif({
+  weight: ['400', '700'],
+  subsets: ['latin'],
+  variable: '--font-pt-serif',
+  display: 'swap',
+});
+
+// Heading Font - Using system font as fallback (Mercellus would need to be added via @font-face)
+// For now, we'll use a similar serif font or system font
+const headingFont = Inter({
+  weight: ['600', '700', '800'],
+  subsets: ['latin'],
+  variable: '--font-mercellus',
+  display: 'swap',
+});
 
 export const metadata: Metadata = {
   title: {
@@ -69,12 +93,17 @@ export default function RootLayout({
     <html lang="en">
       <head>
         <link rel="icon" href="/favicon.ico" />
-        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-        <link rel="manifest" href="/manifest.json" />
       </head>
-      <body className={inter.className}>
+      <body className={`${inter.variable} ${ptSerif.variable} ${headingFont.variable} font-ui antialiased`}>
+        <SkipLink />
         <ErrorBoundary>
-          <Providers>{children}</Providers>
+          <Providers>
+            <div id="live-region" role="status" aria-live="polite" aria-atomic="true" className="sr-only" />
+            <main id="main-content">
+              {children}
+            </main>
+            <MobileNavigation />
+          </Providers>
         </ErrorBoundary>
       </body>
     </html>

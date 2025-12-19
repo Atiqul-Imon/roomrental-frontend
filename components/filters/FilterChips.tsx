@@ -1,13 +1,17 @@
 'use client';
 
 import { useRouter, useSearchParams } from 'next/navigation';
-import { X } from 'lucide-react';
+import { X, Filter } from 'lucide-react';
+import { Badge } from '@/components/ui/Badge';
+import { BodySmall } from '@/components/ui/Typography';
+import { Button } from '@/components/ui/Button';
+import { cn } from '@/lib/utils';
 
 export function FilterChips() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const activeFilters: { key: string; label: string; value: string }[] = [];
+  const activeFilters: { key: string; label: string; value: string; type?: string }[] = [];
 
   const city = searchParams.get('city');
   const state = searchParams.get('state');
@@ -17,14 +21,14 @@ export function FilterChips() {
   const availabilityDate = searchParams.get('availabilityDate');
   const search = searchParams.get('search');
 
-  if (city) activeFilters.push({ key: 'city', label: 'City', value: city });
-  if (state) activeFilters.push({ key: 'state', label: 'State', value: state });
-  if (minPrice) activeFilters.push({ key: 'minPrice', label: 'Min Price', value: `$${minPrice}` });
-  if (maxPrice) activeFilters.push({ key: 'maxPrice', label: 'Max Price', value: `$${maxPrice}` });
+  if (city) activeFilters.push({ key: 'city', label: 'City', value: city, type: 'location' });
+  if (state) activeFilters.push({ key: 'state', label: 'State', value: state, type: 'location' });
+  if (minPrice) activeFilters.push({ key: 'minPrice', label: 'Min Price', value: `$${minPrice}`, type: 'price' });
+  if (maxPrice) activeFilters.push({ key: 'maxPrice', label: 'Max Price', value: `$${maxPrice}`, type: 'price' });
   if (amenities) {
     const amenityList = amenities.split(',');
     amenityList.forEach((amenity) => {
-      activeFilters.push({ key: `amenity-${amenity}`, label: 'Amenity', value: amenity });
+      activeFilters.push({ key: `amenity-${amenity}`, label: 'Amenity', value: amenity, type: 'amenity' });
     });
   }
   if (availabilityDate) {
@@ -32,9 +36,10 @@ export function FilterChips() {
       key: 'availabilityDate',
       label: 'Available',
       value: new Date(availabilityDate).toLocaleDateString(),
+      type: 'date',
     });
   }
-  if (search) activeFilters.push({ key: 'search', label: 'Search', value: search });
+  if (search) activeFilters.push({ key: 'search', label: 'Search', value: search, type: 'search' });
 
   if (activeFilters.length === 0) return null;
 
@@ -67,31 +72,72 @@ export function FilterChips() {
     router.push(`/listings?${params.toString()}`);
   };
 
+  // Group filters by type for better organization
+  const filterGroups = {
+    search: activeFilters.filter(f => f.type === 'search'),
+    location: activeFilters.filter(f => f.type === 'location'),
+    price: activeFilters.filter(f => f.type === 'price'),
+    amenity: activeFilters.filter(f => f.type === 'amenity'),
+    date: activeFilters.filter(f => f.type === 'date'),
+  };
+
+  const hasMultipleGroups = Object.values(filterGroups).filter(g => g.length > 0).length > 1;
+
   return (
-    <div className="flex flex-wrap gap-2 items-center">
-      {activeFilters.map((filter) => (
-        <div
-          key={filter.key}
-          className="flex items-center gap-1 px-3 py-1 bg-secondary rounded-full text-sm"
-        >
-          <span className="text-muted-foreground">{filter.label}:</span>
-          <span>{filter.value}</span>
-          <button
-            onClick={() => removeFilter(filter.key, filter.value)}
-            className="ml-1 text-muted-foreground hover:text-foreground"
-          >
-            <X className="w-4 h-4" />
-          </button>
+    <div className="flex flex-col gap-3">
+      {/* Filter Count Badge */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <Filter className="w-4 h-4 text-grey-500" />
+          <BodySmall className="text-grey-600 font-medium">
+            {activeFilters.length} {activeFilters.length === 1 ? 'filter' : 'filters'} active
+          </BodySmall>
         </div>
-      ))}
-      {activeFilters.length > 0 && (
-        <button
-          onClick={clearAllFilters}
-          className="text-sm text-primary hover:underline"
-        >
-          Clear all
-        </button>
-      )}
+        {activeFilters.length > 0 && (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={clearAllFilters}
+            className="text-grey-600 hover:text-grey-900"
+          >
+            Clear all
+          </Button>
+        )}
+      </div>
+
+      {/* Filter Chips */}
+      <div className="flex flex-wrap gap-2">
+        {activeFilters.map((filter) => {
+          const typeColors = {
+            search: 'bg-primary-50 text-primary-700 border-primary-200',
+            location: 'bg-info-50 text-info-700 border-info-200',
+            price: 'bg-success-50 text-success-700 border-success-200',
+            amenity: 'bg-secondary-50 text-secondary-700 border-secondary-200',
+            date: 'bg-warning-50 text-warning-700 border-warning-200',
+          };
+
+          return (
+            <Badge
+              key={filter.key}
+              variant="outline"
+              className={cn(
+                'flex items-center gap-2 px-3 py-1.5 rounded-lg border-2',
+                'transition-all duration-200 hover:shadow-sm',
+                typeColors[filter.type as keyof typeof typeColors] || 'bg-grey-50 text-grey-700 border-grey-200'
+              )}
+            >
+              <span className="font-medium">{filter.value}</span>
+              <button
+                onClick={() => removeFilter(filter.key, filter.value)}
+                className="ml-1 p-0.5 rounded-full hover:bg-white/50 transition-colors"
+                aria-label={`Remove ${filter.label} filter`}
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            </Badge>
+          );
+        })}
+      </div>
     </div>
   );
 }

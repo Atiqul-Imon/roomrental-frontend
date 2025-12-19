@@ -7,6 +7,8 @@ import { ListingList } from '@/components/listings/ListingList';
 import { SearchBar } from '@/components/search/SearchBar';
 import { FilterSidebar } from '@/components/filters/FilterSidebar';
 import { FilterChips } from '@/components/filters/FilterChips';
+import { FilterPresets } from '@/components/filters/FilterPresets';
+import { ViewToggle } from '@/components/listings/ViewToggle';
 import { SlidersHorizontal } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
@@ -20,6 +22,10 @@ function FilterChipsContent() {
   return <FilterChips />;
 }
 
+function FilterPresetsContent() {
+  return <FilterPresets />;
+}
+
 function ListingListContent() {
   return <ListingList />;
 }
@@ -30,6 +36,7 @@ function FilterSidebarContent({ isOpen, onClose }: { isOpen: boolean; onClose: (
 
 export default function ListingsPage() {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [viewMode, setViewMode] = useState<'list' | 'map'>('list');
 
   return (
     <>
@@ -55,9 +62,17 @@ export default function ListingsPage() {
         </section>
 
         <div className="container mx-auto px-4 py-8">
+          {/* Filter Presets */}
+          <div className="mb-6">
+            <Suspense fallback={null}>
+              <FilterPresetsContent />
+            </Suspense>
+          </div>
+
           {/* Filter Toggle and View Controls */}
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-4 flex-wrap">
+              <ViewToggle view={viewMode} onViewChange={setViewMode} />
               <button
                 onClick={() => setIsFilterOpen(!isFilterOpen)}
                 className="flex items-center gap-2 px-4 py-2 bg-white border border-grey-300 rounded-lg hover:bg-grey-50 transition-all duration-200 shadow-soft lg:hidden"
@@ -65,11 +80,14 @@ export default function ListingsPage() {
                 <SlidersHorizontal className="w-5 h-5" />
                 <span className="font-medium">Filters</span>
               </button>
-              <Suspense fallback={null}>
-                <FilterChipsContent />
-              </Suspense>
             </div>
-            
+          </div>
+
+          {/* Active Filter Chips */}
+          <div className="mb-6">
+            <Suspense fallback={null}>
+              <FilterChipsContent />
+            </Suspense>
           </div>
 
           {/* Content with Sidebar */}

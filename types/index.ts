@@ -81,6 +81,9 @@ export interface Listing {
   title: string;
   description: string;
   price: number;
+  bedrooms?: number;
+  bathrooms?: number;
+  squareFeet?: number;
   location: {
     city: string;
     state: string;
@@ -94,7 +97,7 @@ export interface Listing {
   images: string[];
   amenities: string[];
   availabilityDate: string;
-  status: 'active' | 'pending' | 'rented';
+  status: 'active' | 'pending' | 'rented' | 'available' | 'inactive';
   createdAt: string;
   updatedAt: string;
 }

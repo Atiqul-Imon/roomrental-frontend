@@ -3,7 +3,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { api } from '@/lib/api';
-import { Search, X } from 'lucide-react';
+import { Search, X, Clock, TrendingUp } from 'lucide-react';
+import { BodySmall } from '@/components/ui/Typography';
 
 interface LocationSuggestion {
   cities: string[];
@@ -17,8 +18,28 @@ export function SearchBar() {
   const [suggestions, setSuggestions] = useState<LocationSuggestion>({ cities: [], states: [] });
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [recentSearches, setRecentSearches] = useState<string[]>([]);
+  const [popularSearches] = useState([
+    'Boston, MA',
+    'New York, NY',
+    'Los Angeles, CA',
+    'Chicago, IL',
+    'San Francisco, CA',
+  ]);
   const searchRef = useRef<HTMLDivElement>(null);
   const debounceRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Load recent searches from localStorage
+  useEffect(() => {
+    const stored = localStorage.getItem('recentSearches');
+    if (stored) {
+      try {
+        setRecentSearches(JSON.parse(stored).slice(0, 5));
+      } catch (e) {
+        // Invalid JSON, ignore
+      }
+    }
+  }, []);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -71,6 +92,10 @@ export function SearchBar() {
     
     if (term.trim()) {
       params.set('search', term.trim());
+      // Save to recent searches
+      const updated = [term.trim(), ...recentSearches.filter(s => s !== term.trim())].slice(0, 5);
+      setRecentSearches(updated);
+      localStorage.setItem('recentSearches', JSON.stringify(updated));
     } else {
       params.delete('search');
     }
@@ -121,11 +146,15 @@ export function SearchBar() {
           }}
           placeholder="Search by location, city, or keywords..."
           className="w-full pl-12 pr-12 py-4 bg-white border-2 border-grey-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200 shadow-medium text-base"
-          aria-label="Search listings"
+          aria-label="Search listings by location, city, or keywords"
           aria-autocomplete="list"
           aria-expanded={showSuggestions}
           aria-controls="search-suggestions"
+          aria-describedby="search-description"
         />
+        <span id="search-description" className="sr-only">
+          Search for rooms by entering a city name, state, or keywords. Suggestions will appear as you type.
+        </span>
         {searchTerm && (
           <button
             onClick={clearSearch}
@@ -137,10 +166,10 @@ export function SearchBar() {
         )}
       </div>
 
-      {showSuggestions && allSuggestions.length > 0 && (
+      {showSuggestions && (
         <div 
           id="search-suggestions"
-          className="absolute z-50 w-full mt-3 bg-white border border-grey-200 rounded-xl shadow-large max-h-80 overflow-y-auto"
+          className="absolute z-50 w-full mt-3 bg-white border border-grey-200 rounded-xl shadow-large max-h-96 overflow-y-auto"
           role="listbox"
           aria-label="Search suggestions"
         >
@@ -150,26 +179,92 @@ export function SearchBar() {
               <p className="mt-2 text-sm">Searching...</p>
             </div>
           ) : (
-            <ul className="py-2">
-              {allSuggestions.map((suggestion, index) => (
-                <li key={index} role="option">
-                  <button
-                    onClick={() => handleSuggestionClick(suggestion.type, suggestion.value)}
-                    className="w-full text-left px-5 py-3 hover:bg-primary-50 transition-colors duration-200 focus:bg-primary-50 focus:outline-none group"
-                    aria-label={`Select ${suggestion.value} (${suggestion.type})`}
-                  >
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm font-semibold text-grey-900 group-hover:text-primary-600">
-                        {suggestion.value}
-                      </span>
-                      <span className="text-xs font-medium px-2 py-1 rounded-full bg-grey-100 text-grey-600 group-hover:bg-primary-100 group-hover:text-primary-600">
-                        {suggestion.type === 'city' ? 'City' : 'State'}
-                      </span>
-                    </div>
-                  </button>
-                </li>
-              ))}
-            </ul>
+            <>
+              {/* Location Suggestions */}
+              {allSuggestions.length > 0 && (
+                <div className="py-2">
+                  <div className="px-5 py-2">
+                    <BodySmall className="text-grey-500 font-medium uppercase tracking-wider">
+                      Locations
+                    </BodySmall>
+                  </div>
+                  <ul>
+                    {allSuggestions.map((suggestion, index) => (
+                      <li key={index} role="option">
+                        <button
+                          onClick={() => handleSuggestionClick(suggestion.type, suggestion.value)}
+                          className="w-full text-left px-5 py-3 hover:bg-primary-50 transition-colors duration-200 focus:bg-primary-50 focus:outline-none group"
+                          aria-label={`Select ${suggestion.value} (${suggestion.type})`}
+                        >
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm font-semibold text-grey-900 group-hover:text-primary-600">
+                              {suggestion.value}
+                            </span>
+                            <span className="text-xs font-medium px-2 py-1 rounded-full bg-grey-100 text-grey-600 group-hover:bg-primary-100 group-hover:text-primary-600">
+                              {suggestion.type === 'city' ? 'City' : 'State'}
+                            </span>
+                          </div>
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {/* Recent Searches */}
+              {recentSearches.length > 0 && searchTerm.length === 0 && (
+                <div className="py-2 border-t border-grey-200">
+                  <div className="px-5 py-2 flex items-center gap-2">
+                    <Clock className="w-4 h-4 text-grey-400" />
+                    <BodySmall className="text-grey-500 font-medium">
+                      Recent Searches
+                    </BodySmall>
+                  </div>
+                  <ul>
+                    {recentSearches.map((search, index) => (
+                      <li key={index} role="option">
+                        <button
+                          onClick={() => {
+                            setSearchTerm(search);
+                            handleSearch(search);
+                          }}
+                          className="w-full text-left px-5 py-2.5 hover:bg-grey-50 transition-colors duration-200 focus:bg-grey-50 focus:outline-none text-sm text-grey-700"
+                        >
+                          {search}
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {/* Popular Searches */}
+              {searchTerm.length === 0 && allSuggestions.length === 0 && (
+                <div className="py-2 border-t border-grey-200">
+                  <div className="px-5 py-2 flex items-center gap-2">
+                    <TrendingUp className="w-4 h-4 text-grey-400" />
+                    <BodySmall className="text-grey-500 font-medium">
+                      Popular Searches
+                    </BodySmall>
+                  </div>
+                  <ul>
+                    {popularSearches.map((search, index) => (
+                      <li key={index} role="option">
+                        <button
+                          onClick={() => {
+                            setSearchTerm(search);
+                            handleSearch(search);
+                          }}
+                          className="w-full text-left px-5 py-2.5 hover:bg-grey-50 transition-colors duration-200 focus:bg-grey-50 focus:outline-none text-sm text-grey-700"
+                        >
+                          {search}
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </>
           )}
         </div>
       )}

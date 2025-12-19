@@ -21,10 +21,11 @@ export function FavoriteButton({ listingId, className = '' }: FavoriteButtonProp
     try {
       const response = await api.get(`/favorites/${listingId}`);
       if (response.data.success) {
-        setIsFavorite(response.data.data.isFavorite);
+        setIsFavorite(response.data.data.isFavorite || false);
       }
     } catch (error) {
       // Silently fail if not authenticated or other error
+      setIsFavorite(false);
     }
   }, [listingId]);
 

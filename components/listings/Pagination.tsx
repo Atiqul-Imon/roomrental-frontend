@@ -62,25 +62,27 @@ export function Pagination({ currentPage, totalPages, total, limit }: Pagination
   const endItem = Math.min(currentPage * limit, total);
 
   return (
-    <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-8">
-      <div className="text-sm text-muted-foreground">
+    <nav aria-label="Pagination navigation" className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-8">
+      <div className="text-sm text-grey-600" aria-live="polite">
         Showing {startItem} to {endItem} of {total} results
       </div>
 
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2" role="group" aria-label="Pagination controls">
         <button
           onClick={() => changePage(currentPage - 1)}
           disabled={currentPage === 1}
-          className="p-2 border border-border rounded-lg hover:bg-secondary transition disabled:opacity-50 disabled:cursor-not-allowed"
+          className="p-2 border border-grey-300 rounded-lg hover:bg-grey-50 transition disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+          aria-label="Go to previous page"
+          aria-disabled={currentPage === 1}
         >
-          <ChevronLeft className="w-5 h-5" />
+          <ChevronLeft className="w-5 h-5" aria-hidden="true" />
         </button>
 
-        <div className="flex gap-1">
+        <div className="flex gap-1" role="list">
           {getPageNumbers().map((page, index) => {
             if (page === '...') {
               return (
-                <span key={`ellipsis-${index}`} className="px-3 py-2 text-muted-foreground">
+                <span key={`ellipsis-${index}`} className="px-3 py-2 text-grey-400" aria-hidden="true">
                   ...
                 </span>
               );
@@ -91,11 +93,13 @@ export function Pagination({ currentPage, totalPages, total, limit }: Pagination
               <button
                 key={pageNum}
                 onClick={() => changePage(pageNum)}
-                className={`px-4 py-2 rounded-lg transition ${
+                className={`px-4 py-2 rounded-lg transition focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 ${
                   currentPage === pageNum
-                    ? 'bg-primary text-primary-foreground'
-                    : 'border border-border hover:bg-secondary'
+                    ? 'bg-primary-600 text-white font-semibold'
+                    : 'border border-grey-300 hover:bg-grey-50 text-grey-700'
                 }`}
+                aria-label={`Go to page ${pageNum}`}
+                aria-current={currentPage === pageNum ? 'page' : undefined}
               >
                 {pageNum}
               </button>
@@ -106,12 +110,14 @@ export function Pagination({ currentPage, totalPages, total, limit }: Pagination
         <button
           onClick={() => changePage(currentPage + 1)}
           disabled={currentPage === totalPages}
-          className="p-2 border border-border rounded-lg hover:bg-secondary transition disabled:opacity-50 disabled:cursor-not-allowed"
+          className="p-2 border border-grey-300 rounded-lg hover:bg-grey-50 transition disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+          aria-label="Go to next page"
+          aria-disabled={currentPage === totalPages}
         >
-          <ChevronRight className="w-5 h-5" />
+          <ChevronRight className="w-5 h-5" aria-hidden="true" />
         </button>
       </div>
-    </div>
+    </nav>
   );
 }
 

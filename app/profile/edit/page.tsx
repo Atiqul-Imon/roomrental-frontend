@@ -28,7 +28,7 @@ export default function EditProfilePage() {
 
   const updateMutation = useMutation({
     mutationFn: async (data: typeof formData) => {
-      const response = await api.put('/profile', {
+      const response = await api.patch('/profile', {
         name: data.name,
         bio: data.bio,
         phone: data.phone,

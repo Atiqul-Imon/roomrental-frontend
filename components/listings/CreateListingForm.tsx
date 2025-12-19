@@ -12,6 +12,9 @@ const listingSchema = z.object({
   title: z.string().min(5, 'Title must be at least 5 characters').max(200),
   description: z.string().min(20, 'Description must be at least 20 characters').max(2000),
   price: z.number().min(0, 'Price must be positive'),
+  bedrooms: z.number().min(1).default(1),
+  bathrooms: z.number().min(1).default(1),
+  squareFeet: z.number().optional(),
   city: z.string().min(1, 'City is required'),
   state: z.string().min(1, 'State is required'),
   zip: z.string().optional(),
@@ -97,15 +100,22 @@ export function CreateListingForm({ onSuccess }: CreateListingFormProps) {
 
     try {
       const listingData = {
-        ...data,
-        images,
+        title: data.title,
+        description: data.description,
+        price: data.price,
+        bedrooms: data.bedrooms || 1,
+        bathrooms: data.bathrooms || 1,
+        squareFeet: data.squareFeet,
         location: {
           city: data.city,
           state: data.state,
           zip: data.zip,
           address: data.address,
         },
+        amenities: data.amenities || [],
+        images,
         availabilityDate: new Date(data.availabilityDate).toISOString(),
+        status: 'available',
       };
 
       const response = await api.post('/listings', listingData);
@@ -114,7 +124,7 @@ export function CreateListingForm({ onSuccess }: CreateListingFormProps) {
         if (onSuccess) {
           onSuccess();
         } else {
-          router.push(`/listings/${response.data.data._id}`);
+          router.push(`/listings/${response.data.data.id}`);
         }
       } else {
         setError(response.data.error || 'Failed to create listing');

@@ -28,7 +28,26 @@ export default function ProfilePage({ params }: { params: Promise<{ id: string }
       if (!response.data.success) {
         throw new Error(response.data.error || 'Failed to fetch profile');
       }
-      return response.data.data as User;
+      const backendData = response.data.data;
+      return {
+        id: backendData.user.id,
+        email: backendData.user.email,
+        name: backendData.user.name || '',
+        role: backendData.user.role,
+        profileImage: backendData.user.profileImage,
+        bio: backendData.user.bio,
+        phone: backendData.user.phone,
+        preferences: backendData.user.preferences as any,
+        verification: backendData.user.verification
+          ? {
+              emailVerified: backendData.user.emailVerified || false,
+              phoneVerified: false,
+              idVerified: backendData.user.verification === 'verified',
+            }
+          : undefined,
+        createdAt: backendData.user.createdAt,
+        updatedAt: backendData.user.updatedAt,
+      } as User;
     },
   });
 

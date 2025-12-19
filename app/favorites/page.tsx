@@ -26,12 +26,44 @@ export default function FavoritesPage() {
       const response = await api.get('/favorites', {
         params: { page, limit: 12 },
       });
-      return response.data.data as {
-        favorites: Array<{ listingId: Listing }>;
-        total: number;
-        page: number;
-        limit: number;
-        totalPages: number;
+      const backendData = response.data.data;
+      return {
+        favorites: (backendData.favorites || []).map((favorite: any) => ({
+            listingId: {
+              _id: favorite.listing.id,
+              landlordId: {
+                _id: favorite.listing.landlord?.id || favorite.listing.landlordId,
+                name: favorite.listing.landlord?.name || '',
+                email: favorite.listing.landlord?.email || '',
+                profileImage: favorite.listing.landlord?.profileImage,
+              },
+              title: favorite.listing.title,
+              description: favorite.listing.description,
+              price: favorite.listing.price,
+              bedrooms: favorite.listing.bedrooms,
+              bathrooms: favorite.listing.bathrooms,
+              squareFeet: favorite.listing.squareFeet,
+              location: {
+                city: favorite.listing.city,
+                state: favorite.listing.state,
+                zip: favorite.listing.zip,
+                address: favorite.listing.address,
+                coordinates: favorite.listing.latitude && favorite.listing.longitude
+                  ? { lat: favorite.listing.latitude, lng: favorite.listing.longitude }
+                  : undefined,
+              },
+              images: favorite.listing.images || [],
+              amenities: favorite.listing.amenities || [],
+              availabilityDate: favorite.listing.availabilityDate,
+              status: favorite.listing.status,
+              createdAt: favorite.listing.createdAt,
+              updatedAt: favorite.listing.updatedAt,
+            } as Listing,
+        })),
+        total: backendData.pagination?.total || 0,
+        page: backendData.pagination?.page || 1,
+        limit: backendData.pagination?.limit || 12,
+        totalPages: backendData.pagination?.totalPages || 0,
       };
     },
     enabled: isAuthenticated,
@@ -80,7 +112,7 @@ export default function FavoritesPage() {
           {data && data.favorites.length > 0 ? (
             <>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-                {data.favorites.map((favorite) => (
+                {data.favorites.map((favorite: { listingId: Listing }) => (
                   <ListingCard key={favorite.listingId._id} listing={favorite.listingId} />
                 ))}
               </div>

@@ -30,12 +30,42 @@ export default function DashboardPage() {
         params.status = statusFilter;
       }
       const response = await api.get('/listings/my/listings', { params });
-      return response.data.data as {
-        listings: Listing[];
-        total: number;
-        page: number;
-        limit: number;
-        totalPages: number;
+      const backendData = response.data.data;
+      return {
+        listings: (backendData.listings || []).map((l: any) => ({
+          _id: l.id,
+          landlordId: {
+            _id: l.landlord?.id || l.landlordId,
+            name: l.landlord?.name || '',
+            email: l.landlord?.email || '',
+            profileImage: l.landlord?.profileImage,
+          },
+          title: l.title,
+          description: l.description,
+          price: l.price,
+          bedrooms: l.bedrooms,
+          bathrooms: l.bathrooms,
+          squareFeet: l.squareFeet,
+          location: {
+            city: l.city,
+            state: l.state,
+            zip: l.zip,
+            address: l.address,
+            coordinates: l.latitude && l.longitude
+              ? { lat: l.latitude, lng: l.longitude }
+              : undefined,
+          },
+          images: l.images || [],
+          amenities: l.amenities || [],
+          availabilityDate: l.availabilityDate,
+          status: l.status,
+          createdAt: l.createdAt,
+          updatedAt: l.updatedAt,
+        })) as Listing[],
+        total: backendData.total || 0,
+        page: backendData.page || 1,
+        limit: backendData.limit || 12,
+        totalPages: backendData.totalPages || 0,
       };
     },
     enabled: isAuthenticated && user?.role === 'landlord',
@@ -51,7 +81,7 @@ export default function DashboardPage() {
   });
 
   const statusMutation = useMutation({
-    mutationFn: async ({ id, status }: { id: string; status: 'active' | 'pending' | 'rented' }) => {
+    mutationFn: async ({ id, status }: { id: string; status: 'active' | 'pending' | 'rented' | 'available' | 'inactive' }) => {
       await api.patch(`/listings/${id}/status`, { status });
     },
     onSuccess: () => {

@@ -17,10 +17,10 @@ export function ListingCard({ listing }: ListingCardProps) {
   return (
     <Link 
       href={`/listings/${listing._id}`}
-      aria-label={`View listing: ${listing.title}`}
+      aria-label={`View listing: ${listing.title} in ${listing.location.city}, ${listing.location.state} for $${listing.price} per month`}
       className="block group"
     >
-      <article className="bg-white border border-grey-200 rounded-xl overflow-hidden card-hover shadow-soft h-full flex flex-col">
+      <article className="bg-white border border-grey-200 rounded-xl overflow-hidden card-hover shadow-soft h-full flex flex-col group transition-all duration-300 hover:shadow-large hover:-translate-y-1">
         {/* Image Container */}
         <div className="relative w-full h-56 bg-gradient-to-br from-grey-100 to-grey-200 overflow-hidden">
           {listing.images[0] && !imageError ? (

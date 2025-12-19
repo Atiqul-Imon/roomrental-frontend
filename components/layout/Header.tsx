@@ -22,12 +22,13 @@ export function Header() {
     <header className="sticky top-0 z-50 border-b border-grey-200 bg-white/80 backdrop-blur-md shadow-sm">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
-          <Link 
-            href="/" 
-            className="text-2xl font-bold text-gradient transition-smooth hover:opacity-90"
-          >
-            RoomRentalUSA
-          </Link>
+            <Link 
+              href="/" 
+              className="text-2xl font-bold text-gradient transition-smooth hover:opacity-90"
+              aria-label="RoomRentalUSA Home"
+            >
+              RoomRentalUSA
+            </Link>
 
           <nav className="hidden md:flex items-center gap-2">
             <Link
@@ -37,9 +38,11 @@ export function Header() {
                   ? 'bg-primary-50 text-primary-600'
                   : 'text-grey-700 hover:text-primary-600 hover:bg-grey-50'
               }`}
+              aria-label="Browse listings"
+              aria-current={isActive('/listings') ? 'page' : undefined}
             >
               <span className="flex items-center gap-1.5">
-                <Search className="w-4 h-4" />
+                <Search className="w-4 h-4" aria-hidden="true" />
                 Browse
               </span>
             </Link>

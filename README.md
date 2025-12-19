@@ -42,6 +42,8 @@ A modern, enterprise-grade Next.js application for room rental management. Built
    NEXT_PUBLIC_API_URL=http://localhost:5000
    NEXT_PUBLIC_SITE_URL=http://localhost:3000
    ```
+   
+   **Note**: For production, replace `http://localhost:5000` with your deployed backend API URL.
 
 4. **Run development server**
    ```bash
@@ -111,12 +113,76 @@ The app uses JWT-based authentication with:
 
 ## 🚀 Deployment
 
+### ⚠️ Important: Deploy Backend First!
+
+**Before deploying the frontend, you must deploy the backend API first.** See `../backend/DEPLOYMENT.md` for backend deployment instructions.
+
+The frontend requires the backend API URL to function. After deploying the backend, you'll get an API URL (e.g., `https://roomrental-api.railway.app`) that you'll use in the frontend environment variables.
+
 ### Vercel (Recommended)
 
-1. Push your code to GitHub
-2. Import project in Vercel
-3. Add environment variables
-4. Deploy
+Vercel is the recommended platform for deploying Next.js applications. Follow these steps:
+
+#### Option 1: Deploy via Vercel Dashboard
+
+1. **Push your code to GitHub** (already done ✅)
+
+2. **Import project in Vercel**:
+   - Go to [vercel.com](https://vercel.com)
+   - Click "Add New Project"
+   - Import your GitHub repository: `Atiqul-Imon/roomrental-frontend`
+   - Vercel will auto-detect Next.js
+
+3. **Configure environment variables**:
+   - Go to Project Settings → Environment Variables
+   - Add the following variables:
+     ```
+     NEXT_PUBLIC_API_URL=https://your-backend-api.com
+     NEXT_PUBLIC_SITE_URL=https://your-frontend-domain.vercel.app
+     ```
+   - For production, preview, and development environments
+
+4. **Deploy**:
+   - Click "Deploy"
+   - Vercel will build and deploy automatically
+   - Your site will be live at `https://your-project.vercel.app`
+
+#### Option 2: Deploy via Vercel CLI
+
+1. **Install Vercel CLI**:
+   ```bash
+   npm i -g vercel
+   ```
+
+2. **Login to Vercel**:
+   ```bash
+   vercel login
+   ```
+
+3. **Deploy**:
+   ```bash
+   cd frontend
+   vercel
+   ```
+
+4. **Set environment variables**:
+   ```bash
+   vercel env add NEXT_PUBLIC_API_URL
+   vercel env add NEXT_PUBLIC_SITE_URL
+   ```
+
+5. **Deploy to production**:
+   ```bash
+   vercel --prod
+   ```
+
+#### Vercel Configuration
+
+The project includes `vercel.json` with:
+- Security headers (XSS protection, frame options, etc.)
+- Cache headers for static assets
+- Optimized build settings
+- Region configuration (US East)
 
 ### Other Platforms
 
@@ -129,6 +195,11 @@ The app uses JWT-based authentication with:
    ```bash
    npm start
    ```
+
+3. Configure your hosting platform to:
+   - Run `npm install` and `npm run build`
+   - Serve the `.next` directory
+   - Set environment variables
 
 ## 🔧 Environment Variables
 

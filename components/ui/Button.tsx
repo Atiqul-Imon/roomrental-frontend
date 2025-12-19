@@ -20,20 +20,22 @@ export function Button({
   className = '',
   ...props
 }: ButtonProps) {
-  const baseStyles = 'inline-flex items-center justify-center font-medium rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-dark-bg-secondary disabled:opacity-50 disabled:cursor-not-allowed active:scale-95';
+  // Phase 1: Enhanced button styles with design system
+  // Phase 4: Accessibility - Enhanced focus indicators
+  const baseStyles = 'inline-flex items-center justify-center font-ui font-medium rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed active:scale-95';
   
   const variants = {
-    primary: 'btn-gradient text-white focus:ring-primary-500 shadow-glow-primary hover:shadow-glow-blue',
-    secondary: 'bg-primary-500/20 text-primary-400 border border-primary-500/30 hover:bg-primary-500/30 hover:border-primary-500/50 focus:ring-primary-500',
-    ghost: 'bg-transparent hover:bg-dark-bg-tertiary text-dark-text-secondary hover:text-dark-text-primary focus:ring-dark-border-default',
-    outline: 'border-2 border-dark-border-default text-dark-text-primary hover:bg-dark-bg-tertiary hover:border-primary-500/50 hover:text-primary-400 focus:ring-primary-500',
-    danger: 'bg-red-500/20 text-red-400 border border-red-500/30 hover:bg-red-500/30 hover:border-red-500/50 focus:ring-red-500',
+    primary: 'bg-gradient-primary text-white hover:bg-gradient-primary-hover focus:ring-primary-500 shadow-medium hover:shadow-large active:shadow-soft',
+    secondary: 'bg-primary-50 text-primary-600 border-2 border-primary-200 hover:bg-primary-100 hover:border-primary-300 focus:ring-primary-500',
+    ghost: 'bg-transparent hover:bg-grey-100 text-grey-700 hover:text-grey-900 focus:ring-grey-300',
+    outline: 'border-2 border-grey-300 text-grey-700 hover:bg-grey-50 hover:border-primary-400 hover:text-primary-600 focus:ring-primary-500',
+    danger: 'bg-error-50 text-error-600 border-2 border-error-200 hover:bg-error-100 hover:border-error-300 focus:ring-error-500',
   };
   
   const sizes = {
-    sm: 'px-3 py-1.5 text-sm',
-    md: 'px-4 py-2 text-base',
-    lg: 'px-6 py-3 text-lg',
+    sm: 'px-3 py-1.5 text-sm h-9',
+    md: 'px-4 py-2 text-base h-11',
+    lg: 'px-6 py-3 text-lg h-12',
   };
   
   return (
