@@ -29,7 +29,12 @@ const nextConfig: NextConfig = {
       exclude: ['error', 'warn'],
     } : false,
   },
-  // Bundle optimization
+  // Turbopack configuration (Next.js 16 default)
+  turbopack: {
+    // Turbopack handles optimization automatically
+    // Package imports optimization is now built-in
+  },
+  // Bundle optimization (for webpack fallback if needed)
   webpack: (config, { isServer }) => {
     if (!isServer) {
       config.optimization = {
@@ -55,6 +60,7 @@ const nextConfig: NextConfig = {
     }
     return config;
   },
+  // Experimental features (some moved to stable in Next.js 16)
   experimental: {
     optimizePackageImports: ['lucide-react', '@tanstack/react-query', 'recharts'],
     optimizeCss: true,
