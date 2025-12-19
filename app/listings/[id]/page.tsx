@@ -1,7 +1,8 @@
 'use client';
 
-// ISR: Revalidate every 5 minutes
-export const revalidate = 300;
+// Note: ISR (revalidate) cannot be used in client components
+// Caching is handled by React Query with queryConfig.listingDetail
+// (2 minutes staleTime, 5 minutes gcTime)
 
 import { use } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
