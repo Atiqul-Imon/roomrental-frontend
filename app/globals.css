@@ -331,6 +331,16 @@ p, li, span {
     scroll-behavior: smooth;
   }
   
+  /* Scrollbar Hide Utility */
+  .scrollbar-hide {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none; /* Chrome, Safari and Opera */
+  }
+
   /* Phase 4: Accessibility - Focus Indicators */
   *:focus-visible {
     outline: 2px solid #3B82F6;
