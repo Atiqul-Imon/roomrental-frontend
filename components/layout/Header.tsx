@@ -3,13 +3,23 @@
 import Link from 'next/link';
 import { useAuth } from '@/lib/auth-context';
 import { useRouter, usePathname } from 'next/navigation';
+import { useQuery } from '@tanstack/react-query';
+import { chatApi } from '@/lib/chat-api';
 import { Button } from '@/components/ui/Button';
-import { Home, Search, Heart, Plus, LayoutDashboard, User, Settings, LogOut } from 'lucide-react';
+import { Home, Search, Heart, Plus, LayoutDashboard, User, Settings, LogOut, MessageSquare } from 'lucide-react';
 
 export function Header() {
   const { user, isAuthenticated, logout } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
+
+  // Get unread message count
+  const { data: unreadData } = useQuery({
+    queryKey: ['unread-count'],
+    queryFn: () => chatApi.getUnreadCount(),
+    enabled: isAuthenticated,
+    refetchInterval: 30000, // Refresh every 30 seconds
+  });
 
   const handleLogout = () => {
     logout();
@@ -60,6 +70,24 @@ export function Header() {
                   <span className="flex items-center gap-1.5">
                     <Heart className="w-4 h-4" />
                     Favorites
+                  </span>
+                </Link>
+                <Link
+                  href="/chat"
+                  className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 relative ${
+                    pathname?.startsWith('/chat')
+                      ? 'bg-primary-50 text-primary-600'
+                      : 'text-grey-700 hover:text-primary-600 hover:bg-grey-50'
+                  }`}
+                >
+                  <span className="flex items-center gap-1.5">
+                    <MessageSquare className="w-4 h-4" />
+                    Messages
+                    {unreadData && unreadData.count > 0 && (
+                      <span className="ml-1 px-1.5 py-0.5 text-xs font-semibold text-white bg-red-600 rounded-full min-w-[20px] text-center">
+                        {unreadData.count > 99 ? '99+' : unreadData.count}
+                      </span>
+                    )}
                   </span>
                 </Link>
                 {user?.role === 'landlord' && (
