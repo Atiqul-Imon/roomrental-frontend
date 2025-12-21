@@ -24,12 +24,14 @@ export default function UsersPage() {
       if (roleFilter !== 'all') params.role = roleFilter;
       
       const response = await api.get('/admin/users', { params });
-      return response.data.data as {
-        users: User[];
-        total: number;
-        page: number;
-        limit: number;
-        totalPages: number;
+      const backendData = response.data.data;
+      
+      return {
+        users: backendData.users || [],
+        total: backendData.pagination?.total || 0,
+        page: backendData.pagination?.page || page,
+        limit: backendData.pagination?.limit || 20,
+        totalPages: backendData.pagination?.totalPages || 1,
       };
     },
   });
@@ -99,7 +101,7 @@ export default function UsersPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-dark-border-default">
-                  {data.users.map((user) => (
+                  {data.users.map((user: User) => (
                     <tr key={user.id} className="hover:bg-dark-bg-tertiary transition-colors">
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">

@@ -24,20 +24,49 @@ export default function AdminListingsPage() {
       if (search) params.search = search;
       if (statusFilter !== 'all') params.status = statusFilter;
       
-      const response = await api.get('/listings', { params });
-      return response.data.data as {
-        listings: Listing[];
-        total: number;
-        page: number;
-        limit: number;
-        totalPages: number;
+      const response = await api.get('/admin/listings', { params });
+      const backendData = response.data.data;
+      
+      // Transform backend listing format to frontend format
+      const listings = (backendData.listings || []).map((l: any) => ({
+        _id: l.id,
+        landlordId: {
+          _id: l.landlord?.id || l.landlordId,
+          name: l.landlord?.name || '',
+          email: l.landlord?.email || '',
+          profileImage: l.landlord?.profileImage,
+        },
+        title: l.title,
+        description: l.description,
+        price: l.price,
+        bedrooms: l.bedrooms,
+        bathrooms: l.bathrooms,
+        squareFeet: l.squareFeet,
+        location: {
+          city: l.city,
+          state: l.state,
+          zip: l.zip,
+          address: l.address,
+        },
+        images: l.images || [],
+        status: l.status,
+        createdAt: l.createdAt,
+        updatedAt: l.updatedAt,
+      }));
+      
+      return {
+        listings,
+        total: backendData.pagination?.total || 0,
+        page: backendData.pagination?.page || page,
+        limit: backendData.pagination?.limit || 20,
+        totalPages: backendData.pagination?.totalPages || 1,
       };
     },
   });
 
-  const handleStatusChange = async (listingId: string, newStatus: 'active' | 'pending' | 'rented') => {
+  const handleStatusChange = async (listingId: string, newStatus: 'available' | 'pending' | 'rented' | 'inactive') => {
     try {
-      await api.put(`/listings/${listingId}/status`, { status: newStatus });
+      await api.put(`/listings/${listingId}`, { status: newStatus });
       queryClient.invalidateQueries({ queryKey: ['admin-listings'] });
     } catch (error) {
       alert('Failed to update listing status');
@@ -59,11 +88,13 @@ export default function AdminListingsPage() {
 
   const getStatusBadgeColor = (status: string) => {
     switch (status) {
-      case 'active':
+      case 'available':
         return 'bg-green-500/20 text-green-400 border-green-500/30';
       case 'pending':
         return 'bg-warning/20 text-warning border-warning/30';
       case 'rented':
+        return 'bg-blue-500/20 text-blue-400 border-blue-500/30';
+      case 'inactive':
         return 'bg-dark-bg-tertiary text-dark-text-secondary border-dark-border-default';
       default:
         return 'bg-dark-bg-tertiary text-dark-text-secondary border-dark-border-default';
@@ -97,9 +128,10 @@ export default function AdminListingsPage() {
             className="px-4 py-2 bg-dark-bg-tertiary border border-dark-border-default rounded-lg text-dark-text-primary focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
           >
             <option value="all">All Status</option>
-            <option value="active">Active</option>
+            <option value="available">Available</option>
             <option value="pending">Pending</option>
             <option value="rented">Rented</option>
+            <option value="inactive">Inactive</option>
           </select>
         </div>
       </div>
@@ -126,7 +158,7 @@ export default function AdminListingsPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-dark-border-default">
-                  {data.listings.map((listing) => (
+                  {data.listings.map((listing: Listing) => (
                     <tr key={listing._id} className="hover:bg-dark-bg-tertiary transition-colors">
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
@@ -163,8 +195,9 @@ export default function AdminListingsPage() {
                           className={`px-3 py-1 rounded-full text-xs font-semibold border bg-dark-bg-tertiary text-dark-text-primary ${getStatusBadgeColor(listing.status)} focus:outline-none focus:ring-2 focus:ring-primary-500`}
                         >
                           <option value="pending">Pending</option>
-                          <option value="active">Active</option>
+                          <option value="available">Available</option>
                           <option value="rented">Rented</option>
+                          <option value="inactive">Inactive</option>
                         </select>
                       </td>
                       <td className="px-6 py-4">

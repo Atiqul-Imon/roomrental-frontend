@@ -26,17 +26,28 @@ export default function AdminDashboard() {
   const { data: stats, isLoading } = useQuery<DashboardStats>({
     queryKey: ['admin-stats'],
     queryFn: async () => {
-      // This will be implemented when backend analytics endpoint is ready
-      // For now, return mock data structure with trend data
+      const response = await api.get('/admin/stats');
+      const backendData = response.data.data;
+      
+      // Get active and pending listings count in parallel
+      const [activeListingsResponse, pendingListingsResponse] = await Promise.all([
+        api.get('/admin/listings', { params: { status: 'available', limit: 1 } }),
+        api.get('/admin/listings', { params: { status: 'pending', limit: 1 } }),
+      ]);
+      
+      const activeCount = activeListingsResponse.data.data.pagination?.total || 0;
+      const pendingCount = pendingListingsResponse.data.data.pagination?.total || 0;
+      
+      // For now, use mock trend data (can be enhanced later with time-series data)
       return {
-        totalUsers: 1250,
-        totalListings: 342,
-        totalReviews: 89,
-        activeListings: 298,
-        pendingListings: 44,
-        totalRevenue: 125000,
-        newUsersThisMonth: 45,
-        newListingsThisMonth: 12,
+        totalUsers: backendData.stats?.users || 0,
+        totalListings: backendData.stats?.listings || 0,
+        totalReviews: backendData.stats?.reviews || 0,
+        activeListings: activeCount,
+        pendingListings: pendingCount,
+        totalRevenue: 0, // Not tracked in backend yet
+        newUsersThisMonth: 0, // Not tracked in backend yet
+        newListingsThisMonth: 0, // Not tracked in backend yet
         userTrendData: [
           { name: 'W1', value: 100 },
           { name: 'W2', value: 120 },
