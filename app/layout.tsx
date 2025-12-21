@@ -1,33 +1,25 @@
 import type { Metadata } from 'next';
-import { Inter, PT_Serif } from 'next/font/google';
+import { Inter, Plus_Jakarta_Sans } from 'next/font/google';
 import './globals.css';
 import { Providers } from './providers';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { MobileNavigation } from '@/components/mobile/MobileNavigation';
 import { SkipLink } from '@/components/accessibility/SkipLink';
 
-// UI Font - System fonts for performance
+// UI & Body Font - Inter for excellent screen readability
 const inter = Inter({ 
   subsets: ['latin'],
   variable: '--font-ui',
   display: 'swap',
+  weight: ['400', '500', '600'],
 });
 
-// Body Font - PT Serif for readable, professional text
-const ptSerif = PT_Serif({
-  weight: ['400', '700'],
+// Heading Font - Plus Jakarta Sans for modern, friendly headings
+const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ['latin'],
-  variable: '--font-pt-serif',
+  variable: '--font-heading',
   display: 'swap',
-});
-
-// Heading Font - Using system font as fallback (Mercellus would need to be added via @font-face)
-// For now, we'll use a similar serif font or system font
-const headingFont = Inter({
   weight: ['600', '700', '800'],
-  subsets: ['latin'],
-  variable: '--font-mercellus',
-  display: 'swap',
 });
 
 export const metadata: Metadata = {
@@ -94,7 +86,7 @@ export default function RootLayout({
       <head>
         <link rel="icon" href="/favicon.ico" />
       </head>
-      <body className={`${inter.variable} ${ptSerif.variable} ${headingFont.variable} font-ui antialiased`}>
+      <body className={`${inter.variable} ${plusJakartaSans.variable} font-ui antialiased`}>
         <SkipLink />
         <ErrorBoundary>
           <Providers>

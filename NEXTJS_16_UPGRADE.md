@@ -186,3 +186,6 @@ With Next.js 16 and Turbopack, you should see:
 
 **Your frontend is now running on Next.js 16! 🎉**
 
+
+
+

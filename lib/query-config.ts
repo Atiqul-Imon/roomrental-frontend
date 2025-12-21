@@ -82,3 +82,6 @@ export function getQueryConfig(key: keyof typeof queryConfig) {
   return queryConfig[key];
 }
 
+
+
+

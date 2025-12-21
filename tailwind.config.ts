@@ -42,9 +42,9 @@ const config: Config = {
       },
       
       fontFamily: {
-        'heading': ['var(--font-mercellus)', 'system-ui', 'sans-serif'],
-        'body': ['var(--font-pt-serif)', 'Georgia', 'serif'],
-        'ui': ['system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+        'heading': ['var(--font-heading)', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+        'body': ['var(--font-ui)', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+        'ui': ['var(--font-ui)', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
       },
       
       // Color System - Enhanced with WCAG AA compliance
