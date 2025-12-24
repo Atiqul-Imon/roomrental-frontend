@@ -77,6 +77,7 @@ export interface Listing {
     name: string;
     email: string;
     profileImage?: string;
+    role?: string; // To determine if admin/staff created the listing
   };
   title: string;
   description: string;
@@ -98,8 +99,55 @@ export interface Listing {
   amenities: string[];
   availabilityDate: string;
   status: 'active' | 'pending' | 'rented' | 'available' | 'inactive';
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface Conversation {
+  id: string;
+  participant1Id: string;
+  participant2Id: string;
+  listingId?: string;
   createdAt: string;
   updatedAt: string;
+  lastMessageAt?: string;
+  participant1: {
+    id: string;
+    name: string;
+    profileImage?: string;
+    email: string;
+  };
+  participant2: {
+    id: string;
+    name: string;
+    profileImage?: string;
+    email: string;
+  };
+  listing?: {
+    id: string;
+    title: string;
+    images: string[];
+    price: number;
+  };
+  messages?: Message[];
+  unreadCount?: number;
+}
+
+export interface Message {
+  id: string;
+  conversationId: string;
+  senderId: string;
+  content: string;
+  messageType: 'text' | 'image' | 'file' | 'system';
+  attachments: string[];
+  readAt?: string;
+  deliveredAt?: string;
+  createdAt: string;
+  sender: {
+    id: string;
+    name: string;
+    profileImage?: string;
+  };
 }
 
 export interface ApiResponse<T = unknown> {

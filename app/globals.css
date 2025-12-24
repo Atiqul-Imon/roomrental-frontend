@@ -6,38 +6,6 @@
   --background: 0 0% 100%;
   --foreground: 31 33% 11%; /* Dark grey for text */
   --radius: 0.75rem; /* Increased for more modern look */
-  
-  /* Phase 1: Design System Variables */
-  --font-ui: var(--font-ui), system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --font-heading: var(--font-heading), system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  
-  /* Spacing Scale (4px base) */
-  --spacing-xs: 4px;
-  --spacing-sm: 8px;
-  --spacing-md: 16px;
-  --spacing-lg: 24px;
-  --spacing-xl: 32px;
-  --spacing-2xl: 48px;
-  --spacing-3xl: 64px;
-  
-  /* Typography Scale */
-  --text-xs: 12px;
-  --text-sm: 14px;
-  --text-base: 16px;
-  --text-lg: 18px;
-  --text-xl: 20px;
-  --text-2xl: 24px;
-  --text-3xl: 30px;
-  --text-4xl: 36px;
-  --text-5xl: 48px;
-  --text-6xl: 60px;
-  
-  /* Line Heights */
-  --leading-tight: 1.25;
-  --leading-snug: 1.375;
-  --leading-normal: 1.5;
-  --leading-relaxed: 1.625;
-  --leading-loose: 2;
 }
 
 /* Dark mode variables */
@@ -52,40 +20,6 @@ body {
   font-feature-settings: 'rlig' 1, 'calt' 1;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  font-family: var(--font-ui);
-  line-height: var(--leading-normal);
-}
-
-/* Phase 1: Typography Enhancements */
-h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-heading);
-  font-weight: 700;
-  line-height: var(--leading-tight);
-  letter-spacing: -0.02em;
-  color: hsl(var(--foreground));
-}
-
-/* H1 specific styling for hero sections */
-h1 {
-  font-weight: 800;
-  letter-spacing: -0.03em;
-}
-
-/* H2-H3 for section headings */
-h2, h3 {
-  font-weight: 700;
-  letter-spacing: -0.02em;
-}
-
-/* H4-H6 for subsections */
-h4, h5, h6 {
-  font-weight: 600;
-  letter-spacing: -0.01em;
-}
-
-p, li, span, div, a, button, input, textarea, select, label {
-  font-family: var(--font-ui);
-  line-height: var(--leading-relaxed);
 }
 
 @layer utilities {
@@ -318,9 +252,9 @@ p, li, span, div, a, button, input, textarea, select, label {
   .shimmer {
     background: linear-gradient(
       90deg,
-      #F3F4F6 0%,
-      #E5E7EB 50%,
-      #F3F4F6 100%
+      #1E293B 0%,
+      #334155 50%,
+      #1E293B 100%
     );
     background-size: 1000px 100%;
     animation: shimmer 2s infinite;
@@ -348,93 +282,10 @@ p, li, span, div, a, button, input, textarea, select, label {
     scroll-behavior: smooth;
   }
   
-  /* Scrollbar Hide Utility */
-  .scrollbar-hide {
-    -ms-overflow-style: none; /* IE and Edge */
-    scrollbar-width: none; /* Firefox */
-  }
-
-  .scrollbar-hide::-webkit-scrollbar {
-    display: none; /* Chrome, Safari and Opera */
-  }
-
-  /* Phase 4: Accessibility - Focus Indicators */
+  /* Focus visible for accessibility */
   *:focus-visible {
     outline: 2px solid #3B82F6;
     outline-offset: 2px;
-    outline-style: solid;
-  }
-
-  /* Skip link styles */
-  .sr-only {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-    border-width: 0;
-  }
-
-  .sr-only:focus {
-    position: static;
-    width: auto;
-    height: auto;
-    padding: inherit;
-    margin: inherit;
-    overflow: visible;
-    clip: auto;
-    white-space: normal;
-  }
-
-  /* Enhanced focus styles for interactive elements */
-  button:focus-visible,
-  a:focus-visible,
-  input:focus-visible,
-  select:focus-visible,
-  textarea:focus-visible {
-    outline: 2px solid #3B82F6;
-    outline-offset: 2px;
-    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
-  }
-
-  /* Remove focus outline for mouse users (keep for keyboard) */
-  .js-focus-visible :focus:not(.focus-visible) {
-    outline: none;
-  }
-
-  /* Phase 3: Mobile optimizations */
-  @media (max-width: 768px) {
-    /* Ensure minimum touch target size */
-    button, a, input, select, textarea {
-      min-height: 44px;
-      min-width: 44px;
-    }
-
-    /* Better scrolling on mobile */
-    body {
-      -webkit-overflow-scrolling: touch;
-    }
-  }
-
-  /* Pull to refresh indicator */
-  .pull-to-refresh {
-    position: fixed;
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 1000;
-    padding: 8px 16px;
-    background: white;
-    border-radius: 0 0 12px 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 14px;
-    color: #6B7280;
   }
 }
 

@@ -15,6 +15,7 @@ import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { ImageGallery } from '@/components/listings/ImageGallery';
 import { FavoriteButton } from '@/components/listings/FavoriteButton';
+import { ContactButton } from '@/components/listings/ContactButton';
 import { ReviewList } from '@/components/reviews/ReviewList';
 import { ReviewForm } from '@/components/reviews/ReviewForm';
 import { RatingDisplay } from '@/components/reviews/RatingDisplay';
@@ -50,6 +51,7 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
           name: listing.landlord?.name || '',
           email: listing.landlord?.email || '',
           profileImage: listing.landlord?.profileImage,
+          role: listing.landlord?.role || 'landlord', // Include role to determine if admin
         },
         title: listing.title,
         description: listing.description,
@@ -292,10 +294,14 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
                   </p>
                 )}
                 {!isOwner && (
-                  <button className="mt-4 w-full px-6 py-4 btn-gradient text-white rounded-xl font-bold text-base hover:scale-105 transition-all duration-200 shadow-large hover:shadow-xl flex items-center justify-center gap-2">
-                    <span>💬</span>
-                    Contact Landlord
-                  </button>
+                  <div className="mt-4">
+                    <ContactButton
+                      landlordId={data.landlordId._id}
+                      landlordRole={data.landlordId.role}
+                      listingId={data._id}
+                      listingTitle={data.title}
+                    />
+                  </div>
                 )}
               </div>
 
@@ -323,7 +329,7 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
                   <div className="flex justify-between items-center py-3">
                     <span className="text-grey-600 font-medium">Listed:</span>
                     <span className="font-bold text-grey-900">
-                      {format(new Date(data.createdAt), 'MMM dd, yyyy')}
+                      {data.createdAt ? format(new Date(data.createdAt), 'MMM dd, yyyy') : 'N/A'}
                     </span>
                   </div>
                 </div>

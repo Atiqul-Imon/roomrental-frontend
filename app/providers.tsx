@@ -3,9 +3,8 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useState } from 'react';
 import { AuthProvider } from '@/lib/auth-context';
-import { ChatProvider } from '@/lib/chat-context';
+import { SocketProvider } from '@/lib/socket-context';
 import { ToastProvider } from '@/components/ui/ToastProvider';
-import { queryConfig } from '@/lib/query-config';
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(
@@ -13,9 +12,10 @@ export function Providers({ children }: { children: React.ReactNode }) {
       new QueryClient({
         defaultOptions: {
           queries: {
-            // Default: Use listings config (most common)
-            ...queryConfig.listings,
+            staleTime: 60 * 1000, // 1 minute
+            refetchOnWindowFocus: false,
             retry: 1,
+            refetchOnMount: true,
           },
           mutations: {
             retry: 0,
@@ -27,9 +27,9 @@ export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <ChatProvider>
+        <SocketProvider>
           <ToastProvider>{children}</ToastProvider>
-        </ChatProvider>
+        </SocketProvider>
       </AuthProvider>
     </QueryClientProvider>
   );

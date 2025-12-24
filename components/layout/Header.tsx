@@ -4,9 +4,9 @@ import Link from 'next/link';
 import { useAuth } from '@/lib/auth-context';
 import { useRouter, usePathname } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
-import { chatApi } from '@/lib/chat-api';
 import { Button } from '@/components/ui/Button';
 import { Home, Search, Heart, Plus, LayoutDashboard, User, Settings, LogOut, MessageSquare } from 'lucide-react';
+import { chatApi } from '@/lib/chat-api';
 
 export function Header() {
   const { user, isAuthenticated, logout } = useAuth();
@@ -18,8 +18,10 @@ export function Header() {
     queryKey: ['unread-count'],
     queryFn: () => chatApi.getUnreadCount(),
     enabled: isAuthenticated,
-    refetchInterval: 30000, // Refresh every 30 seconds
+    refetchInterval: 30000, // Refetch every 30 seconds
   });
+
+  const unreadCount = unreadData ?? 0;
 
   const handleLogout = () => {
     logout();
@@ -32,13 +34,12 @@ export function Header() {
     <header className="sticky top-0 z-50 border-b border-grey-200 bg-white/80 backdrop-blur-md shadow-sm">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
-            <Link 
-              href="/" 
-              className="text-2xl font-bold text-gradient transition-smooth hover:opacity-90"
-              aria-label="RoomRentalUSA Home"
-            >
-              RoomRentalUSA
-            </Link>
+          <Link 
+            href="/" 
+            className="text-2xl font-bold text-gradient transition-smooth hover:opacity-90"
+          >
+            RoomRentalUSA
+          </Link>
 
           <nav className="hidden md:flex items-center gap-2">
             <Link
@@ -48,11 +49,9 @@ export function Header() {
                   ? 'bg-primary-50 text-primary-600'
                   : 'text-grey-700 hover:text-primary-600 hover:bg-grey-50'
               }`}
-              aria-label="Browse listings"
-              aria-current={isActive('/listings') ? 'page' : undefined}
             >
               <span className="flex items-center gap-1.5">
-                <Search className="w-4 h-4" aria-hidden="true" />
+                <Search className="w-4 h-4" />
                 Browse
               </span>
             </Link>
@@ -75,7 +74,7 @@ export function Header() {
                 <Link
                   href="/chat"
                   className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 relative ${
-                    pathname?.startsWith('/chat')
+                    isActive('/chat')
                       ? 'bg-primary-50 text-primary-600'
                       : 'text-grey-700 hover:text-primary-600 hover:bg-grey-50'
                   }`}
@@ -83,9 +82,9 @@ export function Header() {
                   <span className="flex items-center gap-1.5">
                     <MessageSquare className="w-4 h-4" />
                     Messages
-                    {unreadData && unreadData.count > 0 && (
-                      <span className="ml-1 px-1.5 py-0.5 text-xs font-semibold text-white bg-red-600 rounded-full min-w-[20px] text-center">
-                        {unreadData.count > 99 ? '99+' : unreadData.count}
+                    {unreadCount > 0 && (
+                      <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">
+                        {unreadCount > 9 ? '9+' : unreadCount}
                       </span>
                     )}
                   </span>

@@ -240,7 +240,7 @@ export default function DashboardPage() {
                         <option value="rented">Rented</option>
                       </select>
                       <span className="text-xs text-muted-foreground">
-                        {format(new Date(listing.createdAt), 'MMM dd, yyyy')}
+                        {listing.createdAt ? format(new Date(listing.createdAt), 'MMM dd, yyyy') : 'N/A'}
                       </span>
                     </div>
                   </div>

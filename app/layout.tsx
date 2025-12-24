@@ -1,26 +1,10 @@
 import type { Metadata } from 'next';
-import { Inter, Plus_Jakarta_Sans } from 'next/font/google';
+import { Inter } from 'next/font/google';
 import './globals.css';
 import { Providers } from './providers';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
-import { MobileNavigation } from '@/components/mobile/MobileNavigation';
-import { SkipLink } from '@/components/accessibility/SkipLink';
 
-// UI & Body Font - Inter for excellent screen readability
-const inter = Inter({ 
-  subsets: ['latin'],
-  variable: '--font-ui',
-  display: 'swap',
-  weight: ['400', '500', '600'],
-});
-
-// Heading Font - Plus Jakarta Sans for modern, friendly headings
-const plusJakartaSans = Plus_Jakarta_Sans({
-  subsets: ['latin'],
-  variable: '--font-heading',
-  display: 'swap',
-  weight: ['600', '700', '800'],
-});
+const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
   title: {
@@ -86,16 +70,9 @@ export default function RootLayout({
       <head>
         <link rel="icon" href="/favicon.ico" />
       </head>
-      <body className={`${inter.variable} ${plusJakartaSans.variable} font-ui antialiased`}>
-        <SkipLink />
+      <body className={inter.className}>
         <ErrorBoundary>
-          <Providers>
-            <div id="live-region" role="status" aria-live="polite" aria-atomic="true" className="sr-only" />
-            <main id="main-content">
-              {children}
-            </main>
-            <MobileNavigation />
-          </Providers>
+          <Providers>{children}</Providers>
         </ErrorBoundary>
       </body>
     </html>
