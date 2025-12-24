@@ -8,7 +8,8 @@ import { MessageInput } from './MessageInput';
 import { useSocket } from '@/lib/socket-context';
 import { chatApi } from '@/lib/chat-api';
 import { useAuth } from '@/lib/auth-context';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useNotifications } from '@/hooks/useNotifications';
+import { useQuery, useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { ArrowLeft, User } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -19,8 +20,9 @@ interface ChatWindowProps {
 
 export function ChatWindow({ initialConversationId }: ChatWindowProps) {
   const { user } = useAuth();
-  const { socket, isConnected, joinConversation, leaveConversation, onMessage, offMessage } =
+  const { socket, isConnected, joinConversation, leaveConversation, onMessage, offMessage, isUserOnline } =
     useSocket();
+  const { showChatNotification } = useNotifications();
   const queryClient = useQueryClient();
   const [selectedConversation, setSelectedConversation] = useState<Conversation | null>(null);
   const [typingUsers, setTypingUsers] = useState<Set<string>>(new Set());
@@ -36,21 +38,40 @@ export function ChatWindow({ initialConversationId }: ChatWindowProps) {
     enabled: !!user,
   });
 
-  // Fetch messages for selected conversation
+  // Fetch messages for selected conversation with infinite scroll
   const {
-    data: messages = [],
+    data: messagesData,
     isLoading: messagesLoading,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
     refetch: refetchMessages,
-  } = useQuery({
+  } = useInfiniteQuery({
     queryKey: ['messages', selectedConversation?.id],
-    queryFn: () => chatApi.getMessages(selectedConversation!.id, 1, 100),
+    queryFn: ({ pageParam = 1 }) =>
+      chatApi.getMessages(selectedConversation!.id, pageParam, 50),
+    getNextPageParam: (lastPage, allPages) => {
+      // If last page has messages, there might be more
+      if (lastPage.length === 50) {
+        return allPages.length + 1;
+      }
+      return undefined;
+    },
     enabled: !!selectedConversation?.id,
+    initialPageParam: 1,
   });
+
+  const messages = messagesData?.pages.flat() || [];
 
   // Send message mutation
   const sendMessageMutation = useMutation({
-    mutationFn: (content: string) =>
-      chatApi.sendMessage(selectedConversation!.id, content, 'text', []),
+    mutationFn: (data: { content: string; messageType?: string; attachments?: string[] }) =>
+      chatApi.sendMessage(
+        selectedConversation!.id,
+        data.content,
+        data.messageType || 'text',
+        data.attachments || []
+      ),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['messages', selectedConversation?.id] });
       queryClient.invalidateQueries({ queryKey: ['conversations'] });
@@ -96,18 +117,39 @@ export function ChatWindow({ initialConversationId }: ChatWindowProps) {
 
     const handleNewMessage = (message: Message) => {
       if (message.conversationId === selectedConversation.id) {
-        queryClient.setQueryData(['messages', selectedConversation.id], (old: Message[] = []) => {
-          // Check if message already exists
-          if (old.some((m) => m.id === message.id)) {
-            return old;
+        // Update infinite query cache
+        queryClient.setQueryData(
+          ['messages', selectedConversation.id],
+          (old: any) => {
+            if (!old) return old;
+            // Check if message already exists
+            const allMessages = old.pages.flat();
+            if (allMessages.some((m: Message) => m.id === message.id)) {
+              return old;
+            }
+            // Add new message to the last page
+            const lastPage = old.pages[old.pages.length - 1];
+            return {
+              ...old,
+              pages: [
+                ...old.pages.slice(0, -1),
+                [...lastPage, message],
+              ],
+            };
           }
-          return [...old, message];
-        });
+        );
         refetchMessages();
         refetchConversations();
         markAsReadMutation.mutate();
       } else {
-        // Message in another conversation - just refresh conversations list
+        // Message in another conversation - show notification and refresh
+        if (message.senderId !== user?.id) {
+          showChatNotification(
+            message.sender.name,
+            message.content,
+            message.conversationId
+          );
+        }
         refetchConversations();
       }
     };
@@ -117,15 +159,19 @@ export function ChatWindow({ initialConversationId }: ChatWindowProps) {
     return () => {
       offMessage(handleNewMessage);
     };
-  }, [socket, selectedConversation, onMessage, offMessage]);
+  }, [socket, selectedConversation, onMessage, offMessage, user, showChatNotification]);
 
   const handleSelectConversation = (conversation: Conversation) => {
     setSelectedConversation(conversation);
   };
 
-  const handleSendMessage = (content: string) => {
-    if (selectedConversation && content.trim()) {
-      sendMessageMutation.mutate(content);
+  const handleSendMessage = (content: string, messageType?: string, attachments?: string[]) => {
+    if (selectedConversation && (content.trim() || (attachments && attachments.length > 0))) {
+      sendMessageMutation.mutate({
+        content,
+        messageType: messageType || 'text',
+        attachments: attachments || [],
+      });
     }
   };
 
@@ -198,7 +244,15 @@ export function ChatWindow({ initialConversationId }: ChatWindowProps) {
                         </div>
                       )}
                       <div className="flex-1">
-                        <h3 className="font-semibold text-gray-900">{otherParticipant.name}</h3>
+                        <div className="flex items-center gap-2">
+                          <h3 className="font-semibold text-gray-900">{otherParticipant.name}</h3>
+                          {isUserOnline(otherParticipant.id) && (
+                            <span className="relative flex h-2 w-2">
+                              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                              <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                            </span>
+                          )}
+                        </div>
                         {selectedConversation.listing && (
                           <Link
                             href={`/listings/${selectedConversation.listing.id}`}
@@ -219,6 +273,9 @@ export function ChatWindow({ initialConversationId }: ChatWindowProps) {
               messages={messages}
               isLoading={messagesLoading}
               currentUserId={user?.id || ''}
+              hasMore={hasNextPage}
+              isFetchingMore={isFetchingNextPage}
+              onLoadMore={() => fetchNextPage()}
             />
 
             {/* Typing Indicator */}

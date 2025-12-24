@@ -5,6 +5,7 @@ import { Conversation } from '@/types';
 import { format, formatDistanceToNow } from 'date-fns';
 import { MessageSquare, Circle } from 'lucide-react';
 import Image from 'next/image';
+import { useSocket } from '@/lib/socket-context';
 
 interface ConversationListProps {
   conversations: Conversation[];
@@ -21,6 +22,8 @@ export function ConversationList({
   currentUserId,
   isLoading,
 }: ConversationListProps) {
+  const { isUserOnline } = useSocket();
+
   const getOtherParticipant = (conversation: Conversation) => {
     return conversation.participant1Id === currentUserId
       ? conversation.participant2
@@ -92,6 +95,10 @@ export function ConversationList({
                     >
                       {otherParticipant.name.charAt(0).toUpperCase()}
                     </div>
+                  )}
+                  {/* Online Status Indicator */}
+                  {isUserOnline(otherParticipant.id) && (
+                    <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></div>
                   )}
                   {unreadCount > 0 && (
                     <div className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">

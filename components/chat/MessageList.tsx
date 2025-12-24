@@ -4,20 +4,69 @@ import { useEffect, useRef } from 'react';
 import { Message } from '@/types';
 import { format, isToday, isYesterday, formatDistanceToNow } from 'date-fns';
 import Image from 'next/image';
+import { Paperclip } from 'lucide-react';
 import { useAuth } from '@/lib/auth-context';
 
 interface MessageListProps {
   messages: Message[];
   isLoading?: boolean;
   currentUserId: string;
+  hasMore?: boolean;
+  isFetchingMore?: boolean;
+  onLoadMore?: () => void;
 }
 
-export function MessageList({ messages, isLoading, currentUserId }: MessageListProps) {
+export function MessageList({
+  messages,
+  isLoading,
+  currentUserId,
+  hasMore,
+  isFetchingMore,
+  onLoadMore,
+}: MessageListProps) {
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
+  const previousScrollHeight = useRef<number>(0);
 
+  // Scroll to bottom on new messages (but not when loading older messages)
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
+    if (!isFetchingMore && messages.length > 0) {
+      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [messages.length, isFetchingMore]);
+
+  // Maintain scroll position when loading older messages
+  useEffect(() => {
+    if (isFetchingMore && messagesContainerRef.current) {
+      const container = messagesContainerRef.current;
+      const currentScrollHeight = container.scrollHeight;
+      const scrollTop = container.scrollTop;
+      const scrollDifference = currentScrollHeight - previousScrollHeight.current;
+
+      if (scrollDifference > 0) {
+        container.scrollTop = scrollTop + scrollDifference;
+      }
+      previousScrollHeight.current = currentScrollHeight;
+    }
+  }, [messages, isFetchingMore]);
+
+  // Handle infinite scroll
+  useEffect(() => {
+    const container = messagesContainerRef.current;
+    if (!container || !hasMore || isFetchingMore) return;
+
+    const handleScroll = () => {
+      const { scrollTop } = container;
+      // Load more when scrolled to top 200px
+      if (scrollTop < 200 && onLoadMore) {
+        previousScrollHeight.current = container.scrollHeight;
+        onLoadMore();
+      }
+    };
+
+    container.addEventListener('scroll', handleScroll);
+    return () => container.removeEventListener('scroll', handleScroll);
+  }, [hasMore, isFetchingMore, onLoadMore]);
 
   const formatMessageTime = (date: string) => {
     const messageDate = new Date(date);
@@ -91,7 +140,7 @@ export function MessageList({ messages, isLoading, currentUserId }: MessageListP
   const messageGroups = groupMessagesByDate(messages);
 
   return (
-    <div className="flex-1 overflow-y-auto p-4 space-y-4">
+    <div ref={messagesContainerRef} className="flex-1 overflow-y-auto p-4 space-y-4">
       {messageGroups.map((group, groupIndex) => (
         <div key={group.date}>
           {/* Date Separator */}
@@ -156,26 +205,73 @@ export function MessageList({ messages, isLoading, currentUserId }: MessageListP
                           : 'bg-gray-100 text-gray-900'
                       }`}
                     >
+                      {/* Message Content */}
                       {message.messageType === 'text' ? (
                         <p className="text-sm whitespace-pre-wrap break-words">
                           {message.content}
                         </p>
                       ) : message.messageType === 'image' ? (
                         <div className="space-y-2">
-                          <p className="text-sm">{message.content}</p>
-                          {message.attachments.map((url, idx) => (
-                            <Image
-                              key={idx}
-                              src={url}
-                              alt={`Image ${idx + 1}`}
-                              width={200}
-                              height={200}
-                              className="rounded-lg object-cover"
-                            />
-                          ))}
+                          {message.content && message.content !== '📎' && (
+                            <p className="text-sm whitespace-pre-wrap break-words">
+                              {message.content}
+                            </p>
+                          )}
+                          {message.attachments && message.attachments.length > 0 && (
+                            <div className="grid gap-2" style={{
+                              gridTemplateColumns: `repeat(${Math.min(message.attachments.length, 3)}, 1fr)`
+                            }}>
+                              {message.attachments.map((url, idx) => (
+                                <div
+                                  key={idx}
+                                  className="relative group cursor-pointer rounded-lg overflow-hidden"
+                                  onClick={() => window.open(url, '_blank')}
+                                >
+                                  <Image
+                                    src={url}
+                                    alt={`Image ${idx + 1}`}
+                                    width={200}
+                                    height={200}
+                                    className="w-full h-auto max-w-xs rounded-lg object-cover hover:opacity-90 transition-opacity"
+                                  />
+                                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      ) : message.messageType === 'file' ? (
+                        <div className="space-y-2">
+                          {message.content && message.content !== '📎' && (
+                            <p className="text-sm whitespace-pre-wrap break-words">
+                              {message.content}
+                            </p>
+                          )}
+                          {message.attachments && message.attachments.length > 0 && (
+                            <div className="space-y-2">
+                              {message.attachments.map((url, idx) => {
+                                const fileName = url.split('/').pop() || `File ${idx + 1}`;
+                                return (
+                                  <a
+                                    key={idx}
+                                    href={url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="flex items-center gap-2 p-2 bg-black/10 hover:bg-black/20 rounded-lg transition-colors"
+                                  >
+                                    <Paperclip className="w-4 h-4 flex-shrink-0" />
+                                    <span className="text-sm truncate flex-1">{fileName}</span>
+                                    <span className="text-xs opacity-75">Open</span>
+                                  </a>
+                                );
+                              })}
+                            </div>
+                          )}
                         </div>
                       ) : (
-                        <p className="text-sm">{message.content}</p>
+                        <p className="text-sm whitespace-pre-wrap break-words">
+                          {message.content}
+                        </p>
                       )}
 
                       <span
@@ -209,6 +305,25 @@ export function MessageList({ messages, isLoading, currentUserId }: MessageListP
           </div>
         </div>
       ))}
+
+      {/* Loading more messages indicator */}
+      {isFetchingMore && (
+        <div className="flex justify-center py-4">
+          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary-500"></div>
+        </div>
+      )}
+
+      {/* Load more button */}
+      {hasMore && !isFetchingMore && (
+        <div className="flex justify-center py-4">
+          <button
+            onClick={onLoadMore}
+            className="px-4 py-2 text-sm text-primary-600 hover:text-primary-700 hover:bg-primary-50 rounded-lg transition-colors"
+          >
+            Load older messages
+          </button>
+        </div>
+      )}
 
       <div ref={messagesEndRef} />
     </div>

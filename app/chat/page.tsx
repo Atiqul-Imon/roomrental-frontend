@@ -7,6 +7,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { Header } from '@/components/layout/Header';
 import { ChatWindow } from '@/components/chat/ChatWindow';
+import { NotificationPermissionPrompt } from '@/components/chat/NotificationPermissionPrompt';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 
 function ChatContent() {
@@ -40,6 +41,7 @@ export default function ChatPage() {
   return (
     <>
       <Header />
+      <NotificationPermissionPrompt />
       <Suspense fallback={
         <div className="min-h-screen flex items-center justify-center bg-grey-50">
           <LoadingSpinner />
