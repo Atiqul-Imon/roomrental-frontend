@@ -3,7 +3,6 @@ import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { ListingList } from '@/components/listings/ListingList';
 import { Search, Home as HomeIcon, Users } from 'lucide-react';
-import { WelcomeModalWrapper } from '@/components/onboarding/WelcomeModalWrapper';
 
 export const dynamic = 'force-dynamic';
 
@@ -11,7 +10,6 @@ export default function Home() {
 
   return (
     <>
-      <WelcomeModalWrapper />
       <Header />
       <main id="main-content" className="min-h-screen bg-grey-50" role="main">
         {/* Hero Section */}
