@@ -7,7 +7,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/lib/api';
 import { Listing } from '@/types';
 import { Button } from '@/components/ui/Button';
-import { Search, Filter, CheckCircle, XCircle, Eye, Edit, Trash2, Building2 } from 'lucide-react';
+import { Search, Filter, CheckCircle, XCircle, Eye, Edit, Trash2, Building2, Plus } from 'lucide-react';
 import Link from 'next/link';
 import { format } from 'date-fns';
 
@@ -73,9 +73,18 @@ export default function AdminListingsPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold text-dark-text-primary mb-2">Listing Management</h1>
-        <p className="text-dark-text-secondary">Manage and moderate all listings on the platform</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold text-dark-text-primary mb-2">Listing Management</h1>
+          <p className="text-dark-text-secondary">Manage and moderate all listings on the platform</p>
+        </div>
+        <Link
+          href="/admin/listings/create"
+          className="flex items-center gap-2 px-6 py-3 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors font-semibold shadow-medium"
+        >
+          <Building2 className="w-5 h-5" />
+          Create Listing
+        </Link>
       </div>
 
       {/* Filters */}

@@ -25,11 +25,27 @@ const listingSchema = z.object({
 
 type ListingFormData = z.infer<typeof listingSchema>;
 
-interface CreateListingFormProps {
-  onSuccess?: () => void;
+interface Landlord {
+  id: string;
+  name: string;
+  email: string;
 }
 
-export function CreateListingForm({ onSuccess }: CreateListingFormProps) {
+interface CreateListingFormProps {
+  onSuccess?: () => void;
+  isAdmin?: boolean;
+  selectedLandlordId?: string;
+  onLandlordChange?: (landlordId: string) => void;
+  landlords?: Landlord[];
+}
+
+export function CreateListingForm({ 
+  onSuccess, 
+  isAdmin = false, 
+  selectedLandlordId,
+  onLandlordChange,
+  landlords = []
+}: CreateListingFormProps) {
   const router = useRouter();
   const [step, setStep] = useState(1);
   const [images, setImages] = useState<string[]>([]);
@@ -99,7 +115,7 @@ export function CreateListingForm({ onSuccess }: CreateListingFormProps) {
     setError('');
 
     try {
-      const listingData = {
+      const listingData: any = {
         title: data.title,
         description: data.description,
         price: data.price,
@@ -117,6 +133,11 @@ export function CreateListingForm({ onSuccess }: CreateListingFormProps) {
         availabilityDate: new Date(data.availabilityDate).toISOString(),
         status: 'available',
       };
+
+      // If admin mode and landlord selected, include landlordId
+      if (isAdmin && selectedLandlordId) {
+        listingData.landlordId = selectedLandlordId;
+      }
 
       const response = await api.post('/listings', listingData);
 
@@ -169,6 +190,32 @@ export function CreateListingForm({ onSuccess }: CreateListingFormProps) {
             <h2 className="text-2xl md:text-3xl font-bold mb-2 text-grey-900">Basic Information</h2>
             <p className="text-grey-600">Tell us about your room</p>
           </div>
+
+          {/* Admin Landlord Selection */}
+          {isAdmin && onLandlordChange && (
+            <div>
+              <label className="block text-sm font-semibold text-grey-700 mb-2">
+                Assign to Landlord
+              </label>
+              <select
+                value={selectedLandlordId || ''}
+                onChange={(e) => onLandlordChange(e.target.value)}
+                className="w-full px-4 py-3 border-2 border-grey-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200 bg-white"
+              >
+                <option value="">Assign to myself (Admin)</option>
+                {landlords.map((landlord) => (
+                  <option key={landlord.id} value={landlord.id}>
+                    {landlord.name} ({landlord.email})
+                  </option>
+                ))}
+              </select>
+              <p className="text-xs text-grey-500 mt-1">
+                {selectedLandlordId 
+                  ? 'Listing will be assigned to the selected landlord'
+                  : 'If no landlord is selected, the listing will be assigned to your admin account'}
+              </p>
+            </div>
+          )}
 
           <div>
             <label className="block text-sm font-semibold text-grey-700 mb-2">

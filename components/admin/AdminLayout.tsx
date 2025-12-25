@@ -76,6 +76,12 @@ export function AdminLayout({ children }: AdminLayoutProps) {
       permission: 'view_listings',
     },
     {
+      icon: Building2,
+      label: 'Create Listing',
+      href: '/admin/listings/create',
+      permission: 'view_listings',
+    },
+    {
       icon: MessageSquare,
       label: 'Reviews',
       href: '/admin/reviews',
