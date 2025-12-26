@@ -116,16 +116,13 @@ export default function ProfilePage({ params }: { params: Promise<{ id: string }
         <main className="min-h-screen bg-grey-50">
           <div className="container mx-auto px-4 py-8">
             <div className="relative animate-pulse">
-              <div className="h-48 bg-grey-200 rounded-t-xl" />
-              <div className="relative -mt-20 px-6 pb-6">
-                <div className="bg-white rounded-xl shadow-large border border-grey-200 p-6">
-                  <div className="flex flex-col md:flex-row md:items-start gap-6">
-                    <div className="w-32 h-32 rounded-full bg-grey-200 border-4 border-white" />
-                    <div className="flex-1 space-y-4">
-                      <div className="h-8 bg-grey-200 rounded w-48" />
-                      <div className="h-6 bg-grey-200 rounded w-32" />
-                      <div className="h-4 bg-grey-200 rounded w-64" />
-                    </div>
+              <div className="bg-white rounded-xl shadow-large border border-grey-200 p-6">
+                <div className="flex flex-col md:flex-row md:items-start gap-6">
+                  <div className="w-32 h-32 rounded-full bg-grey-200 border-2 border-grey-200" />
+                  <div className="flex-1 space-y-4">
+                    <div className="h-8 bg-grey-200 rounded w-48" />
+                    <div className="h-6 bg-grey-200 rounded w-32" />
+                    <div className="h-4 bg-grey-200 rounded w-64" />
                   </div>
                 </div>
               </div>
@@ -257,7 +254,7 @@ export default function ProfilePage({ params }: { params: Promise<{ id: string }
     <>
       <Header />
       <main className="min-h-screen bg-grey-50">
-        <div className="container mx-auto px-4 py-8">
+        <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-6 md:py-8 max-w-7xl">
           {/* Profile Hero */}
           <ProfileHero 
             profile={profile} 
@@ -266,17 +263,19 @@ export default function ProfilePage({ params }: { params: Promise<{ id: string }
           />
 
           {/* Statistics */}
-          <div className="mt-8 mb-8">
+          <div className="mt-4 sm:mt-6 md:mt-8 mb-4 sm:mb-6 md:mb-8">
             <ProfileStats role={profile.role} stats={stats} />
           </div>
 
           {/* Tabs */}
-          <ProfileTabs 
-            role={profile.role}
-            userId={userId}
-            isOwnProfile={isOwnProfile}
-            tabs={tabs}
-          />
+          <div className="mt-4 sm:mt-6 md:mt-8">
+            <ProfileTabs 
+              role={profile.role}
+              userId={userId}
+              isOwnProfile={isOwnProfile}
+              tabs={tabs}
+            />
+          </div>
         </div>
       </main>
       <Footer />

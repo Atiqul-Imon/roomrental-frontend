@@ -91,7 +91,7 @@ export function SearchHistorySidebar({ isOpen, onClose }: SearchHistoryProps) {
 
       {/* Sidebar */}
       <div
-        className={`fixed top-0 right-0 h-full w-80 bg-white shadow-xl z-50 transform transition-transform duration-300 ease-in-out ${
+        className={`fixed top-0 right-0 h-full w-full sm:w-80 max-w-sm bg-white shadow-xl z-50 transform transition-transform duration-300 ease-in-out ${
           isOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
       >
