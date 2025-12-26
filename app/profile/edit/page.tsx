@@ -154,11 +154,21 @@ export default function EditProfilePage() {
 
         if (status === 400) {
           errorType = 'server';
-          // Extract detailed error message
+          // Extract detailed error message - handle various formats
           if (serverMessage) {
-            errorMessage = serverMessage;
+            // Check if serverMessage is an object and extract the actual message
+            if (typeof serverMessage === 'object') {
+              errorMessage = serverMessage.message || serverMessage.error || JSON.stringify(serverMessage);
+            } else {
+              errorMessage = serverMessage;
+            }
           } else if (responseData?.details) {
-            errorMessage = `Upload failed: ${responseData.details}`;
+            errorMessage = typeof responseData.details === 'string' 
+              ? responseData.details 
+              : `Upload failed: ${JSON.stringify(responseData.details)}`;
+          } else if (responseData?.data?.error) {
+            const dataError = responseData.data.error;
+            errorMessage = typeof dataError === 'string' ? dataError : JSON.stringify(dataError);
           } else {
             errorMessage = 'Invalid file format or file too large (max 100KB for profile images). Please ensure the file is a valid image and under 100KB.';
           }
