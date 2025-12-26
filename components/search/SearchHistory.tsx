@@ -108,11 +108,14 @@ export function SearchHistorySidebar({ isOpen, onClose }: SearchHistoryProps) {
 
       {/* Sidebar/Drawer */}
       <div
-        className="fixed top-0 h-screen bg-white shadow-2xl z-50 transition-transform duration-300 ease-in-out"
+        className={`fixed top-0 h-screen bg-white shadow-2xl z-50 transition-transform duration-300 ease-in-out ${
+          !isOpen ? 'translate-x-full' : ''
+        }`}
         style={{ 
           width: 'min(85vw, 320px)',
           maxWidth: '320px',
-          right: isOpen ? '0' : '-100%',
+          right: 0,
+          transform: isOpen ? 'translateX(0)' : 'translateX(100%)',
           pointerEvents: isOpen ? 'auto' : 'none'
         }}
       >

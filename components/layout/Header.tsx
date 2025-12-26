@@ -6,7 +6,7 @@ import { useAuth } from '@/lib/auth-context';
 import { useRouter, usePathname } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 import { Button } from '@/components/ui/Button';
-import { Home, Search, Heart, Plus, LayoutDashboard, User, Settings, LogOut, MessageSquare, Clock } from 'lucide-react';
+import { Home, Search, Heart, Plus, LayoutDashboard, User, Settings, LogOut, MessageSquare, Clock, Menu, X } from 'lucide-react';
 import { chatApi } from '@/lib/chat-api';
 import { SavedSearchesDropdown } from '@/components/search/SavedSearchesDropdown';
 import { SearchHistorySidebar } from '@/components/search/SearchHistory';
@@ -16,6 +16,7 @@ export function Header() {
   const router = useRouter();
   const pathname = usePathname();
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   // Get unread message count
   const { data: unreadData } = useQuery({
@@ -191,13 +192,175 @@ export function Header() {
             )}
           </nav>
 
-          {/* Mobile menu button - simplified for now */}
+          {/* Mobile menu button */}
           <div className="md:hidden">
-            <Button variant="ghost" size="sm">
-              Menu
+            <Button 
+              variant="ghost" 
+              size="sm"
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              aria-label="Toggle mobile menu"
+            >
+              {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </Button>
           </div>
         </div>
+
+        {/* Mobile Menu */}
+        {isMobileMenuOpen && (
+          <div className="md:hidden border-t border-grey-200 bg-white">
+            <nav className="flex flex-col py-4 space-y-2">
+              <Link
+                href="/listings"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className={`px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 ${
+                  isActive('/listings')
+                    ? 'bg-primary-50 text-primary-600'
+                    : 'text-grey-700 hover:text-primary-600 hover:bg-grey-50'
+                }`}
+              >
+                <span className="flex items-center gap-2">
+                  <Search className="w-4 h-4" />
+                  Browse
+                </span>
+              </Link>
+              
+              {isAuthenticated ? (
+                <>
+                  <button
+                    onClick={() => {
+                      setIsHistoryOpen(true);
+                      setIsMobileMenuOpen(false);
+                    }}
+                    className="px-4 py-3 rounded-lg text-sm font-medium text-grey-700 hover:text-primary-600 hover:bg-grey-50 transition-all duration-200 text-left flex items-center gap-2"
+                  >
+                    <Clock className="w-4 h-4" />
+                    Search History
+                  </button>
+                  <Link
+                    href="/favorites"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className={`px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 ${
+                      isActive('/favorites')
+                        ? 'bg-secondary-50 text-secondary-600'
+                        : 'text-grey-700 hover:text-secondary-600 hover:bg-grey-50'
+                    }`}
+                  >
+                    <span className="flex items-center gap-2">
+                      <Heart className="w-4 h-4" />
+                      Favorites
+                    </span>
+                  </Link>
+                  <Link
+                    href="/chat"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className={`px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 relative ${
+                      isActive('/chat')
+                        ? 'bg-primary-50 text-primary-600'
+                        : 'text-grey-700 hover:text-primary-600 hover:bg-grey-50'
+                    }`}
+                  >
+                    <span className="flex items-center gap-2">
+                      <MessageSquare className="w-4 h-4" />
+                      Messages
+                      {unreadCount > 0 && (
+                        <span className="ml-auto bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">
+                          {unreadCount > 9 ? '9+' : unreadCount}
+                        </span>
+                      )}
+                    </span>
+                  </Link>
+                  {user?.role === 'landlord' && (
+                    <>
+                      <Link
+                        href="/listings/create"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                        className={`px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 ${
+                          isActive('/listings/create')
+                            ? 'bg-primary-50 text-primary-600'
+                            : 'text-grey-700 hover:text-primary-600 hover:bg-grey-50'
+                        }`}
+                      >
+                        <span className="flex items-center gap-2">
+                          <Plus className="w-4 h-4" />
+                          Create Listing
+                        </span>
+                      </Link>
+                      <Link
+                        href="/dashboard"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                        className={`px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 ${
+                          isActive('/dashboard')
+                            ? 'bg-primary-50 text-primary-600'
+                            : 'text-grey-700 hover:text-primary-600 hover:bg-grey-50'
+                        }`}
+                      >
+                        <span className="flex items-center gap-2">
+                          <LayoutDashboard className="w-4 h-4" />
+                          Dashboard
+                        </span>
+                      </Link>
+                    </>
+                  )}
+                  <Link
+                    href={`/profile/${user?.id}`}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className={`px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 ${
+                      pathname?.startsWith('/profile')
+                        ? 'bg-primary-50 text-primary-600'
+                        : 'text-grey-700 hover:text-primary-600 hover:bg-grey-50'
+                    }`}
+                  >
+                    <span className="flex items-center gap-2">
+                      <User className="w-4 h-4" />
+                      Profile
+                    </span>
+                  </Link>
+                  <Link
+                    href="/settings"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className={`px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 ${
+                      isActive('/settings')
+                        ? 'bg-primary-50 text-primary-600'
+                        : 'text-grey-700 hover:text-primary-600 hover:bg-grey-50'
+                    }`}
+                  >
+                    <span className="flex items-center gap-2">
+                      <Settings className="w-4 h-4" />
+                      Settings
+                    </span>
+                  </Link>
+                  <button
+                    onClick={() => {
+                      handleLogout();
+                      setIsMobileMenuOpen(false);
+                    }}
+                    className="px-4 py-3 rounded-lg text-sm font-medium text-grey-700 hover:text-red-600 hover:bg-grey-50 transition-all duration-200 text-left flex items-center gap-2"
+                  >
+                    <LogOut className="w-4 h-4" />
+                    Logout
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Link
+                    href="/auth/login"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="px-4 py-3 text-sm font-medium text-grey-700 hover:text-primary-600 transition-all duration-200 rounded-lg hover:bg-grey-50"
+                  >
+                    Sign In
+                  </Link>
+                  <Link
+                    href="/auth/register"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="px-4 py-3 text-sm font-medium bg-gradient-primary text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-all duration-200"
+                  >
+                    Sign Up
+                  </Link>
+                </>
+              )}
+            </nav>
+          </div>
+        )}
       </div>
       <SearchHistorySidebar isOpen={isHistoryOpen} onClose={() => setIsHistoryOpen(false)} />
     </header>
