@@ -61,7 +61,7 @@ export function Modal({
 
   return (
     <div
-      className="fixed inset-0 z-modal flex items-center justify-center p-4"
+      className="fixed inset-0 z-[100] flex items-center justify-center p-2 sm:p-4"
       onClick={closeOnOverlayClick ? onClose : undefined}
       role="dialog"
       aria-modal="true"
@@ -87,6 +87,7 @@ export function Modal({
         className={cn(
           'relative w-full bg-white rounded-xl shadow-2xl border border-grey-200',
           'transform transition-all duration-300',
+          'max-h-[90vh] flex flex-col',
           isOpen ? 'scale-100 opacity-100' : 'scale-95 opacity-0',
           sizeClasses[size]
         )}
@@ -94,16 +95,16 @@ export function Modal({
       >
         {/* Header */}
         {(title || showCloseButton) && (
-          <div className="flex items-center justify-between p-6 border-b border-grey-200">
+          <div className="flex items-center justify-between p-4 md:p-6 border-b border-grey-200 flex-shrink-0">
             {title && (
-              <h2 id="modal-title" className="text-xl font-bold text-grey-900">
+              <h2 id="modal-title" className="text-lg md:text-xl font-bold text-grey-900">
                 {title}
               </h2>
             )}
             {showCloseButton && (
               <button
                 onClick={onClose}
-                className="p-2 text-grey-400 hover:text-grey-600 hover:bg-grey-100 rounded-lg transition-colors"
+                className="p-2 text-grey-400 hover:text-grey-600 hover:bg-grey-100 rounded-lg transition-colors z-20"
                 aria-label="Close modal"
               >
                 <X className="w-5 h-5" />
@@ -112,8 +113,8 @@ export function Modal({
           </div>
         )}
 
-        {/* Body */}
-        <div className="p-6">{children}</div>
+        {/* Body - Scrollable */}
+        <div className="overflow-y-auto flex-1 min-h-0">{children}</div>
       </div>
     </div>
   );
