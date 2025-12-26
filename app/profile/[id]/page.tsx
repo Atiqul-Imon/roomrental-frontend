@@ -113,8 +113,31 @@ export default function ProfilePage({ params }: { params: Promise<{ id: string }
     return (
       <>
         <Header />
-        <main className="min-h-screen flex items-center justify-center bg-grey-50">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-500"></div>
+        <main className="min-h-screen bg-grey-50">
+          <div className="container mx-auto px-4 py-8">
+            <div className="relative animate-pulse">
+              <div className="h-48 bg-grey-200 rounded-t-xl" />
+              <div className="relative -mt-20 px-6 pb-6">
+                <div className="bg-white rounded-xl shadow-large border border-grey-200 p-6">
+                  <div className="flex flex-col md:flex-row md:items-start gap-6">
+                    <div className="w-32 h-32 rounded-full bg-grey-200 border-4 border-white" />
+                    <div className="flex-1 space-y-4">
+                      <div className="h-8 bg-grey-200 rounded w-48" />
+                      <div className="h-6 bg-grey-200 rounded w-32" />
+                      <div className="h-4 bg-grey-200 rounded w-64" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              {[...Array(4)].map((_, i) => (
+                <div key={i} className="bg-white rounded-xl p-6 shadow-medium border border-grey-200">
+                  <div className="h-20 bg-grey-100 rounded animate-pulse" />
+                </div>
+              ))}
+            </div>
+          </div>
         </main>
         <Footer />
       </>

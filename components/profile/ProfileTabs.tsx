@@ -26,7 +26,7 @@ export function ProfileTabs({ role, userId, isOwnProfile, tabs }: ProfileTabsPro
     <div className="bg-white rounded-xl shadow-medium border border-grey-200">
       {/* Tab Navigation */}
       <div className="border-b border-grey-200">
-        <div className="flex overflow-x-auto scrollbar-hide">
+        <div className="flex overflow-x-auto scrollbar-hide -mb-px">
           {tabs.map((tab) => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.id;
