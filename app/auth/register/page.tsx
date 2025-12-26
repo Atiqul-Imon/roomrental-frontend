@@ -210,6 +210,7 @@ function RegisterFormContent() {
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                   required
                   minLength={8}
+                  autoComplete="new-password"
                   className="w-full px-4 py-2 border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-ring"
                 />
                 <p className="text-xs text-muted-foreground mt-1">
