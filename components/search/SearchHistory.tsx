@@ -74,21 +74,26 @@ export function SearchHistorySidebar({ isOpen, onClose }: SearchHistoryProps) {
     return parts.join(', ');
   };
 
-  if (!isAuthenticated) {
-    return null;
-  }
-
   // Prevent body scroll when sidebar is open
+  // Must be called before any early returns to follow React hooks rules
   useEffect(() => {
-    if (isOpen) {
+    if (typeof window === 'undefined') return;
+    
+    if (isOpen && isAuthenticated) {
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = '';
     }
     return () => {
-      document.body.style.overflow = '';
+      if (typeof window !== 'undefined') {
+        document.body.style.overflow = '';
+      }
     };
-  }, [isOpen]);
+  }, [isOpen, isAuthenticated]);
+
+  if (!isAuthenticated) {
+    return null;
+  }
 
   return (
     <>
