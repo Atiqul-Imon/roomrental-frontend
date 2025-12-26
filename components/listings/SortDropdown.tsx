@@ -6,9 +6,13 @@ import { useState, useRef, useEffect } from 'react';
 
 const sortOptions = [
   { value: 'date', label: 'Newest First' },
+  { value: 'oldest', label: 'Oldest First' },
   { value: 'price', label: 'Price: Low to High' },
   { value: 'price-desc', label: 'Price: High to Low' },
-  { value: 'relevance', label: 'Most Relevant' },
+  { value: 'popular', label: 'Most Popular' },
+  { value: 'squareFeet', label: 'Largest First' },
+  { value: 'squareFeet-asc', label: 'Smallest First' },
+  { value: 'distance', label: 'Distance (Nearest)' },
 ];
 
 export function SortDropdown() {

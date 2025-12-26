@@ -61,6 +61,17 @@ export function ListingList() {
           status: l.status,
           createdAt: l.createdAt,
           updatedAt: l.updatedAt,
+          // Advanced search fields
+          propertyType: l.propertyType,
+          petFriendly: l.petFriendly,
+          smokingAllowed: l.smokingAllowed,
+          genderPreference: l.genderPreference,
+          parkingAvailable: l.parkingAvailable,
+          walkabilityScore: l.walkabilityScore,
+          nearbyUniversities: l.nearbyUniversities,
+          nearbyTransit: l.nearbyTransit,
+          viewCount: l.viewCount,
+          distance: l.distance, // Distance in miles (for geospatial search)
         })) as Listing[],
         total: backendData?.pagination?.total || backendData?.total || 0,
         page: backendData?.pagination?.page || backendData?.page || 1,

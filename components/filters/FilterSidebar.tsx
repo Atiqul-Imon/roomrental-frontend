@@ -3,8 +3,9 @@
 import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { api } from '@/lib/api';
-import { X, SlidersHorizontal, MapPin, DollarSign, Calendar, Sparkles, Check } from 'lucide-react';
+import { X, SlidersHorizontal, MapPin, DollarSign, Calendar, Sparkles, Check, Home, Users, Car, Heart, Cigarette } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
+import { PropertyType, GenderPreference } from '@/types';
 
 interface FilterSidebarProps {
   isOpen: boolean;
@@ -26,6 +27,19 @@ export function FilterSidebar({ isOpen, onClose }: FilterSidebarProps) {
     maxPrice: searchParams.get('maxPrice') || '',
     amenities: searchParams.get('amenities')?.split(',') || [],
     availabilityDate: searchParams.get('availabilityDate') || '',
+    // Advanced filters
+    minBedrooms: searchParams.get('minBedrooms') || '',
+    maxBedrooms: searchParams.get('maxBedrooms') || '',
+    minBathrooms: searchParams.get('minBathrooms') || '',
+    maxBathrooms: searchParams.get('maxBathrooms') || '',
+    minSquareFeet: searchParams.get('minSquareFeet') || '',
+    maxSquareFeet: searchParams.get('maxSquareFeet') || '',
+    propertyType: searchParams.get('propertyType') || '',
+    petFriendly: searchParams.get('petFriendly') === 'true',
+    smokingAllowed: searchParams.get('smokingAllowed') === 'true',
+    genderPreference: searchParams.get('genderPreference') || '',
+    parkingAvailable: searchParams.get('parkingAvailable') === 'true',
+    minWalkabilityScore: searchParams.get('minWalkabilityScore') || '',
   });
 
   useEffect(() => {
@@ -71,7 +85,7 @@ export function FilterSidebar({ isOpen, onClose }: FilterSidebarProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleFilterChange = (key: string, value: string | string[]) => {
+  const handleFilterChange = (key: string, value: string | string[] | boolean) => {
     setFilters((prev) => ({
       ...prev,
       [key]: value,
@@ -90,7 +104,13 @@ export function FilterSidebar({ isOpen, onClose }: FilterSidebarProps) {
     const params = new URLSearchParams(searchParams.toString());
     
     // Clear existing filters
-    ['city', 'state', 'minPrice', 'maxPrice', 'amenities', 'availabilityDate'].forEach((key) => {
+    const filterKeys = [
+      'city', 'state', 'minPrice', 'maxPrice', 'amenities', 'availabilityDate',
+      'minBedrooms', 'maxBedrooms', 'minBathrooms', 'maxBathrooms',
+      'minSquareFeet', 'maxSquareFeet', 'propertyType', 'petFriendly',
+      'smokingAllowed', 'genderPreference', 'parkingAvailable', 'minWalkabilityScore'
+    ];
+    filterKeys.forEach((key) => {
       params.delete(key);
     });
 
@@ -101,6 +121,20 @@ export function FilterSidebar({ isOpen, onClose }: FilterSidebarProps) {
     if (filters.maxPrice) params.set('maxPrice', filters.maxPrice);
     if (filters.amenities.length > 0) params.set('amenities', filters.amenities.join(','));
     if (filters.availabilityDate) params.set('availabilityDate', filters.availabilityDate);
+    
+    // Advanced filters
+    if (filters.minBedrooms) params.set('minBedrooms', filters.minBedrooms);
+    if (filters.maxBedrooms) params.set('maxBedrooms', filters.maxBedrooms);
+    if (filters.minBathrooms) params.set('minBathrooms', filters.minBathrooms);
+    if (filters.maxBathrooms) params.set('maxBathrooms', filters.maxBathrooms);
+    if (filters.minSquareFeet) params.set('minSquareFeet', filters.minSquareFeet);
+    if (filters.maxSquareFeet) params.set('maxSquareFeet', filters.maxSquareFeet);
+    if (filters.propertyType) params.set('propertyType', filters.propertyType);
+    if (filters.petFriendly) params.set('petFriendly', 'true');
+    if (filters.smokingAllowed) params.set('smokingAllowed', 'true');
+    if (filters.genderPreference && filters.genderPreference !== 'any') params.set('genderPreference', filters.genderPreference);
+    if (filters.parkingAvailable) params.set('parkingAvailable', 'true');
+    if (filters.minWalkabilityScore) params.set('minWalkabilityScore', filters.minWalkabilityScore);
     
     params.set('page', '1'); // Reset to first page
     router.push(`/listings?${params.toString()}`);
@@ -115,10 +149,28 @@ export function FilterSidebar({ isOpen, onClose }: FilterSidebarProps) {
       maxPrice: priceRange.max.toString(),
       amenities: [],
       availabilityDate: '',
+      minBedrooms: '',
+      maxBedrooms: '',
+      minBathrooms: '',
+      maxBathrooms: '',
+      minSquareFeet: '',
+      maxSquareFeet: '',
+      propertyType: '',
+      petFriendly: false,
+      smokingAllowed: false,
+      genderPreference: '',
+      parkingAvailable: false,
+      minWalkabilityScore: '',
     });
     
     const params = new URLSearchParams(searchParams.toString());
-    ['city', 'state', 'minPrice', 'maxPrice', 'amenities', 'availabilityDate'].forEach((key) => {
+    const filterKeys = [
+      'city', 'state', 'minPrice', 'maxPrice', 'amenities', 'availabilityDate',
+      'minBedrooms', 'maxBedrooms', 'minBathrooms', 'maxBathrooms',
+      'minSquareFeet', 'maxSquareFeet', 'propertyType', 'petFriendly',
+      'smokingAllowed', 'genderPreference', 'parkingAvailable', 'minWalkabilityScore'
+    ];
+    filterKeys.forEach((key) => {
       params.delete(key);
     });
     params.set('page', '1');
@@ -230,6 +282,239 @@ export function FilterSidebar({ isOpen, onClose }: FilterSidebarProps) {
               onChange={(e) => handleFilterChange('availabilityDate', e.target.value)}
               className="w-full px-4 py-2.5 bg-white border border-grey-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200"
             />
+          </div>
+
+          {/* Property Details Section */}
+          <div className="bg-grey-50 rounded-xl p-4 space-y-4">
+            <div className="flex items-center gap-2 mb-3">
+              <Home className="w-4 h-4 text-primary-600" />
+              <h3 className="font-semibold text-grey-900">Property Details</h3>
+            </div>
+            
+            {/* Bedrooms */}
+            <div>
+              <label className="block text-sm font-medium text-grey-700 mb-2">Bedrooms</label>
+              <div className="flex gap-3">
+                <div className="flex-1">
+                  <input
+                    type="number"
+                    value={filters.minBedrooms}
+                    onChange={(e) => handleFilterChange('minBedrooms', e.target.value)}
+                    placeholder="Min"
+                    min={0}
+                    className="w-full px-3 py-2 bg-white border border-grey-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200"
+                  />
+                </div>
+                <div className="flex-1">
+                  <input
+                    type="number"
+                    value={filters.maxBedrooms}
+                    onChange={(e) => handleFilterChange('maxBedrooms', e.target.value)}
+                    placeholder="Max"
+                    min={0}
+                    className="w-full px-3 py-2 bg-white border border-grey-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Bathrooms */}
+            <div>
+              <label className="block text-sm font-medium text-grey-700 mb-2">Bathrooms</label>
+              <div className="flex gap-3">
+                <div className="flex-1">
+                  <input
+                    type="number"
+                    step="0.5"
+                    value={filters.minBathrooms}
+                    onChange={(e) => handleFilterChange('minBathrooms', e.target.value)}
+                    placeholder="Min"
+                    min={0}
+                    className="w-full px-3 py-2 bg-white border border-grey-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200"
+                  />
+                </div>
+                <div className="flex-1">
+                  <input
+                    type="number"
+                    step="0.5"
+                    value={filters.maxBathrooms}
+                    onChange={(e) => handleFilterChange('maxBathrooms', e.target.value)}
+                    placeholder="Max"
+                    min={0}
+                    className="w-full px-3 py-2 bg-white border border-grey-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Square Feet */}
+            <div>
+              <label className="block text-sm font-medium text-grey-700 mb-2">Square Feet</label>
+              <div className="flex gap-3">
+                <div className="flex-1">
+                  <input
+                    type="number"
+                    value={filters.minSquareFeet}
+                    onChange={(e) => handleFilterChange('minSquareFeet', e.target.value)}
+                    placeholder="Min"
+                    min={0}
+                    className="w-full px-3 py-2 bg-white border border-grey-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200"
+                  />
+                </div>
+                <div className="flex-1">
+                  <input
+                    type="number"
+                    value={filters.maxSquareFeet}
+                    onChange={(e) => handleFilterChange('maxSquareFeet', e.target.value)}
+                    placeholder="Max"
+                    min={0}
+                    className="w-full px-3 py-2 bg-white border border-grey-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Property Type */}
+            <div>
+              <label className="block text-sm font-medium text-grey-700 mb-2">Property Type</label>
+              <select
+                value={filters.propertyType}
+                onChange={(e) => handleFilterChange('propertyType', e.target.value)}
+                className="w-full px-4 py-2.5 bg-white border border-grey-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200"
+              >
+                <option value="">All Types</option>
+                <option value="apartment">Apartment</option>
+                <option value="house">House</option>
+                <option value="dorm">Dorm</option>
+                <option value="studio">Studio</option>
+                <option value="shared_room">Shared Room</option>
+                <option value="private_room">Private Room</option>
+              </select>
+            </div>
+          </div>
+
+          {/* Lifestyle Filters */}
+          <div className="bg-grey-50 rounded-xl p-4">
+            <div className="flex items-center gap-2 mb-3">
+              <Users className="w-4 h-4 text-primary-600" />
+              <h3 className="font-semibold text-grey-900">Lifestyle</h3>
+            </div>
+            <div className="space-y-3">
+              {/* Pet Friendly */}
+              <label className="flex items-center gap-3 cursor-pointer group p-2 rounded-lg hover:bg-white transition-colors duration-200">
+                <div className="relative">
+                  <input
+                    type="checkbox"
+                    checked={filters.petFriendly}
+                    onChange={(e) => handleFilterChange('petFriendly', e.target.checked)}
+                    className="sr-only"
+                  />
+                  <div
+                    className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-all duration-200 ${
+                      filters.petFriendly
+                        ? 'bg-primary-500 border-primary-500'
+                        : 'bg-white border-grey-300 group-hover:border-primary-400'
+                    }`}
+                  >
+                    {filters.petFriendly && <Check className="w-3.5 h-3.5 text-white" />}
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Heart className="w-4 h-4 text-grey-500" />
+                  <span className="text-sm text-grey-700 font-medium group-hover:text-primary-600 transition-colors">
+                    Pet Friendly
+                  </span>
+                </div>
+              </label>
+
+              {/* Smoking Allowed */}
+              <label className="flex items-center gap-3 cursor-pointer group p-2 rounded-lg hover:bg-white transition-colors duration-200">
+                <div className="relative">
+                  <input
+                    type="checkbox"
+                    checked={filters.smokingAllowed}
+                    onChange={(e) => handleFilterChange('smokingAllowed', e.target.checked)}
+                    className="sr-only"
+                  />
+                  <div
+                    className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-all duration-200 ${
+                      filters.smokingAllowed
+                        ? 'bg-primary-500 border-primary-500'
+                        : 'bg-white border-grey-300 group-hover:border-primary-400'
+                    }`}
+                  >
+                    {filters.smokingAllowed && <Check className="w-3.5 h-3.5 text-white" />}
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Cigarette className="w-4 h-4 text-grey-500" />
+                  <span className="text-sm text-grey-700 font-medium group-hover:text-primary-600 transition-colors">
+                    Smoking Allowed
+                  </span>
+                </div>
+              </label>
+
+              {/* Gender Preference */}
+              <div>
+                <label className="block text-sm font-medium text-grey-700 mb-2">Gender Preference</label>
+                <select
+                  value={filters.genderPreference}
+                  onChange={(e) => handleFilterChange('genderPreference', e.target.value)}
+                  className="w-full px-4 py-2.5 bg-white border border-grey-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200"
+                >
+                  <option value="">Any</option>
+                  <option value="male">Male Only</option>
+                  <option value="female">Female Only</option>
+                  <option value="coed">Co-ed</option>
+                </select>
+              </div>
+
+              {/* Parking Available */}
+              <label className="flex items-center gap-3 cursor-pointer group p-2 rounded-lg hover:bg-white transition-colors duration-200">
+                <div className="relative">
+                  <input
+                    type="checkbox"
+                    checked={filters.parkingAvailable}
+                    onChange={(e) => handleFilterChange('parkingAvailable', e.target.checked)}
+                    className="sr-only"
+                  />
+                  <div
+                    className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-all duration-200 ${
+                      filters.parkingAvailable
+                        ? 'bg-primary-500 border-primary-500'
+                        : 'bg-white border-grey-300 group-hover:border-primary-400'
+                    }`}
+                  >
+                    {filters.parkingAvailable && <Check className="w-3.5 h-3.5 text-white" />}
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Car className="w-4 h-4 text-grey-500" />
+                  <span className="text-sm text-grey-700 font-medium group-hover:text-primary-600 transition-colors">
+                    Parking Available
+                  </span>
+                </div>
+              </label>
+
+              {/* Walkability Score */}
+              <div>
+                <label className="block text-sm font-medium text-grey-700 mb-2">
+                  Walkability Score: {filters.minWalkabilityScore || 'Any'}
+                </label>
+                <input
+                  type="range"
+                  min="0"
+                  max="100"
+                  value={filters.minWalkabilityScore || 0}
+                  onChange={(e) => handleFilterChange('minWalkabilityScore', e.target.value)}
+                  className="w-full h-2 bg-grey-200 rounded-lg appearance-none cursor-pointer accent-primary-500"
+                />
+                <div className="flex justify-between text-xs text-grey-500 mt-1">
+                  <span>0</span>
+                  <span>100</span>
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* Amenities Section */}

@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { Listing } from '@/types';
 import { format } from 'date-fns';
 import { useState } from 'react';
-import { MapPin, Calendar, Sparkles } from 'lucide-react';
+import { MapPin, Calendar, Sparkles, Navigation } from 'lucide-react';
 import { imageKitPresets } from '@/lib/imagekit';
 
 interface ListingCardProps {
@@ -78,11 +78,19 @@ export function ListingCard({ listing }: ListingCardProps) {
           </h3>
 
           {/* Location */}
-          <div className="flex items-center gap-1.5 text-grey-600 mb-3">
-            <MapPin className="w-4 h-4 text-grey-400" />
-            <p className="text-sm font-medium" aria-label={`Location: ${listing.location.city}, ${listing.location.state}`}>
-              {listing.location.city}, {listing.location.state}
-            </p>
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-1.5 text-grey-600">
+              <MapPin className="w-4 h-4 text-grey-400" />
+              <p className="text-sm font-medium" aria-label={`Location: ${listing.location.city}, ${listing.location.state}`}>
+                {listing.location.city}, {listing.location.state}
+              </p>
+            </div>
+            {listing.distance !== undefined && (
+              <div className="flex items-center gap-1 text-xs text-primary-600 font-medium">
+                <Navigation className="w-3.5 h-3.5" />
+                <span>{listing.distance.toFixed(1)} mi</span>
+              </div>
+            )}
           </div>
 
           {/* Description */}

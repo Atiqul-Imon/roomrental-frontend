@@ -70,6 +70,9 @@ export interface Review {
   updatedAt: string;
 }
 
+export type PropertyType = 'apartment' | 'house' | 'dorm' | 'studio' | 'shared_room' | 'private_room';
+export type GenderPreference = 'male' | 'female' | 'coed' | 'any';
+
 export interface Listing {
   _id: string;
   landlordId: {
@@ -101,6 +104,17 @@ export interface Listing {
   status: 'active' | 'pending' | 'rented' | 'available' | 'inactive';
   createdAt?: string;
   updatedAt?: string;
+  // Advanced search fields
+  propertyType?: PropertyType;
+  petFriendly?: boolean;
+  smokingAllowed?: boolean;
+  genderPreference?: GenderPreference;
+  parkingAvailable?: boolean;
+  walkabilityScore?: number;
+  nearbyUniversities?: string[];
+  nearbyTransit?: string[];
+  viewCount?: number;
+  distance?: number; // Distance in miles (for geospatial search)
 }
 
 export interface Conversation {

@@ -4,6 +4,7 @@ import { useState, Suspense } from 'react';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { ListingList } from '@/components/listings/ListingList';
+import { MapViewContent } from '@/components/listings/MapViewContent';
 import { SearchBar } from '@/components/search/SearchBar';
 import { FilterSidebar } from '@/components/filters/FilterSidebar';
 import { FilterChips } from '@/components/filters/FilterChips';
@@ -28,6 +29,10 @@ function FilterPresetsContent() {
 
 function ListingListContent() {
   return <ListingList />;
+}
+
+function MapViewContentWrapper() {
+  return <MapViewContent />;
 }
 
 function FilterSidebarContent({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
@@ -99,9 +104,15 @@ export default function ListingsPage() {
 
             {/* Main Content */}
             <div className="flex-1 min-w-0">
-              <Suspense fallback={<div className="text-center py-12">Loading listings...</div>}>
-                <ListingListContent />
-              </Suspense>
+              {viewMode === 'list' ? (
+                <Suspense fallback={<div className="text-center py-12">Loading listings...</div>}>
+                  <ListingListContent />
+                </Suspense>
+              ) : (
+                <Suspense fallback={<div className="text-center py-12">Loading map...</div>}>
+                  <MapViewContentWrapper />
+                </Suspense>
+              )}
             </div>
           </div>
         </div>
