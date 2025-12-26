@@ -10,6 +10,7 @@ import { FilterSidebar } from '@/components/filters/FilterSidebar';
 import { FilterChips } from '@/components/filters/FilterChips';
 import { FilterPresets } from '@/components/filters/FilterPresets';
 import { ViewToggle } from '@/components/listings/ViewToggle';
+import { SaveSearchButton } from '@/components/search/SaveSearchButton';
 import { SlidersHorizontal } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
@@ -78,6 +79,9 @@ export default function ListingsPage() {
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
             <div className="flex items-center gap-4 flex-wrap">
               <ViewToggle view={viewMode} onViewChange={setViewMode} />
+              <Suspense fallback={null}>
+                <SaveSearchButton />
+              </Suspense>
               <button
                 onClick={() => setIsFilterOpen(!isFilterOpen)}
                 className="flex items-center gap-2 px-4 py-2 bg-white border border-grey-300 rounded-lg hover:bg-grey-50 transition-all duration-200 shadow-soft lg:hidden"

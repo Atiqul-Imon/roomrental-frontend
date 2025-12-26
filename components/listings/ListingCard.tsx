@@ -2,27 +2,51 @@ import Link from 'next/link';
 import { Listing } from '@/types';
 import { format } from 'date-fns';
 import { useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { MapPin, Calendar, Sparkles, Navigation } from 'lucide-react';
 import { imageKitPresets } from '@/lib/imagekit';
+import { QuickViewModal } from './QuickViewModal';
+import { highlightSearchTermsReact } from '@/lib/search-highlight';
 
 interface ListingCardProps {
   listing: Listing;
 }
 
 export function ListingCard({ listing }: ListingCardProps) {
+  const searchParams = useSearchParams();
+  const searchQuery = searchParams.get('search') || '';
   const originalImageUrl = listing.images[0] || '/placeholder-room.jpg';
   const imageUrl = originalImageUrl.includes('ik.imagekit.io')
     ? imageKitPresets.card(originalImageUrl)
     : originalImageUrl;
   const formattedDate = format(new Date(listing.availabilityDate), 'MMM dd, yyyy');
   const [imageError, setImageError] = useState(false);
+  const [isQuickViewOpen, setIsQuickViewOpen] = useState(false);
+
+  const handleCardClick = (e: React.MouseEvent) => {
+    // Only open quick view if not clicking on a link
+    if ((e.target as HTMLElement).closest('a')) {
+      return;
+    }
+    e.preventDefault();
+    setIsQuickViewOpen(true);
+  };
 
   return (
-    <Link 
-      href={`/listings/${listing._id}`}
-      aria-label={`View listing: ${listing.title} in ${listing.location.city}, ${listing.location.state} for $${listing.price} per month`}
-      className="block group"
-    >
+    <>
+      <div
+        onClick={handleCardClick}
+        className="block group cursor-pointer"
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            setIsQuickViewOpen(true);
+          }
+        }}
+        aria-label={`Quick view listing: ${listing.title} in ${listing.location.city}, ${listing.location.state} for $${listing.price} per month`}
+      >
       <article className="bg-white border border-grey-200 rounded-xl overflow-hidden card-hover shadow-soft h-full flex flex-col group transition-all duration-300 hover:shadow-large hover:-translate-y-1">
         {/* Image Container */}
         <div className="relative w-full h-56 bg-gradient-to-br from-grey-100 to-grey-200 overflow-hidden">
@@ -74,7 +98,11 @@ export function ListingCard({ listing }: ListingCardProps) {
         <div className="p-5 flex-1 flex flex-col">
           {/* Title */}
           <h3 className="font-semibold text-lg text-grey-900 line-clamp-1 mb-2 group-hover:text-primary-600 transition-colors duration-200">
-            {listing.title}
+            {searchQuery ? (
+              <span>{highlightSearchTermsReact(listing.title, searchQuery)}</span>
+            ) : (
+              listing.title
+            )}
           </h3>
 
           {/* Location */}
@@ -82,7 +110,14 @@ export function ListingCard({ listing }: ListingCardProps) {
             <div className="flex items-center gap-1.5 text-grey-600">
               <MapPin className="w-4 h-4 text-grey-400" />
               <p className="text-sm font-medium" aria-label={`Location: ${listing.location.city}, ${listing.location.state}`}>
-                {listing.location.city}, {listing.location.state}
+                {searchQuery ? (
+                  <span>
+                    {highlightSearchTermsReact(listing.location.city, searchQuery)},{' '}
+                    {highlightSearchTermsReact(listing.location.state, searchQuery)}
+                  </span>
+                ) : (
+                  `${listing.location.city}, ${listing.location.state}`
+                )}
               </p>
             </div>
             {listing.distance !== undefined && (
@@ -95,7 +130,11 @@ export function ListingCard({ listing }: ListingCardProps) {
 
           {/* Description */}
           <p className="text-sm text-grey-600 line-clamp-2 mb-4 flex-1">
-            {listing.description}
+            {searchQuery ? (
+              <span>{highlightSearchTermsReact(listing.description, searchQuery)}</span>
+            ) : (
+              listing.description
+            )}
           </p>
 
           {/* Footer Info */}
@@ -113,7 +152,13 @@ export function ListingCard({ listing }: ListingCardProps) {
           </div>
         </div>
       </article>
-    </Link>
+      </div>
+      <QuickViewModal
+        listing={listing}
+        isOpen={isQuickViewOpen}
+        onClose={() => setIsQuickViewOpen(false)}
+      />
+    </>
   );
 }
 

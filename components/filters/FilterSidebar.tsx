@@ -17,6 +17,10 @@ export function FilterSidebar({ isOpen, onClose }: FilterSidebarProps) {
   const searchParams = useSearchParams();
   const [amenities, setAmenities] = useState<string[]>([]);
   const [priceRange, setPriceRange] = useState({ min: 0, max: 10000 });
+  const [filterCounts, setFilterCounts] = useState<{
+    amenities?: Record<string, number>;
+    features?: { petFriendly: number; smokingAllowed: number; parkingAvailable: number };
+  }>({});
   const [isLoading, setIsLoading] = useState(true);
 
   // Filter state from URL
@@ -84,6 +88,29 @@ export function FilterSidebar({ isOpen, onClose }: FilterSidebarProps) {
     fetchFilterData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Fetch filter counts for faceted search
+  useEffect(() => {
+    const fetchFilterCounts = async () => {
+      try {
+        const params: Record<string, any> = {};
+        searchParams.forEach((value, key) => {
+          if (key !== 'page' && key !== 'sort') {
+            params[key] = value;
+          }
+        });
+
+        const response = await api.get('/listings/filters/counts', { params });
+        if (response.data.success) {
+          setFilterCounts(response.data.data);
+        }
+      } catch (error) {
+        console.error('Error fetching filter counts:', error);
+      }
+    };
+
+    fetchFilterCounts();
+  }, [searchParams]);
 
   const handleFilterChange = (key: string, value: string | string[] | boolean) => {
     setFilters((prev) => ({
@@ -421,9 +448,14 @@ export function FilterSidebar({ isOpen, onClose }: FilterSidebarProps) {
                 </div>
                 <div className="flex items-center gap-2">
                   <Heart className="w-4 h-4 text-grey-500" />
-                  <span className="text-sm text-grey-700 font-medium group-hover:text-primary-600 transition-colors">
+                  <span className="text-sm text-grey-700 font-medium group-hover:text-primary-600 transition-colors flex-1">
                     Pet Friendly
                   </span>
+                  {filterCounts.features && (
+                    <span className="text-xs text-grey-500 bg-grey-100 px-2 py-0.5 rounded-full">
+                      {filterCounts.features.petFriendly}
+                    </span>
+                  )}
                 </div>
               </label>
 
@@ -448,9 +480,14 @@ export function FilterSidebar({ isOpen, onClose }: FilterSidebarProps) {
                 </div>
                 <div className="flex items-center gap-2">
                   <Cigarette className="w-4 h-4 text-grey-500" />
-                  <span className="text-sm text-grey-700 font-medium group-hover:text-primary-600 transition-colors">
+                  <span className="text-sm text-grey-700 font-medium group-hover:text-primary-600 transition-colors flex-1">
                     Smoking Allowed
                   </span>
+                  {filterCounts.features && (
+                    <span className="text-xs text-grey-500 bg-grey-100 px-2 py-0.5 rounded-full">
+                      {filterCounts.features.smokingAllowed}
+                    </span>
+                  )}
                 </div>
               </label>
 
@@ -490,9 +527,14 @@ export function FilterSidebar({ isOpen, onClose }: FilterSidebarProps) {
                 </div>
                 <div className="flex items-center gap-2">
                   <Car className="w-4 h-4 text-grey-500" />
-                  <span className="text-sm text-grey-700 font-medium group-hover:text-primary-600 transition-colors">
+                  <span className="text-sm text-grey-700 font-medium group-hover:text-primary-600 transition-colors flex-1">
                     Parking Available
                   </span>
+                  {filterCounts.features && (
+                    <span className="text-xs text-grey-500 bg-grey-100 px-2 py-0.5 rounded-full">
+                      {filterCounts.features.parkingAvailable}
+                    </span>
+                  )}
                 </div>
               </label>
 
@@ -550,9 +592,14 @@ export function FilterSidebar({ isOpen, onClose }: FilterSidebarProps) {
                           {isChecked && <Check className="w-3.5 h-3.5 text-white" />}
                         </div>
                       </div>
-                      <span className="text-sm text-grey-700 font-medium group-hover:text-primary-600 transition-colors">
+                      <span className="text-sm text-grey-700 font-medium group-hover:text-primary-600 transition-colors flex-1">
                         {amenity}
                       </span>
+                      {filterCounts.amenities && filterCounts.amenities[amenity] !== undefined && (
+                        <span className="text-xs text-grey-500 bg-grey-100 px-2 py-0.5 rounded-full">
+                          {filterCounts.amenities[amenity]}
+                        </span>
+                      )}
                     </label>
                   );
                 }) : (

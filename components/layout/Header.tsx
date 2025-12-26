@@ -7,6 +7,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Button } from '@/components/ui/Button';
 import { Home, Search, Heart, Plus, LayoutDashboard, User, Settings, LogOut, MessageSquare } from 'lucide-react';
 import { chatApi } from '@/lib/chat-api';
+import { SavedSearchesDropdown } from '@/components/search/SavedSearchesDropdown';
 
 export function Header() {
   const { user, isAuthenticated, logout } = useAuth();
@@ -55,6 +56,8 @@ export function Header() {
                 Browse
               </span>
             </Link>
+            
+            {isAuthenticated && <SavedSearchesDropdown />}
 
             {isAuthenticated ? (
               <>
