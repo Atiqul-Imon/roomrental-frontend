@@ -207,3 +207,5 @@ export function SearchHistorySidebar({ isOpen, onClose }: SearchHistoryProps) {
   );
 }
 
+
+
