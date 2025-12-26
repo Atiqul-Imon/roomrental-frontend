@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '@/lib/auth-context';
@@ -78,24 +78,37 @@ export function SearchHistorySidebar({ isOpen, onClose }: SearchHistoryProps) {
     return null;
   }
 
+  // Prevent body scroll when sidebar is open
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isOpen]);
+
   return (
     <>
       {/* Overlay */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black/50 z-40"
+          className="fixed inset-0 bg-black/50 z-40 backdrop-blur-sm"
           onClick={onClose}
           aria-hidden="true"
         />
       )}
 
-      {/* Sidebar */}
+      {/* Sidebar/Drawer */}
       <div
-        className="fixed top-0 h-screen w-full sm:w-80 bg-white shadow-xl z-50 transition-transform duration-300 ease-in-out"
+        className={`fixed top-0 h-screen bg-white shadow-2xl z-50 transition-all duration-300 ease-in-out ${
+          isOpen ? 'right-0' : '-right-full'
+        }`}
         style={{ 
-          right: isOpen ? '0' : '-100%',
-          maxWidth: '100vw',
-          width: '100%'
+          width: 'min(85vw, 320px)',
+          maxWidth: '320px'
         }}
       >
         <div className="flex flex-col h-full max-h-screen">
