@@ -83,7 +83,7 @@ export function SearchHistorySidebar({ isOpen, onClose }: SearchHistoryProps) {
       {/* Overlay */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+          className="fixed inset-0 bg-black/50 z-40"
           onClick={onClose}
           aria-hidden="true"
         />
@@ -91,20 +91,23 @@ export function SearchHistorySidebar({ isOpen, onClose }: SearchHistoryProps) {
 
       {/* Sidebar */}
       <div
-        className={`fixed top-0 right-0 h-full w-full sm:w-80 max-w-sm bg-white shadow-xl z-50 transform transition-transform duration-300 ease-in-out ${
-          isOpen ? 'translate-x-0' : 'translate-x-full'
-        }`}
+        className="fixed top-0 h-screen w-full sm:w-80 bg-white shadow-xl z-50 transition-transform duration-300 ease-in-out"
+        style={{ 
+          right: isOpen ? '0' : '-100%',
+          maxWidth: '100vw',
+          width: '100%'
+        }}
       >
-        <div className="flex flex-col h-full">
+        <div className="flex flex-col h-full max-h-screen">
           {/* Header */}
-          <div className="flex items-center justify-between p-4 border-b border-grey-200">
-            <div className="flex items-center gap-2">
-              <Clock className="w-5 h-5 text-primary-500" />
-              <h2 className="text-lg font-semibold text-grey-900">Search History</h2>
+          <div className="flex items-center justify-between p-4 border-b border-grey-200 flex-shrink-0">
+            <div className="flex items-center gap-2 min-w-0">
+              <Clock className="w-5 h-5 text-primary-500 flex-shrink-0" />
+              <h2 className="text-lg font-semibold text-grey-900 truncate">Search History</h2>
             </div>
             <button
               onClick={onClose}
-              className="p-1.5 hover:bg-grey-100 rounded-lg transition-colors"
+              className="p-1.5 hover:bg-grey-100 rounded-lg transition-colors flex-shrink-0 ml-2"
               aria-label="Close search history"
             >
               <X className="w-5 h-5 text-grey-500" />
@@ -112,7 +115,7 @@ export function SearchHistorySidebar({ isOpen, onClose }: SearchHistoryProps) {
           </div>
 
           {/* Content */}
-          <div className="flex-1 overflow-y-auto p-4">
+          <div className="flex-1 overflow-y-auto p-4 min-h-0">
             {isLoading ? (
               <div className="flex items-center justify-center py-12">
                 <Loader2 className="w-6 h-6 animate-spin text-primary-500" />
