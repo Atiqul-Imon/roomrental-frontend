@@ -25,13 +25,13 @@ function RegisterFormContent() {
   const searchParams = useSearchParams();
   const redirectParam = searchParams.get('redirect');
 
-  // Redirect if already authenticated
+  // Redirect if already authenticated (but not during registration process)
   useEffect(() => {
-    if (!authLoading && user) {
+    if (!authLoading && user && !isLoading && !isRedirecting) {
       const redirectPath = getDefaultRedirectPath(user, redirectParam);
       router.replace(redirectPath);
     }
-  }, [user, authLoading, redirectParam, router]);
+  }, [user, authLoading, redirectParam, router, isLoading, isRedirecting]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -88,38 +88,42 @@ function RegisterFormContent() {
         throw new Error('Registration succeeded but user data is incomplete. Please try logging in.');
       }
 
-      // Success message will be shown via redirect
-      // Toast notification is optional and will work client-side
-
       // Determine redirect path based on role
-      setIsRedirecting(true);
       const redirectPath = getDefaultRedirectPath(userData, redirectParam);
       
       // Validate redirect path before navigating
       if (!redirectPath || !redirectPath.startsWith('/')) {
         console.error('Invalid redirect path:', redirectPath);
-        router.push('/dashboard');
+        setIsLoading(false);
+        router.replace('/dashboard');
         return;
       }
       
-      // Small delay to show success message and ensure state is updated
+      // Set redirecting state
+      setIsRedirecting(true);
+      
+      // Wait a moment for auth context to update, then navigate
+      // This ensures the user state is properly set before redirecting
       setTimeout(() => {
         try {
-          router.push(redirectPath);
-          // Reset loading state after navigation starts
-          setTimeout(() => {
-            setIsLoading(false);
-            setIsRedirecting(false);
-          }, 1000);
+          // Use window.location as fallback if router.replace doesn't work
+          if (typeof window !== 'undefined') {
+            window.location.href = redirectPath;
+          } else {
+            router.replace(redirectPath);
+          }
         } catch (navError) {
           console.error('Navigation error:', navError);
-          setIsLoading(false);
-          setIsRedirecting(false);
           // Fallback to dashboard if navigation fails
-          router.push('/dashboard');
+          if (typeof window !== 'undefined') {
+            window.location.href = '/dashboard';
+          } else {
+            router.replace('/dashboard');
+          }
         }
       }, 500);
     } catch (err: any) {
+      console.error('Registration error:', err);
       setError(err.message || 'Registration failed. Please try again.');
       setIsLoading(false);
       setIsRedirecting(false);
