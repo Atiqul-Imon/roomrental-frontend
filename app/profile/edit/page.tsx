@@ -61,7 +61,7 @@ export default function EditProfilePage() {
     }
   }, [authLoading, user, router]);
 
-  // Validate file before upload
+  // Validate file before upload (strict 100KB limit for profile images)
   const validateFile = (file: File): UploadError | null => {
     // Check file type
     if (!file.type.startsWith('image/')) {
@@ -71,11 +71,12 @@ export default function EditProfilePage() {
       };
     }
 
-    // Check file size (10MB max)
-    const maxSize = 10 * 1024 * 1024; // 10MB
+    // Strict file size check for profile images (100KB max)
+    const maxSize = 100 * 1024; // 100KB
     if (file.size > maxSize) {
+      const fileSizeKB = (file.size / 1024).toFixed(2);
       return {
-        message: `File size exceeds 10MB limit. Your file is ${(file.size / 1024 / 1024).toFixed(2)}MB`,
+        message: `Profile image size exceeds 100KB limit. Your file is ${fileSizeKB}KB. Please compress or resize the image.`,
         type: 'size',
       };
     }
@@ -142,13 +143,13 @@ export default function EditProfilePage() {
 
         if (status === 400) {
           errorType = 'server';
-          errorMessage = serverMessage || 'Invalid file format or file too large (max 10MB)';
+          errorMessage = serverMessage || 'Invalid file format or file too large (max 100KB for profile images)';
         } else if (status === 401) {
           errorType = 'server';
           errorMessage = 'Please log in again to upload images';
         } else if (status === 413) {
           errorType = 'size';
-          errorMessage = 'File is too large. Maximum size is 10MB';
+          errorMessage = 'File is too large. Maximum size is 100KB for profile images';
         } else if (status >= 500) {
           errorType = 'server';
           errorMessage = 'Server error. Please try again later';
@@ -272,7 +273,7 @@ export default function EditProfilePage() {
                       )}
                     </label>
                     <p className="text-xs text-grey-500 mt-2">
-                      JPG, PNG, GIF or WEBP. Max size: 10MB
+                      JPG, PNG, GIF or WEBP. Max size: <span className="font-semibold text-grey-700">100KB</span>
                     </p>
                   </div>
                 </div>
