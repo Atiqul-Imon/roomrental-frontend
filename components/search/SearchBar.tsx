@@ -145,7 +145,7 @@ export function SearchBar() {
             }
           }}
           placeholder="Search by location, city, or keywords..."
-          className="w-full pl-12 pr-12 py-4 bg-white border-2 border-grey-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200 shadow-medium text-base"
+          className="w-full pl-12 pr-12 py-4 bg-white border-2 border-grey-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200 shadow-medium text-base !text-grey-900 placeholder:text-grey-400"
           aria-label="Search listings by location, city, or keywords"
           aria-autocomplete="list"
           aria-expanded={showSuggestions}
@@ -169,7 +169,7 @@ export function SearchBar() {
       {showSuggestions && (
         <div 
           id="search-suggestions"
-          className="absolute z-50 w-full mt-3 bg-white border border-grey-200 rounded-xl shadow-large max-h-96 overflow-y-auto"
+          className="absolute z-[100] w-full mt-3 bg-white border border-grey-200 rounded-xl shadow-large max-h-96 overflow-y-auto"
           role="listbox"
           aria-label="Search suggestions"
         >
