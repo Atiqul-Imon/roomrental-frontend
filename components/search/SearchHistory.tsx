@@ -108,12 +108,12 @@ export function SearchHistorySidebar({ isOpen, onClose }: SearchHistoryProps) {
 
       {/* Sidebar/Drawer */}
       <div
-        className={`fixed top-0 h-screen bg-white shadow-2xl z-50 transition-all duration-300 ease-in-out ${
-          isOpen ? 'right-0' : '-right-full'
-        }`}
+        className="fixed top-0 h-screen bg-white shadow-2xl z-50 transition-transform duration-300 ease-in-out"
         style={{ 
           width: 'min(85vw, 320px)',
-          maxWidth: '320px'
+          maxWidth: '320px',
+          right: isOpen ? '0' : '-100%',
+          pointerEvents: isOpen ? 'auto' : 'none'
         }}
       >
         <div className="flex flex-col h-full max-h-screen">
