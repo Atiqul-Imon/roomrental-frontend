@@ -110,13 +110,21 @@ export default function EditProfilePage() {
       const formDataToSend = new FormData();
       formDataToSend.append('image', file);
 
+      // Log file details for debugging
+      console.log('Uploading file:', {
+        name: file.name,
+        size: file.size,
+        type: file.type,
+        sizeKB: (file.size / 1024).toFixed(2) + 'KB',
+      });
+
       // Don't set Content-Type header - let browser set it with boundary
       const response = await api.post('/upload/image', formDataToSend, {
         headers: {
           // Remove Content-Type to let browser set it automatically with boundary
         },
-        // Set timeout for large files
-        timeout: 60000, // 60 seconds
+        // Set timeout for uploads
+        timeout: 30000, // 30 seconds (should be enough for 100KB files)
       });
 
       if (response.data.success && response.data.data?.url) {
@@ -132,6 +140,8 @@ export default function EditProfilePage() {
       }
     } catch (error: any) {
       console.error('Upload error:', error);
+      console.error('Error response:', error.response?.data);
+      console.error('Error request:', error.request);
       
       let errorMessage = 'Failed to upload image';
       let errorType: UploadError['type'] = 'unknown';
@@ -139,11 +149,19 @@ export default function EditProfilePage() {
       if (error.response) {
         // Server responded with error
         const status = error.response.status;
-        const serverMessage = error.response.data?.error || error.response.data?.message;
+        const responseData = error.response.data;
+        const serverMessage = responseData?.error || responseData?.message || responseData?.data?.error;
 
         if (status === 400) {
           errorType = 'server';
-          errorMessage = serverMessage || 'Invalid file format or file too large (max 100KB for profile images)';
+          // Extract detailed error message
+          if (serverMessage) {
+            errorMessage = serverMessage;
+          } else if (responseData?.details) {
+            errorMessage = `Upload failed: ${responseData.details}`;
+          } else {
+            errorMessage = 'Invalid file format or file too large (max 100KB for profile images). Please ensure the file is a valid image and under 100KB.';
+          }
         } else if (status === 401) {
           errorType = 'server';
           errorMessage = 'Please log in again to upload images';
@@ -152,7 +170,7 @@ export default function EditProfilePage() {
           errorMessage = 'File is too large. Maximum size is 100KB for profile images';
         } else if (status >= 500) {
           errorType = 'server';
-          errorMessage = 'Server error. Please try again later';
+          errorMessage = 'Server error. The image upload service may be temporarily unavailable. Please try again later.';
         } else {
           errorMessage = serverMessage || `Upload failed (${status})`;
         }
