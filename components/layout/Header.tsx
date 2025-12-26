@@ -1,18 +1,21 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/lib/auth-context';
 import { useRouter, usePathname } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 import { Button } from '@/components/ui/Button';
-import { Home, Search, Heart, Plus, LayoutDashboard, User, Settings, LogOut, MessageSquare } from 'lucide-react';
+import { Home, Search, Heart, Plus, LayoutDashboard, User, Settings, LogOut, MessageSquare, Clock } from 'lucide-react';
 import { chatApi } from '@/lib/chat-api';
 import { SavedSearchesDropdown } from '@/components/search/SavedSearchesDropdown';
+import { SearchHistorySidebar } from '@/components/search/SearchHistory';
 
 export function Header() {
   const { user, isAuthenticated, logout } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
+  const [isHistoryOpen, setIsHistoryOpen] = useState(false);
 
   // Get unread message count
   const { data: unreadData } = useQuery({
@@ -57,7 +60,19 @@ export function Header() {
               </span>
             </Link>
             
-            {isAuthenticated && <SavedSearchesDropdown />}
+            {isAuthenticated && (
+              <>
+                <SavedSearchesDropdown />
+                <Button
+                  onClick={() => setIsHistoryOpen(true)}
+                  variant="outline"
+                  className="flex items-center gap-2"
+                >
+                  <Clock className="w-4 h-4" />
+                  History
+                </Button>
+              </>
+            )}
 
             {isAuthenticated ? (
               <>
@@ -184,6 +199,7 @@ export function Header() {
           </div>
         </div>
       </div>
+      <SearchHistorySidebar isOpen={isHistoryOpen} onClose={() => setIsHistoryOpen(false)} />
     </header>
   );
 }

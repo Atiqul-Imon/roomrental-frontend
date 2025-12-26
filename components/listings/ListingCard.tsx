@@ -3,10 +3,11 @@ import { Listing } from '@/types';
 import { format } from 'date-fns';
 import { useState } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { MapPin, Calendar, Sparkles, Navigation } from 'lucide-react';
+import { MapPin, Calendar, Sparkles, Navigation, Check } from 'lucide-react';
 import { imageKitPresets } from '@/lib/imagekit';
 import { QuickViewModal } from './QuickViewModal';
 import { highlightSearchTermsReact } from '@/lib/search-highlight';
+import { useComparisonStore } from '@/lib/comparison-store';
 
 interface ListingCardProps {
   listing: Listing;
@@ -22,6 +23,8 @@ export function ListingCard({ listing }: ListingCardProps) {
   const formattedDate = format(new Date(listing.availabilityDate), 'MMM dd, yyyy');
   const [imageError, setImageError] = useState(false);
   const [isQuickViewOpen, setIsQuickViewOpen] = useState(false);
+  const { addListing, removeListing, isInComparison, canAddMore } = useComparisonStore();
+  const isSelected = isInComparison(listing._id);
 
   const handleCardClick = (e: React.MouseEvent) => {
     // Only open quick view if not clicking on a link
@@ -67,8 +70,34 @@ export function ListingCard({ listing }: ListingCardProps) {
             </div>
           )}
           
+          {/* Comparison Checkbox */}
+          <div className="absolute top-3 left-3 z-10">
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                if (isSelected) {
+                  removeListing(listing._id);
+                } else if (canAddMore()) {
+                  addListing(listing);
+                } else {
+                  alert(`You can compare up to 5 listings. Please remove one to add another.`);
+                }
+              }}
+              className={`w-8 h-8 rounded-lg border-2 flex items-center justify-center transition-all ${
+                isSelected
+                  ? 'bg-primary-500 border-primary-500 text-white'
+                  : 'bg-white/95 backdrop-blur-sm border-grey-300 text-grey-400 hover:border-primary-400'
+              }`}
+              aria-label={isSelected ? 'Remove from comparison' : 'Add to comparison'}
+              title={isSelected ? 'Remove from comparison' : 'Add to comparison'}
+            >
+              {isSelected && <Check className="w-5 h-5" />}
+            </button>
+          </div>
+
           {/* Status Badge */}
-          <div className="absolute top-3 left-3">
+          <div className="absolute top-3 left-12">
             <span className={`px-2.5 py-1 rounded-full text-xs font-semibold backdrop-blur-sm ${
               listing.status === 'active' 
                 ? 'bg-green-500/90 text-white' 
