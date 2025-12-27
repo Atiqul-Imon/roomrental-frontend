@@ -159,9 +159,9 @@ export function ListingCard({ listing }: ListingCardProps) {
         )}
       <article 
         ref={cardRef}
-        className="bg-white border border-grey-200 rounded-xl overflow-hidden card-hover shadow-soft h-full flex flex-col group transition-all duration-300 hover:shadow-large hover:-translate-y-1 relative"
+        className="bg-white border border-grey-200 rounded-xl overflow-hidden card-hover-enhanced shadow-soft h-full flex flex-col group relative"
         style={{
-          transform: `translateX(${swipeOffset}px)`,
+          transform: `translateX(${swipeOffset}px) translateZ(0)`,
           transition: isSwiping ? 'none' : 'transform 0.3s ease-out',
         }}
       >

@@ -74,7 +74,9 @@ export default function RootLayout({
       <body className={inter.className}>
         <ErrorBoundary>
           <Providers>
-            {children}
+            <div className="fade-in">
+              {children}
+            </div>
             <BottomNav />
           </Providers>
         </ErrorBoundary>

@@ -344,7 +344,7 @@ export default function EditProfilePage() {
                   value={formData.name}
                   onChange={(e) => setFormData((prev) => ({ ...prev, name: e.target.value }))}
                   required
-                  className="w-full px-3 sm:px-4 py-3 sm:py-2.5 border border-grey-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors text-base sm:text-sm min-h-[44px]"
+                  className="w-full px-3 sm:px-4 py-3 sm:py-2.5 border border-grey-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors text-base sm:text-sm min-h-[44px] input-focus"
                 />
               </div>
 

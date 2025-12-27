@@ -22,7 +22,7 @@ export function Button({
 }: ButtonProps) {
   // Phase 1: Enhanced button styles with design system
   // Phase 4: Accessibility - Enhanced focus indicators
-  const baseStyles = 'inline-flex items-center justify-center font-ui font-medium rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed active:scale-95';
+  const baseStyles = 'inline-flex items-center justify-center font-ui font-medium rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed btn-hover';
   
   const variants = {
     primary: 'bg-gradient-primary text-white hover:bg-gradient-primary-hover focus:ring-primary-500 shadow-medium hover:shadow-large active:shadow-soft',

@@ -520,5 +520,146 @@ body {
     transform: translateZ(0);
     will-change: transform, opacity;
   }
+
+  /* Phase 1: Animation & Transition Foundation */
+  
+  /* Enhanced button hover - lightweight */
+  .btn-hover {
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+                box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: transform;
+  }
+  
+  .btn-hover:hover {
+    transform: translateY(-1px) translateZ(0);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+  
+  .btn-hover:active {
+    transform: translateY(0) translateZ(0);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Enhanced card hover - lightweight */
+  .card-hover-enhanced {
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+                box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: transform;
+  }
+  
+  .card-hover-enhanced:hover {
+    transform: translateY(-4px) translateZ(0);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
+  }
+  
+  /* Input focus - subtle glow */
+  .input-focus {
+    transition: border-color 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+                box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .input-focus:focus {
+    border-color: #3B82F6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    outline: none;
+  }
+  
+  /* Link hover - underline animation */
+  .link-hover {
+    position: relative;
+    transition: color 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .link-hover::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: currentColor;
+    transition: width 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .link-hover:hover::after {
+    width: 100%;
+  }
+  
+  /* Enhanced skeleton shimmer - lightweight */
+  @keyframes shimmer-lightweight {
+    0% {
+      background-position: -200% 0;
+    }
+    100% {
+      background-position: 200% 0;
+    }
+  }
+  
+  .skeleton-shimmer {
+    background: linear-gradient(
+      90deg,
+      #F3F4F6 0%,
+      #E5E7EB 50%,
+      #F3F4F6 100%
+    );
+    background-size: 200% 100%;
+    animation: shimmer-lightweight 1.5s ease-in-out infinite;
+    will-change: background-position;
+  }
+  
+  /* Modal backdrop fade - enhanced */
+  .modal-backdrop-enter {
+    animation: fadeIn 0.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  }
+  
+  /* Modal content animations */
+  @keyframes modalSlideUp {
+    from {
+      transform: translateY(100%) translateZ(0);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0) translateZ(0);
+      opacity: 1;
+    }
+  }
+  
+  @keyframes modalScaleIn {
+    from {
+      transform: scale(0.95) translateZ(0);
+      opacity: 0;
+    }
+    to {
+      transform: scale(1) translateZ(0);
+      opacity: 1;
+    }
+  }
+  
+  .modal-slide-up {
+    animation: modalSlideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    will-change: transform, opacity;
+  }
+  
+  .modal-scale-in {
+    animation: modalScaleIn 0.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    will-change: transform, opacity;
+  }
+  
+  /* Smooth scroll behavior */
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    
+    .modal-slide-up,
+    .modal-scale-in,
+    .modal-backdrop-enter {
+      animation: none;
+    }
+  }
 }
 

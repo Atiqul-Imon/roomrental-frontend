@@ -1,6 +1,6 @@
 'use client';
 
-import { ReactNode, useEffect, useRef } from 'react';
+import { ReactNode, useEffect, useRef, useState } from 'react';
 import { X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useFocusTrap, useEscapeKey } from '@/components/accessibility/KeyboardNavigation';
@@ -57,7 +57,15 @@ export function Modal({
     };
   }, [isOpen]);
 
-  if (!isOpen) return null;
+  const [isAnimating, setIsAnimating] = useState(false);
+
+  useEffect(() => {
+    if (isOpen) {
+      setIsAnimating(true);
+    }
+  }, [isOpen]);
+
+  if (!isOpen && !isAnimating) return null;
 
   return (
     <div
@@ -68,10 +76,16 @@ export function Modal({
       aria-labelledby={title ? 'modal-title' : undefined}
       aria-describedby={ariaDescribedBy}
       aria-label={ariaLabel}
+      onAnimationEnd={() => {
+        if (!isOpen) setIsAnimating(false);
+      }}
     >
       {/* Backdrop */}
       <div
-        className="absolute inset-0 bg-black/70 backdrop-blur-sm transition-opacity"
+        className={cn(
+          "absolute inset-0 bg-black/70 backdrop-blur-sm transition-opacity duration-200",
+          isOpen ? "opacity-100" : "opacity-0"
+        )}
         onClick={closeOnOverlayClick ? onClose : undefined}
         aria-hidden="true"
       />
@@ -86,7 +100,6 @@ export function Modal({
         }}
         className={cn(
           'relative w-full bg-white shadow-2xl border border-grey-200',
-          'transform transition-all duration-300 ease-out',
           'max-h-[90vh] md:max-h-[90vh] flex flex-col',
           // Mobile: Bottom sheet with rounded top corners
           'md:rounded-xl',
@@ -95,8 +108,8 @@ export function Modal({
           'md:w-auto',
           // Mobile: Slide up animation, Desktop: Scale animation
           isOpen 
-            ? 'translate-y-0 md:translate-y-0 scale-100 opacity-100' 
-            : 'translate-y-full md:translate-y-0 scale-95 md:scale-95 opacity-0',
+            ? 'modal-slide-up md:modal-scale-in' 
+            : 'translate-y-full md:scale-95 opacity-0',
           sizeClasses[size]
         )}
         onClick={(e) => e.stopPropagation()}
