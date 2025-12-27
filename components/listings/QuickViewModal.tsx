@@ -106,7 +106,7 @@ export function QuickViewModal({ listing, isOpen, onClose }: QuickViewModalProps
     >
       <div className="relative">
         {/* Image Gallery */}
-        <div className="relative h-48 sm:h-64 md:h-80 bg-grey-200 overflow-hidden group">
+        <div className="relative w-full bg-grey-200 overflow-hidden group">
           {listing.images && listing.images.length > 0 ? (
             <>
               <img
@@ -116,7 +116,7 @@ export function QuickViewModal({ listing, isOpen, onClose }: QuickViewModalProps
                     : currentImage
                 }
                 alt={listing.title}
-                className="w-full h-full object-cover"
+                className="w-full h-auto object-contain max-h-[50vh] sm:max-h-[60vh] md:max-h-[70vh]"
               />
               
               {/* Image Navigation */}
@@ -160,7 +160,7 @@ export function QuickViewModal({ listing, isOpen, onClose }: QuickViewModalProps
               )}
             </>
           ) : (
-            <div className="w-full h-full flex items-center justify-center text-grey-400">
+            <div className="w-full min-h-[200px] sm:min-h-[300px] flex items-center justify-center text-grey-400">
               <Sparkles className="w-16 h-16" />
             </div>
           )}

@@ -70,6 +70,10 @@ export function Modal({
   return (
     <div
       className="fixed inset-0 z-[100] flex items-end md:items-center justify-center p-0 md:p-2 lg:p-4"
+      style={{
+        paddingTop: 'env(safe-area-inset-top, 0px)',
+        marginTop: '3.5rem', // h-14 for mobile header
+      }}
       onClick={closeOnOverlayClick ? onClose : undefined}
       role="dialog"
       aria-modal="true"
@@ -100,7 +104,7 @@ export function Modal({
         }}
         className={cn(
           'relative w-full bg-white shadow-2xl border border-grey-200',
-          'max-h-[90vh] md:max-h-[90vh] flex flex-col',
+          'max-h-[85vh] md:max-h-[90vh] flex flex-col',
           // Mobile: Bottom sheet with rounded top corners
           'md:rounded-xl',
           'rounded-t-2xl md:rounded-t-xl',
@@ -114,7 +118,7 @@ export function Modal({
         )}
         onClick={(e) => e.stopPropagation()}
         style={{
-          maxHeight: 'calc(90vh - env(safe-area-inset-bottom, 0px))',
+          maxHeight: 'calc(85vh - env(safe-area-inset-bottom, 0px) - 3.5rem)',
         }}
       >
         {/* Drag Handle (Mobile Only) */}
