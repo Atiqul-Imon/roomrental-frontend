@@ -48,12 +48,15 @@ export function Header() {
           <nav className="hidden md:flex items-center gap-2">
             <Link
               href="/listings"
-              className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+              className={`px-3 py-2 rounded-lg text-sm font-medium color-transition relative ${
                 isActive('/listings')
                   ? 'bg-primary-50 text-primary-600'
                   : 'text-grey-700 hover:text-primary-600 hover:bg-grey-50'
               }`}
             >
+              {isActive('/listings') && (
+                <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary-600 rounded-full" />
+              )}
               <span className="flex items-center gap-1.5">
                 <Search className="w-4 h-4" />
                 Browse
@@ -70,12 +73,15 @@ export function Header() {
               <>
                 <Link
                   href="/favorites"
-                  className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                  className={`px-3 py-2 rounded-lg text-sm font-medium color-transition relative ${
                     isActive('/favorites')
                       ? 'bg-secondary-50 text-secondary-600'
                       : 'text-grey-700 hover:text-secondary-600 hover:bg-grey-50'
                   }`}
                 >
+                  {isActive('/favorites') && (
+                    <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-secondary-600 rounded-full" />
+                  )}
                   <span className="flex items-center gap-1.5">
                     <Heart className="w-4 h-4" />
                     Favorites
@@ -83,12 +89,15 @@ export function Header() {
                 </Link>
                 <Link
                   href="/chat"
-                  className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 relative ${
+                  className={`px-3 py-2 rounded-lg text-sm font-medium color-transition relative ${
                     isActive('/chat')
                       ? 'bg-primary-50 text-primary-600'
                       : 'text-grey-700 hover:text-primary-600 hover:bg-grey-50'
                   }`}
                 >
+                  {isActive('/chat') && (
+                    <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary-600 rounded-full" />
+                  )}
                   <span className="flex items-center gap-1.5">
                     <MessageSquare className="w-4 h-4" />
                     Messages

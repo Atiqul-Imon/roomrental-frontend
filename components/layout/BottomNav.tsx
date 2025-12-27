@@ -130,8 +130,9 @@ export function BottomNav() {
               className={cn(
                 'flex flex-col items-center justify-center',
                 'flex-1 h-full min-h-[44px]',
-                'transition-all duration-200',
+                'color-transition',
                 'active:scale-95',
+                'relative',
                 active 
                   ? 'text-primary-600' 
                   : 'text-grey-600 hover:text-primary-600'
@@ -156,7 +157,7 @@ export function BottomNav() {
                 {item.label}
               </span>
               {active && (
-                <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-primary-600 rounded-t-full" />
+                <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-10 h-0.5 bg-primary-600 rounded-t-full transition-all duration-200" />
               )}
             </Link>
           );

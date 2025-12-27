@@ -238,11 +238,11 @@ export function CreateListingForm({
             <textarea
               {...register('description')}
               rows={6}
-              className="w-full px-3 sm:px-4 py-3 border-2 border-grey-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200 bg-white resize-none text-base sm:text-sm"
+              className="w-full px-3 sm:px-4 py-3 border-2 border-grey-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200 bg-white resize-none text-base sm:text-sm input-focus"
               placeholder="Describe the room, neighborhood, and what makes it special..."
             />
             {errors.description && (
-              <p className="text-sm text-red-600 mt-2 font-medium">{errors.description.message}</p>
+              <p className="text-sm text-red-600 mt-2 font-medium error-shake">{errors.description.message}</p>
             )}
           </div>
 
@@ -255,11 +255,11 @@ export function CreateListingForm({
               type="number"
               min="0"
               step="1"
-              className="w-full px-3 sm:px-4 py-3 border-2 border-grey-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200 bg-white text-base sm:text-sm min-h-[44px]"
+              className="w-full px-3 sm:px-4 py-3 border-2 border-grey-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200 bg-white text-base sm:text-sm min-h-[44px] input-focus"
               placeholder="0"
             />
             {errors.price && (
-              <p className="text-sm text-red-600 mt-2 font-medium">{errors.price.message}</p>
+              <p className="text-sm text-red-600 mt-2 font-medium error-shake">{errors.price.message}</p>
             )}
           </div>
 

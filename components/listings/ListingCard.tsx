@@ -171,9 +171,10 @@ export function ListingCard({ listing }: ListingCardProps) {
             <img
               src={imageUrl}
               alt={listing.title}
-              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 ease-out"
               loading="lazy"
               onError={() => setImageError(true)}
+              style={{ willChange: 'transform' }}
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center text-grey-400" role="img" aria-label="No image available">

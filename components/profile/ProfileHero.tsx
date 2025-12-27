@@ -28,7 +28,7 @@ export function ProfileHero({ profile, ratingData, isOwnProfile }: ProfileHeroPr
     <div className="relative">
       {/* Profile Content */}
       <div className="px-4 sm:px-6 pb-4 sm:pb-6">
-        <div className="bg-white rounded-xl shadow-large border border-grey-200 p-4 sm:p-6">
+        <div className="bg-white rounded-xl shadow-large border-refined border-grey-200 p-5 sm:p-6 md:p-8">
           {/* Avatar and Basic Info */}
           <div className="flex flex-col md:flex-row md:items-start gap-4 sm:gap-6">
             {/* Avatar */}
