@@ -1,7 +1,8 @@
 'use client';
 
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useSearchParams } from 'next/navigation';
+import { useEffect, useRef, useState } from 'react';
 import { api } from '@/lib/api';
 import { Listing } from '@/types';
 import { ListingCard } from './ListingCard';
@@ -11,15 +12,67 @@ import { ListingCardSkeleton } from '@/components/LoadingSkeleton';
 import { ErrorState } from '@/components/ui/ErrorState';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { queryConfig } from '@/lib/query-config';
+import { Loader2 } from 'lucide-react';
 
 export function ListingList() {
   const searchParams = useSearchParams();
+  const queryClient = useQueryClient();
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [pullDistance, setPullDistance] = useState(0);
+  const touchStartY = useRef<number | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   
   // Build query params from URL
   const queryParams: Record<string, string> = {};
   searchParams.forEach((value, key) => {
     queryParams[key] = value;
   });
+
+  // Pull-to-refresh functionality
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const handleTouchStart = (e: TouchEvent) => {
+      if (window.scrollY === 0) {
+        touchStartY.current = e.touches[0].clientY;
+      }
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      if (touchStartY.current !== null && window.scrollY === 0) {
+        const currentY = e.touches[0].clientY;
+        const distance = currentY - touchStartY.current;
+        
+        if (distance > 0 && distance < 100) {
+          setPullDistance(distance);
+        }
+      }
+    };
+
+    const handleTouchEnd = async () => {
+      if (touchStartY.current !== null && pullDistance > 50) {
+        setIsRefreshing(true);
+        await queryClient.invalidateQueries({ queryKey: ['listings', searchParams.toString()] });
+        setTimeout(() => {
+          setIsRefreshing(false);
+          setPullDistance(0);
+        }, 500);
+      }
+      touchStartY.current = null;
+      setPullDistance(0);
+    };
+
+    container.addEventListener('touchstart', handleTouchStart);
+    container.addEventListener('touchmove', handleTouchMove);
+    container.addEventListener('touchend', handleTouchEnd);
+
+    return () => {
+      container.removeEventListener('touchstart', handleTouchStart);
+      container.removeEventListener('touchmove', handleTouchMove);
+      container.removeEventListener('touchend', handleTouchEnd);
+    };
+  }, [pullDistance, queryClient, searchParams]);
 
   const { data, isLoading, error } = useQuery({
     queryKey: ['listings', searchParams.toString()],
@@ -114,7 +167,27 @@ export function ListingList() {
   }
 
   return (
-    <>
+    <div ref={containerRef} className="relative">
+      {/* Pull-to-refresh indicator */}
+      {pullDistance > 0 && (
+        <div 
+          className="flex items-center justify-center py-2 text-grey-600 text-sm transition-opacity"
+          style={{ 
+            opacity: Math.min(pullDistance / 50, 1),
+            transform: `translateY(${Math.min(pullDistance, 50)}px)`
+          }}
+        >
+          {isRefreshing ? (
+            <>
+              <Loader2 className="w-4 h-4 animate-spin mr-2" />
+              <span>Refreshing...</span>
+            </>
+          ) : (
+            <span>Pull to refresh</span>
+          )}
+        </div>
+      )}
+
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0 mb-4 sm:mb-6">
         <div className="text-xs sm:text-sm text-muted-foreground">
           {data.total > 0 ? (
@@ -151,7 +224,7 @@ export function ListingList() {
           />
         </>
       )}
-    </>
+    </div>
   );
 }
 

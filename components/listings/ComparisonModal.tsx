@@ -47,18 +47,18 @@ export function ComparisonModal({ isOpen, onClose }: ComparisonModalProps) {
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="xl" ariaLabel="Compare listings">
-      <div className="p-6">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold text-grey-900">
+      <div className="p-3 sm:p-4 md:p-6">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0 mb-4 sm:mb-6">
+          <h2 className="text-xl sm:text-2xl font-bold text-grey-900">
             Compare {listings.length} {listings.length === 1 ? 'Listing' : 'Listings'}
           </h2>
-          <div className="flex items-center gap-2">
-            <Button onClick={clearAll} variant="outline" size="sm">
+          <div className="flex items-center gap-2 w-full sm:w-auto">
+            <Button onClick={clearAll} variant="outline" size="sm" className="flex-1 sm:flex-none">
               Clear All
             </Button>
             <button
               onClick={onClose}
-              className="p-2 hover:bg-grey-100 rounded-lg transition-colors"
+              className="p-2 hover:bg-grey-100 rounded-lg transition-colors touch-target sm:hidden"
               aria-label="Close comparison"
             >
               <X className="w-5 h-5 text-grey-500" />
@@ -66,7 +66,7 @@ export function ComparisonModal({ isOpen, onClose }: ComparisonModalProps) {
           </div>
         </div>
 
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto -mx-3 sm:-mx-4 md:-mx-6 px-3 sm:px-4 md:px-6">
           <table className="w-full border-collapse">
             <thead>
               <tr className="border-b-2 border-grey-200">
@@ -75,9 +75,9 @@ export function ComparisonModal({ isOpen, onClose }: ComparisonModalProps) {
                 </th>
                 {listings.map((listing) => (
                   <th key={listing._id} className="p-4 text-left min-w-[280px]">
-                    <div className="space-y-3">
+                    <div className="space-y-2 sm:space-y-3">
                       {/* Image */}
-                      <div className="relative w-full h-40 bg-grey-200 rounded-lg overflow-hidden">
+                      <div className="relative w-full h-32 sm:h-40 bg-grey-200 rounded-lg overflow-hidden">
                         {listing.images?.[0] ? (
                           <img
                             src={
@@ -95,7 +95,7 @@ export function ComparisonModal({ isOpen, onClose }: ComparisonModalProps) {
                         )}
                       </div>
                       {/* Title */}
-                      <h3 className="font-semibold text-grey-900 line-clamp-2">{listing.title}</h3>
+                      <h3 className="font-semibold text-xs sm:text-sm text-grey-900 line-clamp-2">{listing.title}</h3>
                       {/* Remove button */}
                       <Button
                         onClick={() => {
@@ -106,9 +106,9 @@ export function ComparisonModal({ isOpen, onClose }: ComparisonModalProps) {
                         }}
                         variant="outline"
                         size="sm"
-                        className="w-full"
+                        className="w-full min-h-[44px] sm:min-h-0 text-xs sm:text-sm"
                       >
-                        <Trash2 className="w-4 h-4 mr-2" />
+                        <Trash2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1.5 sm:mr-2" />
                         Remove
                       </Button>
                     </div>
@@ -119,15 +119,15 @@ export function ComparisonModal({ isOpen, onClose }: ComparisonModalProps) {
             <tbody>
               {/* Price */}
               <tr className="border-b border-grey-100">
-                <td className="p-4 font-medium text-grey-700 sticky left-0 bg-white z-10">
-                  <div className="flex items-center gap-2">
-                    <DollarSign className="w-4 h-4" />
+                <td className="p-2 sm:p-3 md:p-4 font-medium text-xs sm:text-sm text-grey-700 sticky left-0 bg-white z-10">
+                  <div className="flex items-center gap-1.5 sm:gap-2">
+                    <DollarSign className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                     Price
                   </div>
                 </td>
                 {listings.map((listing) => (
-                  <td key={listing._id} className="p-4">
-                    <span className="text-lg font-bold text-primary-600">
+                  <td key={listing._id} className="p-2 sm:p-3 md:p-4">
+                    <span className="text-base sm:text-lg font-bold text-primary-600">
                       ${listing.price.toLocaleString()}/mo
                     </span>
                   </td>
@@ -152,14 +152,14 @@ export function ComparisonModal({ isOpen, onClose }: ComparisonModalProps) {
 
               {/* Bedrooms */}
               <tr className="border-b border-grey-100">
-                <td className="p-4 font-medium text-grey-700 sticky left-0 bg-white z-10">
-                  <div className="flex items-center gap-2">
-                    <BedDouble className="w-4 h-4" />
+                <td className="p-2 sm:p-3 md:p-4 font-medium text-xs sm:text-sm text-grey-700 sticky left-0 bg-white z-10">
+                  <div className="flex items-center gap-1.5 sm:gap-2">
+                    <BedDouble className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                     Bedrooms
                   </div>
                 </td>
                 {listings.map((listing) => (
-                  <td key={listing._id} className="p-4 text-grey-600">
+                  <td key={listing._id} className="p-2 sm:p-3 md:p-4 text-xs sm:text-sm text-grey-600">
                     {listing.bedrooms !== undefined ? listing.bedrooms : 'N/A'}
                   </td>
                 ))}
@@ -167,14 +167,14 @@ export function ComparisonModal({ isOpen, onClose }: ComparisonModalProps) {
 
               {/* Bathrooms */}
               <tr className="border-b border-grey-100">
-                <td className="p-4 font-medium text-grey-700 sticky left-0 bg-white z-10">
-                  <div className="flex items-center gap-2">
-                    <Bath className="w-4 h-4" />
+                <td className="p-2 sm:p-3 md:p-4 font-medium text-xs sm:text-sm text-grey-700 sticky left-0 bg-white z-10">
+                  <div className="flex items-center gap-1.5 sm:gap-2">
+                    <Bath className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                     Bathrooms
                   </div>
                 </td>
                 {listings.map((listing) => (
-                  <td key={listing._id} className="p-4 text-grey-600">
+                  <td key={listing._id} className="p-2 sm:p-3 md:p-4 text-xs sm:text-sm text-grey-600">
                     {listing.bathrooms !== undefined ? listing.bathrooms : 'N/A'}
                   </td>
                 ))}
@@ -182,14 +182,14 @@ export function ComparisonModal({ isOpen, onClose }: ComparisonModalProps) {
 
               {/* Square Feet */}
               <tr className="border-b border-grey-100">
-                <td className="p-4 font-medium text-grey-700 sticky left-0 bg-white z-10">
-                  <div className="flex items-center gap-2">
-                    <Ruler className="w-4 h-4" />
+                <td className="p-2 sm:p-3 md:p-4 font-medium text-xs sm:text-sm text-grey-700 sticky left-0 bg-white z-10">
+                  <div className="flex items-center gap-1.5 sm:gap-2">
+                    <Ruler className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                     Square Feet
                   </div>
                 </td>
                 {listings.map((listing) => (
-                  <td key={listing._id} className="p-4 text-grey-600">
+                  <td key={listing._id} className="p-2 sm:p-3 md:p-4 text-xs sm:text-sm text-grey-600">
                     {listing.squareFeet ? `${listing.squareFeet.toLocaleString()} sq ft` : 'N/A'}
                   </td>
                 ))}
@@ -197,11 +197,11 @@ export function ComparisonModal({ isOpen, onClose }: ComparisonModalProps) {
 
               {/* Property Type */}
               <tr className="border-b border-grey-100">
-                <td className="p-4 font-medium text-grey-700 sticky left-0 bg-white z-10">
+                <td className="p-2 sm:p-3 md:p-4 font-medium text-xs sm:text-sm text-grey-700 sticky left-0 bg-white z-10">
                   Property Type
                 </td>
                 {listings.map((listing) => (
-                  <td key={listing._id} className="p-4 text-grey-600 capitalize">
+                  <td key={listing._id} className="p-2 sm:p-3 md:p-4 text-xs sm:text-sm text-grey-600 capitalize">
                     {listing.propertyType || 'N/A'}
                   </td>
                 ))}
@@ -209,15 +209,15 @@ export function ComparisonModal({ isOpen, onClose }: ComparisonModalProps) {
 
               {/* Pet Friendly */}
               <tr className="border-b border-grey-100">
-                <td className="p-4 font-medium text-grey-700 sticky left-0 bg-white z-10">
+                <td className="p-2 sm:p-3 md:p-4 font-medium text-xs sm:text-sm text-grey-700 sticky left-0 bg-white z-10">
                   Pet Friendly
                 </td>
                 {listings.map((listing) => (
-                  <td key={listing._id} className="p-4">
+                  <td key={listing._id} className="p-2 sm:p-3 md:p-4">
                     {listing.petFriendly ? (
-                      <span className="text-green-600 font-medium">Yes</span>
+                      <span className="text-xs sm:text-sm text-green-600 font-medium">Yes</span>
                     ) : (
-                      <span className="text-grey-400">No</span>
+                      <span className="text-xs sm:text-sm text-grey-400">No</span>
                     )}
                   </td>
                 ))}
@@ -225,15 +225,15 @@ export function ComparisonModal({ isOpen, onClose }: ComparisonModalProps) {
 
               {/* Parking */}
               <tr className="border-b border-grey-100">
-                <td className="p-4 font-medium text-grey-700 sticky left-0 bg-white z-10">
+                <td className="p-2 sm:p-3 md:p-4 font-medium text-xs sm:text-sm text-grey-700 sticky left-0 bg-white z-10">
                   Parking
                 </td>
                 {listings.map((listing) => (
-                  <td key={listing._id} className="p-4">
+                  <td key={listing._id} className="p-2 sm:p-3 md:p-4">
                     {listing.parkingAvailable ? (
-                      <span className="text-green-600 font-medium">Available</span>
+                      <span className="text-xs sm:text-sm text-green-600 font-medium">Available</span>
                     ) : (
-                      <span className="text-grey-400">Not Available</span>
+                      <span className="text-xs sm:text-sm text-grey-400">Not Available</span>
                     )}
                   </td>
                 ))}
@@ -242,18 +242,18 @@ export function ComparisonModal({ isOpen, onClose }: ComparisonModalProps) {
               {/* Amenities */}
               {Array.from(allAmenities).map((amenity) => (
                 <tr key={amenity} className="border-b border-grey-100">
-                  <td className="p-4 font-medium text-grey-700 sticky left-0 bg-white z-10">
-                    <div className="flex items-center gap-2">
-                      <Sparkles className="w-4 h-4" />
+                  <td className="p-2 sm:p-3 md:p-4 font-medium text-xs sm:text-sm text-grey-700 sticky left-0 bg-white z-10">
+                    <div className="flex items-center gap-1.5 sm:gap-2">
+                      <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                       {amenity}
                     </div>
                   </td>
                   {listings.map((listing) => (
-                    <td key={listing._id} className="p-4">
+                    <td key={listing._id} className="p-2 sm:p-3 md:p-4">
                       {listing.amenities?.includes(amenity) ? (
-                        <span className="text-green-600">✓</span>
+                        <span className="text-green-600 text-sm sm:text-base">✓</span>
                       ) : (
-                        <span className="text-grey-300">—</span>
+                        <span className="text-grey-300 text-sm sm:text-base">—</span>
                       )}
                     </td>
                   ))}
@@ -262,18 +262,18 @@ export function ComparisonModal({ isOpen, onClose }: ComparisonModalProps) {
 
               {/* Actions */}
               <tr>
-                <td className="p-4 font-medium text-grey-700 sticky left-0 bg-white z-10">
+                <td className="p-2 sm:p-3 md:p-4 font-medium text-xs sm:text-sm text-grey-700 sticky left-0 bg-white z-10">
                   Actions
                 </td>
                 {listings.map((listing) => (
-                  <td key={listing._id} className="p-4">
+                  <td key={listing._id} className="p-2 sm:p-3 md:p-4">
                     <Button
                       onClick={() => handleViewListing(listing._id)}
                       variant="primary"
                       size="sm"
-                      className="w-full"
+                      className="w-full min-h-[44px] sm:min-h-0 text-xs sm:text-sm"
                     >
-                      <ExternalLink className="w-4 h-4 mr-2" />
+                      <ExternalLink className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1.5 sm:mr-2" />
                       View Details
                     </Button>
                   </td>

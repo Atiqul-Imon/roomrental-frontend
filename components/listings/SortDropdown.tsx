@@ -46,21 +46,22 @@ export function SortDropdown() {
     <div ref={dropdownRef} className="relative">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-4 py-2 border border-border rounded-lg hover:bg-secondary transition"
+        className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 border border-grey-300 rounded-lg hover:bg-grey-50 transition min-h-[44px] sm:min-h-0 touch-target text-xs sm:text-sm font-medium"
       >
-        <span className="text-sm font-medium">Sort: {currentLabel}</span>
-        <ChevronDown className={`w-4 h-4 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+        <span className="hidden sm:inline">Sort: </span>
+        <span>{currentLabel}</span>
+        <ChevronDown className={`w-3.5 h-3.5 sm:w-4 sm:h-4 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-48 bg-background border border-border rounded-lg shadow-lg z-50">
-          <ul className="py-2">
+        <div className="absolute right-0 mt-2 w-56 sm:w-48 bg-white border border-grey-200 rounded-lg shadow-large z-50 max-h-[60vh] sm:max-h-96 overflow-y-auto">
+          <ul className="py-1 sm:py-2">
             {sortOptions.map((option) => (
               <li key={option.value}>
                 <button
                   onClick={() => handleSortChange(option.value)}
-                  className={`w-full text-left px-4 py-2 text-sm hover:bg-secondary transition ${
-                    currentSort === option.value ? 'bg-secondary font-medium' : ''
+                  className={`w-full text-left px-3 sm:px-4 py-2.5 sm:py-2 text-sm hover:bg-grey-50 transition min-h-[44px] sm:min-h-0 flex items-center ${
+                    currentSort === option.value ? 'bg-primary-50 text-primary-600 font-medium' : 'text-grey-700'
                   }`}
                 >
                   {option.label}

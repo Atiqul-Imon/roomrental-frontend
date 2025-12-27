@@ -61,7 +61,7 @@ export function Modal({
 
   return (
     <div
-      className="fixed inset-0 z-[100] flex items-center justify-center p-2 sm:p-4"
+      className="fixed inset-0 z-[100] flex items-end md:items-center justify-center p-0 md:p-2 lg:p-4"
       onClick={closeOnOverlayClick ? onClose : undefined}
       role="dialog"
       aria-modal="true"
@@ -76,7 +76,7 @@ export function Modal({
         aria-hidden="true"
       />
 
-      {/* Modal Content */}
+      {/* Modal Content - Bottom Sheet on Mobile, Centered on Desktop */}
       <div
         ref={(node) => {
           if (node) {
@@ -85,14 +85,30 @@ export function Modal({
           }
         }}
         className={cn(
-          'relative w-full bg-white rounded-xl shadow-2xl border border-grey-200',
-          'transform transition-all duration-300',
-          'max-h-[90vh] flex flex-col',
-          isOpen ? 'scale-100 opacity-100' : 'scale-95 opacity-0',
+          'relative w-full bg-white shadow-2xl border border-grey-200',
+          'transform transition-all duration-300 ease-out',
+          'max-h-[90vh] md:max-h-[90vh] flex flex-col',
+          // Mobile: Bottom sheet with rounded top corners
+          'md:rounded-xl',
+          'rounded-t-2xl md:rounded-t-xl',
+          // Mobile: Full width, Desktop: Sized
+          'md:w-auto',
+          // Mobile: Slide up animation, Desktop: Scale animation
+          isOpen 
+            ? 'translate-y-0 md:translate-y-0 scale-100 opacity-100' 
+            : 'translate-y-full md:translate-y-0 scale-95 md:scale-95 opacity-0',
           sizeClasses[size]
         )}
         onClick={(e) => e.stopPropagation()}
+        style={{
+          maxHeight: 'calc(90vh - env(safe-area-inset-bottom, 0px))',
+        }}
       >
+        {/* Drag Handle (Mobile Only) */}
+        <div className="md:hidden flex justify-center pt-3 pb-2 flex-shrink-0">
+          <div className="w-12 h-1 bg-grey-300 rounded-full" />
+        </div>
+
         {/* Header */}
         {(title || showCloseButton) && (
           <div className="flex items-center justify-between p-4 md:p-6 border-b border-grey-200 flex-shrink-0">
@@ -104,7 +120,7 @@ export function Modal({
             {showCloseButton && (
               <button
                 onClick={onClose}
-                className="p-2 text-grey-400 hover:text-grey-600 hover:bg-grey-100 rounded-lg transition-colors z-20"
+                className="p-2 text-grey-400 hover:text-grey-600 hover:bg-grey-100 rounded-lg transition-colors z-20 touch-target"
                 aria-label="Close modal"
               >
                 <X className="w-5 h-5" />

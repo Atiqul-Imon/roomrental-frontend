@@ -86,20 +86,21 @@ export function SavedSearchesDropdown() {
       <Button
         onClick={() => setIsOpen(!isOpen)}
         variant="outline"
-        className="flex items-center gap-2"
+        className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm"
       >
-        <Bookmark className="w-4 h-4" />
-        Saved Searches
+        <Bookmark className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+        <span className="hidden sm:inline">Saved Searches</span>
+        <span className="sm:hidden">Saved</span>
         {savedSearches.length > 0 && (
-          <span className="bg-primary-500 text-white text-xs px-2 py-0.5 rounded-full">
+          <span className="bg-primary-500 text-white text-[10px] sm:text-xs px-1.5 sm:px-2 py-0.5 rounded-full">
             {savedSearches.length}
           </span>
         )}
-        <ChevronDown className={`w-4 h-4 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+        <ChevronDown className={`w-3.5 h-3.5 sm:w-4 sm:h-4 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
       </Button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-80 bg-white border border-grey-200 rounded-lg shadow-xl z-50 max-h-96 overflow-y-auto">
+        <div className="absolute right-0 mt-2 w-[calc(100vw-2rem)] sm:w-80 max-w-[320px] sm:max-w-none bg-white border border-grey-200 rounded-lg shadow-xl z-50 max-h-[60vh] sm:max-h-96 overflow-y-auto">
           {isLoading ? (
             <div className="p-6 text-center">
               <Loader2 className="w-6 h-6 animate-spin mx-auto mb-2 text-primary-500" />
@@ -112,26 +113,26 @@ export function SavedSearchesDropdown() {
               <p className="text-xs text-grey-500">Save your searches to quickly access them later</p>
             </div>
           ) : (
-            <ul className="py-2">
+            <ul className="py-1 sm:py-2">
               {savedSearches.map((search) => (
                 <li
                   key={search.id}
-                  className="px-4 py-3 hover:bg-grey-50 transition-colors cursor-pointer border-b border-grey-100 last:border-b-0"
+                  className="px-3 sm:px-4 py-2.5 sm:py-3 hover:bg-grey-50 transition-colors cursor-pointer border-b border-grey-100 last:border-b-0 min-h-[44px] sm:min-h-0 flex items-center"
                   onClick={() => applySearch(search)}
                 >
-                  <div className="flex items-start justify-between gap-2">
+                  <div className="flex items-start justify-between gap-2 w-full">
                     <div className="flex-1 min-w-0">
-                      <h4 className="font-semibold text-sm text-grey-900 mb-1 truncate">
+                      <h4 className="font-semibold text-xs sm:text-sm text-grey-900 mb-0.5 sm:mb-1 truncate">
                         {search.name}
                       </h4>
-                      <p className="text-xs text-grey-500">
+                      <p className="text-[10px] sm:text-xs text-grey-500">
                         {new Date(search.createdAt).toLocaleDateString()}
                       </p>
                     </div>
-                    <div className="flex items-center gap-1">
+                    <div className="flex items-center gap-1 flex-shrink-0">
                       <button
                         onClick={(e) => handleToggleEmail(e, search.id, search.emailAlerts)}
-                        className="p-1.5 hover:bg-grey-200 rounded transition-colors"
+                        className="p-1.5 sm:p-1.5 hover:bg-grey-200 rounded transition-colors touch-target"
                         title={search.emailAlerts ? 'Disable email alerts' : 'Enable email alerts'}
                       >
                         {search.emailAlerts ? (
@@ -142,7 +143,7 @@ export function SavedSearchesDropdown() {
                       </button>
                       <button
                         onClick={(e) => handleDelete(e, search.id)}
-                        className="p-1.5 hover:bg-red-50 rounded transition-colors text-red-500"
+                        className="p-1.5 sm:p-1.5 hover:bg-red-50 rounded transition-colors text-red-500 touch-target"
                         title="Delete saved search"
                       >
                         <Trash2 className="w-4 h-4" />

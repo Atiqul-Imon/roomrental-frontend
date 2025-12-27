@@ -127,20 +127,20 @@ export function QuickViewModal({ listing, isOpen, onClose }: QuickViewModalProps
                       e.stopPropagation();
                       prevImage();
                     }}
-                    className="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white rounded-full p-2 shadow-lg z-10 transition-all"
+                    className="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white rounded-full p-2 sm:p-2.5 shadow-lg z-10 transition-all touch-target"
                     aria-label="Previous image"
                   >
-                    <ChevronLeft className="w-5 h-5 text-grey-700" />
+                    <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5 text-grey-700" />
                   </button>
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
                       nextImage();
                     }}
-                    className="absolute right-2 md:right-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white rounded-full p-2 shadow-lg z-10 transition-all"
+                    className="absolute right-2 md:right-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white rounded-full p-2 sm:p-2.5 shadow-lg z-10 transition-all touch-target"
                     aria-label="Next image"
                   >
-                    <ChevronRight className="w-5 h-5 text-grey-700" />
+                    <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 text-grey-700" />
                   </button>
 
                   {/* Image Indicators */}
@@ -166,16 +166,16 @@ export function QuickViewModal({ listing, isOpen, onClose }: QuickViewModalProps
           )}
 
           {/* Price Badge */}
-          <div className="absolute top-4 left-4 bg-primary-500 text-white px-3 py-1.5 md:px-4 md:py-2 rounded-lg font-bold text-base md:text-lg shadow-lg z-10">
+          <div className="absolute top-3 sm:top-4 left-3 sm:left-4 bg-primary-500 text-white px-2.5 sm:px-3 md:px-4 py-1 sm:py-1.5 md:py-2 rounded-lg font-bold text-sm sm:text-base md:text-lg shadow-lg z-10">
             ${listing.price.toLocaleString()}/mo
           </div>
         </div>
 
         {/* Content */}
-        <div className="p-4 md:p-6 space-y-4">
+        <div className="p-3 sm:p-4 md:p-6 space-y-3 sm:space-y-4">
           {/* Title and Location */}
           <div>
-            <h2 className="text-xl md:text-2xl font-bold text-grey-900 mb-2">
+            <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-grey-900 mb-1.5 sm:mb-2">
               {searchQuery ? (
                 <span>{highlightSearchTermsReact(listing.title, searchQuery)}</span>
               ) : (
@@ -199,7 +199,7 @@ export function QuickViewModal({ listing, isOpen, onClose }: QuickViewModalProps
           </div>
 
           {/* Property Details */}
-          <div className="flex items-center gap-6 text-sm text-grey-600">
+          <div className="flex items-center gap-3 sm:gap-4 md:gap-6 text-xs sm:text-sm text-grey-600 flex-wrap">
             {listing.bedrooms !== undefined && (
               <div className="flex items-center gap-2">
                 <BedDouble className="w-4 h-4" />
@@ -266,27 +266,27 @@ export function QuickViewModal({ listing, isOpen, onClose }: QuickViewModalProps
           )}
 
           {/* Actions */}
-          <div className="flex flex-col sm:flex-row gap-3 pt-4 border-t border-grey-200">
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 pt-3 sm:pt-4 border-t border-grey-200" style={{ paddingBottom: 'env(safe-area-inset-bottom, 0)' }}>
             <Button
               onClick={handleViewFullDetails}
               variant="primary"
-              className="flex-1 flex items-center justify-center gap-2"
+              className="flex-1 flex items-center justify-center gap-2 min-h-[44px]"
             >
               <ExternalLink className="w-4 h-4" />
               <span className="hidden sm:inline">View Full Details</span>
               <span className="sm:hidden">View Details</span>
             </Button>
             {isAuthenticated && (
-              <>
+              <div className="flex gap-2 sm:gap-3">
                 <Button
                   onClick={() => toggleFavorite.mutate()}
                   variant="outline"
-                  className="px-4 flex-shrink-0"
+                  className="px-3 sm:px-4 flex-shrink-0 min-h-[44px]"
                   disabled={toggleFavorite.isPending}
                   aria-label={isFavorite ? 'Remove from favorites' : 'Add to favorites'}
                 >
                   <Heart
-                    className={`w-5 h-5 ${
+                    className={`w-4 h-4 sm:w-5 sm:h-5 ${
                       isFavorite ? 'fill-red-500 text-red-500' : 'text-grey-400'
                     }`}
                   />
@@ -294,12 +294,12 @@ export function QuickViewModal({ listing, isOpen, onClose }: QuickViewModalProps
                 <Button
                   onClick={handleContactLandlord}
                   variant="outline"
-                  className="px-4 flex-shrink-0"
+                  className="px-3 sm:px-4 flex-shrink-0 min-h-[44px]"
                   aria-label="Contact landlord"
                 >
-                  <MessageSquare className="w-5 h-5" />
+                  <MessageSquare className="w-4 h-4 sm:w-5 sm:h-5" />
                 </Button>
-              </>
+              </div>
             )}
           </div>
         </div>
