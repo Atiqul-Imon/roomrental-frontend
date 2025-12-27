@@ -75,8 +75,9 @@ export function FavoriteButton({ listingId, className = '' }: FavoriteButtonProp
     return (
       <button
         onClick={handleToggle}
-        className={`p-2.5 border-2 border-grey-300 rounded-lg hover:bg-grey-50 hover:border-primary-400 transition-all duration-200 active:scale-95 ${className}`}
+        className={`p-2.5 border-2 border-grey-300 rounded-lg hover:bg-grey-50 hover:border-primary-400 transition-all duration-200 active:scale-95 focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 focus:outline-none ${className}`}
         title="Sign in to save favorites"
+        aria-label="Sign in to save favorites"
       >
         <Heart className="w-5 h-5 text-grey-400" />
       </button>
@@ -87,12 +88,14 @@ export function FavoriteButton({ listingId, className = '' }: FavoriteButtonProp
     <button
       onClick={handleToggle}
       disabled={isLoading}
-      className={`p-2.5 border-2 rounded-lg transition-all duration-200 disabled:opacity-50 active:scale-95 ${
+      className={`p-2.5 border-2 rounded-lg transition-all duration-200 disabled:opacity-50 active:scale-95 focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 focus:outline-none ${
         isFavorite
           ? 'bg-secondary-50 border-secondary-400 hover:bg-secondary-100'
           : 'border-grey-300 hover:bg-grey-50 hover:border-primary-400'
       } ${className}`}
       title={isFavorite ? 'Remove from favorites' : 'Add to favorites'}
+      aria-label={isFavorite ? 'Remove from favorites' : 'Add to favorites'}
+      aria-pressed={isFavorite}
     >
       <Heart
         data-listing-id={listingId}
