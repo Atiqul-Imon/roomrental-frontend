@@ -198,7 +198,7 @@ export function ListingCard({ listing, onQuickView }: ListingCardProps) {
                   alert(`You can compare up to 5 listings. Please remove one to add another.`);
                 }
               }}
-              className={`w-9 h-9 sm:w-8 sm:h-8 rounded-lg border-2 flex items-center justify-center transition-all touch-target ${
+              className={`w-6 h-6 sm:w-6 sm:h-6 rounded-md border-2 flex items-center justify-center transition-all touch-target ${
                 isSelected
                   ? 'bg-primary-500 border-primary-500 text-white'
                   : 'bg-white/95 backdrop-blur-sm border-grey-300 text-grey-400 hover:border-primary-400'
@@ -206,7 +206,7 @@ export function ListingCard({ listing, onQuickView }: ListingCardProps) {
               aria-label={isSelected ? 'Remove from comparison' : 'Add to comparison'}
               title={isSelected ? 'Remove from comparison' : 'Add to comparison'}
             >
-              {isSelected && <Check className="w-5 h-5 sm:w-4 sm:h-4" />}
+              {isSelected && <Check className="w-3.5 h-3.5 sm:w-3.5 sm:h-3.5" />}
             </button>
           </div>
 

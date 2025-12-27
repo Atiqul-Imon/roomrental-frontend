@@ -62,10 +62,6 @@ export default function Home() {
 
         {/* Listings Section */}
         <section className="container mx-auto px-3 sm:px-4 py-10 sm:py-12 md:py-16 section-spacing">
-          <div className="mb-8 sm:mb-10 md:mb-12">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-grey-900 mb-3 leading-tight tracking-tight">Featured Listings</h2>
-            <p className="text-sm sm:text-base md:text-lg text-grey-600 leading-relaxed">Discover rooms that match your preferences</p>
-          </div>
           <ListingList />
         </section>
       </main>
