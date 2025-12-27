@@ -11,19 +11,27 @@ import Image from 'next/image';
 import { imageKitPresets } from '@/lib/imagekit';
 
 // Fix for default marker icons in Next.js
-import markerIcon from 'leaflet/dist/images/marker-icon.png';
-import markerShadow from 'leaflet/dist/images/marker-shadow.png';
-import markerRetina from 'leaflet/dist/images/marker-icon-2x.png';
-
+// Use direct paths to avoid Next.js image optimization issues
 const DefaultIcon = new Icon({
-  iconUrl: markerIcon.src,
-  shadowUrl: markerShadow.src,
-  iconRetinaUrl: markerRetina.src,
+  iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+  shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+  iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
   iconSize: [25, 41],
   iconAnchor: [12, 41],
   popupAnchor: [1, -34],
   shadowSize: [41, 41],
 });
+
+// Set default icon globally to prevent errors
+if (typeof window !== 'undefined') {
+  const L = require('leaflet');
+  delete (L.Icon.Default.prototype as any)._getIconUrl;
+  L.Icon.Default.mergeOptions({
+    iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+    shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+    iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
+  });
+}
 
 interface MapViewProps {
   listings: Listing[];
@@ -71,6 +79,21 @@ export function MapView({ listings, center, radius = 10, onRadiusChange, onCente
   );
   const [mapRadius, setMapRadius] = useState(radius);
   const [selectedListing, setSelectedListing] = useState<Listing | null>(null);
+  const [isMapReady, setIsMapReady] = useState(false);
+
+  // Ensure Leaflet default icon is set before rendering markers
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const L = require('leaflet');
+      // Ensure default icon is properly configured
+      if (!L.Icon.Default.prototype._getIconUrl) {
+        L.Icon.Default.prototype._getIconUrl = function (name: string) {
+          return `https://unpkg.com/leaflet@1.9.4/dist/images/${name}`;
+        };
+      }
+      setIsMapReady(true);
+    }
+  }, []);
 
   // Update center from props
   useEffect(() => {
@@ -173,7 +196,7 @@ export function MapView({ listings, center, radius = 10, onRadiusChange, onCente
         )}
 
         {/* Listings Markers */}
-        {listings
+        {isMapReady && listings
           .filter((listing) => listing.location.coordinates?.lat && listing.location.coordinates?.lng)
           .map((listing) => {
             const position: [number, number] = [
