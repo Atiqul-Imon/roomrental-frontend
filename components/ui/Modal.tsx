@@ -80,11 +80,12 @@ export function Modal({
         'fixed z-[100] flex justify-center',
         // Mobile: Start below header (h-14 = 3.5rem), Desktop: Full viewport
         'top-14 md:top-0',
-        'left-0 right-0 bottom-0',
-        // Mobile: Align to bottom (bottom sheet), Desktop: Center vertically
+        'left-0 right-0',
+        // Mobile: Align to bottom with padding, Desktop: Center vertically
+        'bottom-0 md:bottom-auto',
         'items-end md:items-center',
-        // Padding: None on mobile, padding on desktop
-        'p-0 md:p-2 lg:p-4',
+        // Padding: Small on mobile bottom, padding on desktop
+        'pb-4 md:p-2 lg:p-4',
         // Disable pointer events when closing to prevent blocking clicks
         !isOpen && 'pointer-events-none'
       )}
@@ -132,14 +133,10 @@ export function Modal({
             ? 'modal-slide-up md:modal-scale-in' 
             : 'translate-y-full md:scale-95 opacity-0',
           sizeClasses[size],
-          // Mobile: Full height from top to bottom (no gap), Desktop: Auto height with max constraint
-          'h-[calc(100vh-3.5rem)]',
-          'md:h-auto md:max-h-[90vh]'
+          // Mobile: Auto height with max constraint, Desktop: Auto height with max constraint
+          'max-h-[90vh]',
+          'md:max-h-[90vh]'
         )}
-        style={{
-          // Ensure full height on mobile, accounting for safe area
-          height: 'calc(100vh - 3.5rem - env(safe-area-inset-bottom, 0px))',
-        }}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Drag Handle with Close Button (Mobile Only) */}

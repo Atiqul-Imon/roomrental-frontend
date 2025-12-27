@@ -273,7 +273,7 @@ export function QuickViewModal({ listing, isOpen, onClose }: QuickViewModalProps
           )}
 
           {/* Actions */}
-          <div className="flex flex-col sm:flex-row gap-2 pt-2.5 border-t border-grey-200" style={{ paddingBottom: 'env(safe-area-inset-bottom, 0)' }}>
+          <div className="flex flex-col sm:flex-row gap-2 pt-2.5 border-t border-grey-200">
             <Button
               onClick={handleViewFullDetails}
               variant="primary"
