@@ -1,12 +1,34 @@
+'use client';
+
 import Link from 'next/link';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { ListingList } from '@/components/listings/ListingList';
+import { ComparisonButton } from '@/components/listings/ComparisonButton';
+import { ComparisonModal } from '@/components/listings/ComparisonModal';
 import { Search, Home as HomeIcon, Users } from 'lucide-react';
+import { useState, useEffect, Suspense } from 'react';
 
 export const dynamic = 'force-dynamic';
 
+function ListingListContent() {
+  return (
+    <Suspense fallback={<div className="text-center py-12">Loading listings...</div>}>
+      <ListingList />
+    </Suspense>
+  );
+}
+
 export default function Home() {
+  const [isComparisonOpen, setIsComparisonOpen] = useState(false);
+
+  useEffect(() => {
+    const handleOpenComparison = () => {
+      setIsComparisonOpen(true);
+    };
+    window.addEventListener('openComparison', handleOpenComparison);
+    return () => window.removeEventListener('openComparison', handleOpenComparison);
+  }, []);
 
   return (
     <>
@@ -62,10 +84,12 @@ export default function Home() {
 
         {/* Listings Section */}
         <section className="container mx-auto px-3 sm:px-4 py-10 sm:py-12 md:py-16 section-spacing">
-          <ListingList />
+          <ListingListContent />
         </section>
       </main>
       <Footer />
+      <ComparisonButton />
+      <ComparisonModal isOpen={isComparisonOpen} onClose={() => setIsComparisonOpen(false)} />
     </>
   );
 }
