@@ -47,18 +47,18 @@ export function ErrorState({
   const displayTitle = title || defaultTitles[variant];
 
   return (
-    <div className={cn('flex flex-col items-center justify-center py-16 px-4 text-center', className)}>
-      <div className={cn('mb-6 p-4 rounded-full', iconColors[variant])}>
-        <IconComponent className="w-12 h-12" />
+    <div className={cn('flex flex-col items-center justify-center py-12 sm:py-16 md:py-20 px-4 text-center fade-in-up-delayed', className)}>
+      <div className={cn('mb-6 sm:mb-8 p-5 sm:p-6 rounded-2xl shadow-soft', iconColors[variant])}>
+        <IconComponent className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16" />
       </div>
-      <H3 className="mb-3">{displayTitle}</H3>
-      <Body className="text-grey-600 mb-6 max-w-md">{message}</Body>
-      <div className="flex flex-col sm:flex-row gap-3">
+      <H3 className="mb-3 sm:mb-4 text-xl sm:text-2xl md:text-3xl leading-tight">{displayTitle}</H3>
+      <Body className="text-grey-600 mb-6 sm:mb-8 max-w-md text-sm sm:text-base leading-relaxed">{message}</Body>
+      <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
         {onRetry && (
           <Button 
             variant="primary" 
             onClick={onRetry}
-            className="flex items-center gap-2"
+            className="flex items-center gap-2 min-h-[44px]"
           >
             <RefreshCw className="w-4 h-4" />
             Try Again
@@ -66,14 +66,14 @@ export function ErrorState({
         )}
         {actionHref && actionLabel && (
           <Link href={actionHref}>
-            <Button variant="outline" className="flex items-center gap-2">
+            <Button variant="outline" className="flex items-center gap-2 min-h-[44px]">
               {actionLabel}
             </Button>
           </Link>
         )}
       </div>
       {variant === 'offline' && (
-        <Body className="text-sm text-grey-500 mt-4">
+        <Body className="text-sm text-grey-500 mt-4 sm:mt-6 leading-relaxed">
           Check your internet connection and try again
         </Body>
       )}

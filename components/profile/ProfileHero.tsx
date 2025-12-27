@@ -51,8 +51,8 @@ export function ProfileHero({ profile, ratingData, isOwnProfile }: ProfileHeroPr
               )}
               {/* Verification Badge */}
               {profile.verification?.emailVerified && (
-                <div className="absolute -bottom-1 -right-1 sm:-bottom-2 sm:-right-2 bg-white rounded-full p-1 sm:p-1.5 shadow-medium border border-grey-200">
-                  <CheckCircle className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
+                <div className="absolute -bottom-1 -right-1 sm:-bottom-2 sm:-right-2 bg-white rounded-full p-1.5 sm:p-2 shadow-medium border-2 border-green-200 hover:border-green-300 transition-colors" title="Email Verified">
+                  <CheckCircle className="w-5 h-5 sm:w-6 sm:h-6 text-green-600 fill-green-50" />
                 </div>
               )}
             </div>
@@ -68,8 +68,8 @@ export function ProfileHero({ profile, ratingData, isOwnProfile }: ProfileHeroPr
                       {profile.role.charAt(0).toUpperCase() + profile.role.slice(1)}
                     </span>
                     {profile.verification?.idVerified && (
-                      <span className="inline-flex items-center gap-1 px-2.5 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-semibold bg-amber-100 text-amber-700">
-                        <CheckCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                      <span className="inline-flex items-center gap-1.5 px-3 sm:px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-semibold bg-amber-50 text-amber-700 border border-amber-200 shadow-soft hover:shadow-medium transition-all duration-200" title="ID Verified - Trusted Member">
+                        <CheckCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-amber-100" />
                         Verified
                       </span>
                     )}

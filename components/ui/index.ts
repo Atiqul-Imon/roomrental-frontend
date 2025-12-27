@@ -21,7 +21,7 @@ export * from './Spacing';
 export * from './EnhancedEmptyState';
 export * from './EnhancedInput';
 export * from './FileUpload';
-export { Tooltip, HelpIcon, InfoBadge } from './Tooltip';
+export { Tooltip } from './Tooltip';
 // Phase 3: Advanced Features
 export * from './EnhancedSkeleton';
 export * from './OptimisticUpdate';

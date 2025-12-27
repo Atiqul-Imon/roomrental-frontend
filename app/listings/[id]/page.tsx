@@ -247,9 +247,9 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
 
               {/* Amenities - Enhanced for Students */}
               {data.amenities.length > 0 && (
-                <div className="bg-white rounded-xl p-4 sm:p-6 md:p-8 shadow-large border border-grey-100">
-                  <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-4 sm:mb-6 text-grey-900 flex items-center gap-2 sm:gap-3">
-                    <span className="text-2xl sm:text-3xl">✨</span>
+                <div className="bg-white rounded-xl p-5 sm:p-6 md:p-8 shadow-large border-refined border-grey-200">
+                  <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-5 sm:mb-6 md:mb-8 text-grey-900 flex items-center gap-2 sm:gap-3 leading-tight">
+                    <span className="text-2xl sm:text-3xl md:text-4xl">✨</span>
                     What's Included
                   </h2>
                   <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-3">
@@ -266,7 +266,7 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
               )}
 
               {/* Availability - Enhanced */}
-              <div className="bg-white rounded-xl p-4 sm:p-6 md:p-8 shadow-large border border-grey-100">
+              <div className="bg-white rounded-xl p-5 sm:p-6 md:p-8 shadow-large border-refined border-grey-200">
                 <div className="flex items-center gap-3 sm:gap-4 text-grey-700">
                   <div className="p-2 sm:p-3 bg-primary-50 rounded-lg sm:rounded-xl">
                     <Calendar className="w-5 h-5 sm:w-6 sm:h-6 text-primary-600" />
@@ -282,9 +282,9 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
             {/* Sticky Sidebar - Enhanced for Students */}
             <div className="lg:sticky lg:top-20 space-y-4 sm:space-y-6 h-fit">
               {/* Contact Card - Student-Friendly */}
-              <div className="bg-gradient-to-br from-white to-primary-50/30 border-2 border-primary-200 rounded-xl p-4 sm:p-6 shadow-large">
-                <h2 className="text-lg sm:text-xl font-bold mb-3 sm:mb-4 text-grey-900 flex items-center gap-2">
-                  <span className="text-xl sm:text-2xl">👤</span>
+              <div className="bg-gradient-to-br from-white to-primary-50/30 border-2 border-primary-200 rounded-xl p-5 sm:p-6 md:p-8 shadow-large">
+                <h2 className="text-lg sm:text-xl md:text-2xl font-bold mb-4 sm:mb-5 md:mb-6 text-grey-900 flex items-center gap-2 sm:gap-3 leading-tight">
+                  <span className="text-xl sm:text-2xl md:text-3xl">👤</span>
                   Meet Your Landlord
                 </h2>
                 <div className="flex items-center gap-3 sm:gap-4 mb-3 sm:mb-4">
