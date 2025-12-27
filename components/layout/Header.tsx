@@ -4,10 +4,8 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/lib/auth-context';
 import { useRouter, usePathname } from 'next/navigation';
-import { useQuery } from '@tanstack/react-query';
 import { Button } from '@/components/ui/Button';
-import { Home, Search, Heart, Plus, LayoutDashboard, User, Settings, LogOut, MessageSquare, Menu, X } from 'lucide-react';
-import { chatApi } from '@/lib/chat-api';
+import { Home, Search, Plus, LayoutDashboard, User, LogOut, Menu, X } from 'lucide-react';
 import { SavedSearchesDropdown } from '@/components/search/SavedSearchesDropdown';
 
 export function Header() {
@@ -15,16 +13,6 @@ export function Header() {
   const router = useRouter();
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
-  // Get unread message count
-  const { data: unreadData } = useQuery({
-    queryKey: ['unread-count'],
-    queryFn: () => chatApi.getUnreadCount(),
-    enabled: isAuthenticated,
-    refetchInterval: 30000, // Refetch every 30 seconds
-  });
-
-  const unreadCount = unreadData ?? 0;
 
   const handleLogout = () => {
     logout();
@@ -71,43 +59,6 @@ export function Header() {
 
             {isAuthenticated ? (
               <>
-                <Link
-                  href="/favorites"
-                  className={`px-3 py-2 rounded-lg text-sm font-medium color-transition relative ${
-                    isActive('/favorites')
-                      ? 'bg-secondary-50 text-secondary-600'
-                      : 'text-grey-700 hover:text-secondary-600 hover:bg-grey-50'
-                  }`}
-                >
-                  {isActive('/favorites') && (
-                    <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-secondary-600 rounded-full" />
-                  )}
-                  <span className="flex items-center gap-1.5">
-                    <Heart className="w-4 h-4" />
-                    Favorites
-                  </span>
-                </Link>
-                <Link
-                  href="/chat"
-                  className={`px-3 py-2 rounded-lg text-sm font-medium color-transition relative ${
-                    isActive('/chat')
-                      ? 'bg-primary-50 text-primary-600'
-                      : 'text-grey-700 hover:text-primary-600 hover:bg-grey-50'
-                  }`}
-                >
-                  {isActive('/chat') && (
-                    <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary-600 rounded-full" />
-                  )}
-                  <span className="flex items-center gap-1.5">
-                    <MessageSquare className="w-4 h-4" />
-                    Messages
-                    {unreadCount > 0 && (
-                      <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">
-                        {unreadCount > 9 ? '9+' : unreadCount}
-                      </span>
-                    )}
-                  </span>
-                </Link>
                 {user?.role === 'landlord' && (
                   <>
                     <Link
@@ -124,9 +75,9 @@ export function Header() {
                       </span>
                     </Link>
                     <Link
-                      href="/dashboard"
+                      href="/landlord/dashboard"
                       className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-                        isActive('/dashboard')
+                        pathname?.startsWith('/landlord/dashboard')
                           ? 'bg-primary-50 text-primary-600'
                           : 'text-grey-700 hover:text-primary-600 hover:bg-grey-50'
                       }`}
@@ -140,28 +91,18 @@ export function Header() {
                 )}
                 <Link
                   href={`/profile/${user?.id}`}
-                  className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                  className={`px-3 py-2 rounded-lg text-sm font-medium color-transition relative ${
                     pathname?.startsWith('/profile')
                       ? 'bg-primary-50 text-primary-600'
                       : 'text-grey-700 hover:text-primary-600 hover:bg-grey-50'
                   }`}
                 >
+                  {pathname?.startsWith('/profile') && (
+                    <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary-600 rounded-full" />
+                  )}
                   <span className="flex items-center gap-1.5">
                     <User className="w-4 h-4" />
                     Profile
-                  </span>
-                </Link>
-                <Link
-                  href="/settings"
-                  className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-                    isActive('/settings')
-                      ? 'bg-primary-50 text-primary-600'
-                      : 'text-grey-700 hover:text-primary-600 hover:bg-grey-50'
-                  }`}
-                >
-                  <span className="flex items-center gap-1.5">
-                    <Settings className="w-4 h-4" />
-                    Settings
                   </span>
                 </Link>
                 <Button
@@ -226,39 +167,6 @@ export function Header() {
               
               {isAuthenticated ? (
                 <>
-                  <Link
-                    href="/favorites"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className={`px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 ${
-                      isActive('/favorites')
-                        ? 'bg-secondary-50 text-secondary-600'
-                        : 'text-grey-700 hover:text-secondary-600 hover:bg-grey-50'
-                    }`}
-                  >
-                    <span className="flex items-center gap-2">
-                      <Heart className="w-4 h-4" />
-                      Favorites
-                    </span>
-                  </Link>
-                  <Link
-                    href="/chat"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className={`px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 relative ${
-                      isActive('/chat')
-                        ? 'bg-primary-50 text-primary-600'
-                        : 'text-grey-700 hover:text-primary-600 hover:bg-grey-50'
-                    }`}
-                  >
-                    <span className="flex items-center gap-2">
-                      <MessageSquare className="w-4 h-4" />
-                      Messages
-                      {unreadCount > 0 && (
-                        <span className="ml-auto bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">
-                          {unreadCount > 9 ? '9+' : unreadCount}
-                        </span>
-                      )}
-                    </span>
-                  </Link>
                   {user?.role === 'landlord' && (
                     <>
                       <Link
@@ -276,10 +184,10 @@ export function Header() {
                         </span>
                       </Link>
                       <Link
-                        href="/dashboard"
+                        href="/landlord/dashboard"
                         onClick={() => setIsMobileMenuOpen(false)}
                         className={`px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 ${
-                          isActive('/dashboard')
+                          pathname?.startsWith('/landlord/dashboard')
                             ? 'bg-primary-50 text-primary-600'
                             : 'text-grey-700 hover:text-primary-600 hover:bg-grey-50'
                         }`}
@@ -303,20 +211,6 @@ export function Header() {
                     <span className="flex items-center gap-2">
                       <User className="w-4 h-4" />
                       Profile
-                    </span>
-                  </Link>
-                  <Link
-                    href="/settings"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className={`px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 ${
-                      isActive('/settings')
-                        ? 'bg-primary-50 text-primary-600'
-                        : 'text-grey-700 hover:text-primary-600 hover:bg-grey-50'
-                    }`}
-                  >
-                    <span className="flex items-center gap-2">
-                      <Settings className="w-4 h-4" />
-                      Settings
                     </span>
                   </Link>
                   <button
