@@ -184,7 +184,7 @@ export function SearchBar() {
         )}
       </div>
 
-      {showSuggestions && (
+      {showSuggestions && (isLoading || allSuggestions.length > 0 || (searchTerm.length === 0 && (recentSearches.length > 0 || popularSearches.length > 0))) && (
         <div 
           id="search-suggestions"
           className="absolute z-[100] w-full mt-2 sm:mt-3 bg-white border border-grey-200 rounded-xl shadow-large max-h-[60vh] sm:max-h-96 overflow-y-auto"
@@ -258,7 +258,7 @@ export function SearchBar() {
 
               {/* Popular Searches */}
               {searchTerm.length === 0 && allSuggestions.length === 0 && recentSearches.length === 0 && (
-                <div className="py-2 border-t border-grey-200">
+                <div className="py-2">
                   <div className="px-5 py-2 flex items-center gap-2">
                     <TrendingUp className="w-4 h-4 text-grey-400" />
                     <BodySmall className="text-grey-500 font-medium">
@@ -280,6 +280,14 @@ export function SearchBar() {
                       </li>
                     ))}
                   </ul>
+                </div>
+              )}
+
+              {/* No Results Message */}
+              {searchTerm.length >= 2 && allSuggestions.length === 0 && !isLoading && (
+                <div className="p-6 text-center text-grey-500">
+                  <p className="text-sm">No location suggestions found for "{searchTerm}"</p>
+                  <p className="text-xs mt-1 text-grey-400">Try a different search term</p>
                 </div>
               )}
             </>
