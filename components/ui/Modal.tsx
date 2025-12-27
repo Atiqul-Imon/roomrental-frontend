@@ -143,22 +143,22 @@ export function Modal({
         onClick={(e) => e.stopPropagation()}
       >
         {/* Drag Handle with Close Button (Mobile Only) */}
-        <div className="md:hidden flex items-center justify-center pt-3 pb-2 px-4 flex-shrink-0 relative">
+        <div className="md:hidden flex items-center justify-center pt-2.5 pb-1.5 px-4 flex-shrink-0 relative">
           <div className="w-12 h-1 bg-grey-300 rounded-full" />
           {showCloseButton && (
             <button
               onClick={onClose}
-              className="absolute right-4 top-3 p-2.5 text-grey-700 hover:text-grey-900 hover:bg-grey-100 rounded-lg transition-colors z-30 touch-target focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 focus:outline-none bg-white shadow-medium"
+              className="absolute right-3 top-2.5 p-2 text-grey-700 hover:text-grey-900 hover:bg-grey-100 rounded-lg transition-colors z-30 touch-target focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 focus:outline-none bg-white shadow-medium"
               aria-label="Close modal"
             >
-              <X className="w-5 h-5" />
+              <X className="w-4 h-4" />
             </button>
           )}
         </div>
 
         {/* Header (Desktop) */}
         {(title || showCloseButton) && (
-          <div className="hidden md:flex items-center justify-between p-4 md:p-6 border-b border-grey-200 flex-shrink-0">
+          <div className="hidden md:flex items-center justify-between p-4 border-b border-grey-200 flex-shrink-0">
             {title && (
               <h2 id="modal-title" className="text-lg md:text-xl font-bold text-grey-900">
                 {title}
@@ -167,10 +167,10 @@ export function Modal({
             {showCloseButton && (
               <button
                 onClick={onClose}
-                className="p-2 text-grey-400 hover:text-grey-600 hover:bg-grey-100 rounded-lg transition-colors z-20 touch-target focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 focus:outline-none"
+                className="p-1.5 text-grey-400 hover:text-grey-600 hover:bg-grey-100 rounded-lg transition-colors z-20 touch-target focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 focus:outline-none"
                 aria-label="Close modal"
               >
-                <X className="w-5 h-5" />
+                <X className="w-4 h-4" />
               </button>
             )}
           </div>

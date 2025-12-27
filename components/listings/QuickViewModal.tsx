@@ -170,24 +170,24 @@ export function QuickViewModal({ listing, isOpen, onClose }: QuickViewModalProps
           )}
 
           {/* Price Badge */}
-          <div className="absolute top-3 sm:top-4 left-3 sm:left-4 bg-primary-500 text-white px-2.5 sm:px-3 md:px-4 py-1 sm:py-1.5 md:py-2 rounded-lg font-bold text-sm sm:text-base md:text-lg shadow-lg z-10">
+          <div className="absolute top-3 left-3 sm:top-4 sm:left-4 bg-primary-500 text-white px-3 py-1.5 rounded-lg font-bold text-sm sm:text-base shadow-lg z-10">
             ${listing.price.toLocaleString()}/mo
           </div>
         </div>
 
         {/* Content */}
-        <div className="p-3 sm:p-4 md:p-6 space-y-3 sm:space-y-4">
+        <div className="p-4 sm:p-5 md:p-6 space-y-2.5 sm:space-y-3">
           {/* Title and Location */}
-          <div>
-            <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-grey-900 mb-1.5 sm:mb-2">
+          <div className="space-y-1">
+            <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-grey-900 leading-tight">
               {searchQuery ? (
                 <span>{highlightSearchTermsReact(listing.title, searchQuery)}</span>
               ) : (
                 listing.title
               )}
             </h2>
-            <div className="flex items-center gap-2 text-sm md:text-base text-grey-600">
-              <MapPin className="w-4 h-4 flex-shrink-0" />
+            <div className="flex items-center gap-1.5 text-sm text-grey-600">
+              <MapPin className="w-3.5 h-3.5 flex-shrink-0" />
               <span className="break-words">
                 {searchQuery ? (
                   <>
@@ -203,29 +203,29 @@ export function QuickViewModal({ listing, isOpen, onClose }: QuickViewModalProps
           </div>
 
           {/* Property Details */}
-          <div className="flex items-center gap-3 sm:gap-4 md:gap-6 text-xs sm:text-sm text-grey-600 flex-wrap">
+          <div className="flex items-center gap-3 sm:gap-4 text-xs sm:text-sm text-grey-600 flex-wrap">
             {listing.bedrooms !== undefined && (
-              <div className="flex items-center gap-2">
-                <BedDouble className="w-4 h-4" />
+              <div className="flex items-center gap-1.5">
+                <BedDouble className="w-3.5 h-3.5" />
                 <span>{listing.bedrooms} {listing.bedrooms === 1 ? 'bedroom' : 'bedrooms'}</span>
               </div>
             )}
             {listing.bathrooms !== undefined && (
-              <div className="flex items-center gap-2">
-                <Bath className="w-4 h-4" />
+              <div className="flex items-center gap-1.5">
+                <Bath className="w-3.5 h-3.5" />
                 <span>{listing.bathrooms} {listing.bathrooms === 1 ? 'bathroom' : 'bathrooms'}</span>
               </div>
             )}
             {listing.squareFeet !== undefined && (
-              <div className="flex items-center gap-2">
-                <Ruler className="w-4 h-4" />
+              <div className="flex items-center gap-1.5">
+                <Ruler className="w-3.5 h-3.5" />
                 <span>{listing.squareFeet.toLocaleString()} sq ft</span>
               </div>
             )}
           </div>
 
           {/* Description */}
-          <p className="text-sm md:text-base text-grey-700 line-clamp-3">
+          <p className="text-sm text-grey-700 line-clamp-2 leading-relaxed">
             {searchQuery ? (
               <span>{highlightSearchTermsReact(listing.description, searchQuery)}</span>
             ) : (
@@ -233,44 +233,47 @@ export function QuickViewModal({ listing, isOpen, onClose }: QuickViewModalProps
             )}
           </p>
 
-          {/* Amenities Preview */}
-          {listing.amenities && listing.amenities.length > 0 && (
-            <div className="flex items-center gap-2 flex-wrap">
-              <Sparkles className="w-4 h-4 text-primary-500" />
-              <div className="flex gap-2 flex-wrap">
-                {listing.amenities.slice(0, 5).map((amenity) => (
-                  <span
-                    key={amenity}
-                    className="px-2 py-1 bg-grey-100 text-grey-700 text-xs rounded-full"
-                  >
-                    {amenity}
-                  </span>
-                ))}
-                {listing.amenities.length > 5 && (
-                  <span className="px-2 py-1 bg-grey-100 text-grey-700 text-xs rounded-full">
-                    +{listing.amenities.length - 5} more
-                  </span>
-                )}
+          {/* Amenities and Availability - Combined Row */}
+          <div className="flex items-center justify-between gap-3 flex-wrap">
+            {/* Amenities Preview */}
+            {listing.amenities && listing.amenities.length > 0 && (
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <Sparkles className="w-3.5 h-3.5 text-primary-500 flex-shrink-0" />
+                <div className="flex gap-1.5 flex-wrap">
+                  {listing.amenities.slice(0, 4).map((amenity) => (
+                    <span
+                      key={amenity}
+                      className="px-2 py-0.5 bg-grey-100 text-grey-700 text-xs rounded-md font-medium"
+                    >
+                      {amenity}
+                    </span>
+                  ))}
+                  {listing.amenities.length > 4 && (
+                    <span className="px-2 py-0.5 bg-grey-100 text-grey-700 text-xs rounded-md font-medium">
+                      +{listing.amenities.length - 4}
+                    </span>
+                  )}
+                </div>
               </div>
-            </div>
-          )}
+            )}
 
-          {/* Availability */}
-          <div className="flex items-center gap-2 text-sm text-grey-600">
-            <Calendar className="w-4 h-4" />
-            <span>Available: {formattedDate}</span>
+            {/* Availability */}
+            <div className="flex items-center gap-1.5 text-xs sm:text-sm text-grey-600">
+              <Calendar className="w-3.5 h-3.5 flex-shrink-0" />
+              <span className="whitespace-nowrap">{formattedDate}</span>
+            </div>
           </div>
 
           {/* Distance (if available) */}
           {listing.distance !== undefined && (
-            <div className="flex items-center gap-2 text-sm text-grey-600">
-              <MapPin className="w-4 h-4 text-primary-400" />
+            <div className="flex items-center gap-1.5 text-xs sm:text-sm text-grey-600">
+              <MapPin className="w-3.5 h-3.5 text-primary-400 flex-shrink-0" />
               <span>{listing.distance.toFixed(1)} miles away</span>
             </div>
           )}
 
           {/* Actions */}
-          <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 pt-3 sm:pt-4 border-t border-grey-200" style={{ paddingBottom: 'env(safe-area-inset-bottom, 0)' }}>
+          <div className="flex flex-col sm:flex-row gap-2 pt-2.5 border-t border-grey-200" style={{ paddingBottom: 'env(safe-area-inset-bottom, 0)' }}>
             <Button
               onClick={handleViewFullDetails}
               variant="primary"
