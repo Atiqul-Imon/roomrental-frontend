@@ -33,9 +33,9 @@ export function Button({
   };
   
   const sizes = {
-    sm: 'px-3 py-1.5 text-sm h-9',
-    md: 'px-4 py-2 text-base h-11',
-    lg: 'px-6 py-3 text-lg h-12',
+    sm: 'px-3 py-1.5 text-sm h-9 min-h-[44px] md:min-h-0',
+    md: 'px-4 py-2 text-base h-11 min-h-[44px]',
+    lg: 'px-6 py-3 text-lg h-12 min-h-[44px]',
   };
   
   return (

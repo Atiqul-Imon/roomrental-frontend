@@ -116,6 +116,12 @@ const config: Config = {
       transitionTimingFunction: {
         'smooth': 'cubic-bezier(0.4, 0, 0.2, 1)',
       },
+      screens: {
+        'xs': '475px',
+      },
+      spacing: {
+        'touch': '44px', // Minimum touch target size
+      },
     },
   },
   plugins: [],

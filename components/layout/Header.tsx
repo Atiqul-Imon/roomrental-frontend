@@ -36,14 +36,15 @@ export function Header() {
   const isActive = (path: string) => pathname === path;
 
   return (
-    <header className="sticky top-0 z-50 border-b border-grey-200 bg-white/80 backdrop-blur-md shadow-sm">
-      <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-16">
+    <header className="sticky top-0 z-50 border-b border-grey-200 bg-white/95 backdrop-blur-md shadow-sm transition-shadow duration-200">
+      <div className="container mx-auto px-3 sm:px-4">
+        <div className="flex items-center justify-between h-14 md:h-16">
           <Link 
             href="/" 
-            className="text-2xl font-bold text-gradient transition-smooth hover:opacity-90"
+            className="text-xl sm:text-2xl font-bold text-gradient transition-smooth hover:opacity-90"
           >
-            RoomRentalUSA
+            <span className="hidden sm:inline">RoomRentalUSA</span>
+            <span className="sm:hidden">RoomRental</span>
           </Link>
 
           <nav className="hidden md:flex items-center gap-2">

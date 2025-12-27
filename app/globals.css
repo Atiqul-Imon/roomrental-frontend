@@ -287,5 +287,76 @@ body {
     outline: 2px solid #3B82F6;
     outline-offset: 2px;
   }
+  
+  /* Mobile bottom navigation spacing */
+  @media (max-width: 767px) {
+    body {
+      padding-bottom: 64px; /* Space for bottom nav */
+    }
+    
+    /* Ensure main content has proper spacing */
+    main {
+      padding-bottom: env(safe-area-inset-bottom, 0);
+    }
+  }
+  
+  /* Mobile typography utilities */
+  @media (max-width: 767px) {
+    .text-mobile-xs {
+      font-size: 0.75rem; /* 12px */
+      line-height: 1.5;
+    }
+    
+    .text-mobile-sm {
+      font-size: 0.875rem; /* 14px */
+      line-height: 1.5;
+    }
+    
+    .text-mobile-base {
+      font-size: 1rem; /* 16px */
+      line-height: 1.6;
+    }
+    
+    .text-mobile-lg {
+      font-size: 1.125rem; /* 18px */
+      line-height: 1.6;
+    }
+    
+    .text-mobile-xl {
+      font-size: 1.25rem; /* 20px */
+      line-height: 1.5;
+    }
+    
+    .text-mobile-2xl {
+      font-size: 1.5rem; /* 24px */
+      line-height: 1.4;
+    }
+  }
+  
+  /* Touch target utilities */
+  .touch-target {
+    min-width: 44px;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  /* Mobile-specific spacing */
+  @media (max-width: 767px) {
+    .mobile-px {
+      padding-left: 0.75rem; /* 12px */
+      padding-right: 0.75rem;
+    }
+    
+    .mobile-py {
+      padding-top: 1rem; /* 16px */
+      padding-bottom: 1rem;
+    }
+    
+    .mobile-gap {
+      gap: 1rem; /* 16px */
+    }
+  }
 }
 
