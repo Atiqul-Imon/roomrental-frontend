@@ -3,9 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
-import { useQuery } from '@tanstack/react-query';
-import { Home, Search, Heart, MessageSquare, User } from 'lucide-react';
-import { chatApi } from '@/lib/chat-api';
+import { Home, Search, User } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 import { cn } from '@/lib/utils';
 
@@ -16,16 +14,6 @@ export function BottomNav() {
   const [isScrolling, setIsScrolling] = useState(false);
   const lastScrollY = useRef(0);
   const scrollTimeout = useRef<NodeJS.Timeout | null>(null);
-
-  // Get unread message count
-  const { data: unreadData } = useQuery({
-    queryKey: ['unread-count'],
-    queryFn: () => chatApi.getUnreadCount(),
-    enabled: isAuthenticated,
-    refetchInterval: 30000, // Refetch every 30 seconds
-  });
-
-  const unreadCount = unreadData ?? 0;
 
   // Scroll behavior: hide on scroll down, show on scroll up
   useEffect(() => {
@@ -110,25 +98,12 @@ export function BottomNav() {
       show: true,
     },
     {
-      href: '/favorites',
-      label: 'Favorites',
-      icon: Heart,
-      show: isAuthenticated,
-    },
-    {
-      href: '/chat',
-      label: 'Messages',
-      icon: MessageSquare,
-      show: isAuthenticated,
-      badge: unreadCount > 0 ? unreadCount : null,
-    },
-    {
       href: isAuthenticated && user ? `/profile/${user.id}` : '/auth/login',
       label: 'Profile',
       icon: User,
       show: true,
     },
-  ].filter(item => item.show);
+  ];
 
   return (
     <nav 
@@ -170,14 +145,6 @@ export function BottomNav() {
                   }`}
                   aria-hidden="true"
                 />
-                {item.badge && item.badge > 0 && (
-                  <span 
-                    className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1"
-                    aria-label={`${item.badge} unread messages`}
-                  >
-                    {item.badge > 9 ? '9+' : item.badge}
-                  </span>
-                )}
               </div>
               <span 
                 className={`
