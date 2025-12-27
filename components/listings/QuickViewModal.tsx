@@ -74,8 +74,12 @@ export function QuickViewModal({ listing, isOpen, onClose }: QuickViewModalProps
     : 'Not specified';
 
   const handleViewFullDetails = () => {
-    router.push(`/listings/${listing._id}`);
+    // Close modal first, then navigate
     onClose();
+    // Use setTimeout to ensure modal closes before navigation
+    setTimeout(() => {
+      router.push(`/listings/${listing._id}`);
+    }, 150);
   };
 
   const handleContactLandlord = () => {
