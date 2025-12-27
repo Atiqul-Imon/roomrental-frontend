@@ -1,6 +1,7 @@
 'use client';
 
 import { ReactNode, useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useFocusTrap, useEscapeKey } from '@/components/accessibility/KeyboardNavigation';
@@ -58,6 +59,11 @@ export function Modal({
   }, [isOpen]);
 
   const [isAnimating, setIsAnimating] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     if (isOpen) {
@@ -65,9 +71,10 @@ export function Modal({
     }
   }, [isOpen]);
 
+  if (!mounted) return null;
   if (!isOpen && !isAnimating) return null;
 
-  return (
+  const modalContent = (
     <div
       className={cn(
         'fixed z-[100] flex justify-center',
@@ -170,4 +177,7 @@ export function Modal({
       </div>
     </div>
   );
+
+  // Render modal using portal to document body to avoid parent positioning issues
+  return createPortal(modalContent, document.body);
 }
