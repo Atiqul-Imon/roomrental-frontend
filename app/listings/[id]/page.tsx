@@ -179,7 +179,7 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
               <div className="bg-white rounded-xl p-5 sm:p-6 md:p-8 shadow-soft border-refined border-grey-200">
                 <div className="flex items-start justify-between mb-5 sm:mb-6">
                   <div className="flex-1 min-w-0">
-                    <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4 text-grey-900 leading-tight">{data.title}</h1>
+                    <h1 className="font-heading text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4 text-grey-900 leading-tight">{data.title}</h1>
                     <div className="flex items-center gap-2 sm:gap-4 text-grey-600">
                       <div className="flex items-center gap-1 sm:gap-1.5 min-w-0">
                         <MapPin className="w-4 h-4 sm:w-5 sm:h-5 text-primary-600 flex-shrink-0" />
@@ -236,7 +236,7 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
 
               {/* Description - Enhanced */}
               <div className="bg-white rounded-xl p-4 sm:p-6 md:p-8 shadow-large border border-grey-100">
-                <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-4 sm:mb-6 text-grey-900 flex items-center gap-2 sm:gap-3">
+                <h2 className="font-heading text-xl sm:text-2xl md:text-3xl font-bold mb-4 sm:mb-6 text-grey-900 flex items-center gap-2 sm:gap-3">
                   <span className="text-2xl sm:text-3xl">📝</span>
                   About This Room
                 </h2>
@@ -248,7 +248,7 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
               {/* Amenities - Enhanced for Students */}
               {data.amenities.length > 0 && (
                 <div className="bg-white rounded-xl p-5 sm:p-6 md:p-8 shadow-large border-refined border-grey-200">
-                  <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-5 sm:mb-6 md:mb-8 text-grey-900 flex items-center gap-2 sm:gap-3 leading-tight">
+                  <h2 className="font-heading text-xl sm:text-2xl md:text-3xl font-bold mb-5 sm:mb-6 md:mb-8 text-grey-900 flex items-center gap-2 sm:gap-3 leading-tight">
                     <span className="text-2xl sm:text-3xl md:text-4xl">✨</span>
                     What's Included
                   </h2>
@@ -283,7 +283,7 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
             <div className="lg:sticky lg:top-20 space-y-4 sm:space-y-6 h-fit">
               {/* Contact Card - Student-Friendly */}
               <div className="bg-gradient-to-br from-white to-primary-50/30 border-2 border-primary-200 rounded-xl p-5 sm:p-6 md:p-8 shadow-large">
-                <h2 className="text-lg sm:text-xl md:text-2xl font-bold mb-4 sm:mb-5 md:mb-6 text-grey-900 flex items-center gap-2 sm:gap-3 leading-tight">
+                <h2 className="font-heading text-lg sm:text-xl md:text-2xl font-bold mb-4 sm:mb-5 md:mb-6 text-grey-900 flex items-center gap-2 sm:gap-3 leading-tight">
                   <span className="text-xl sm:text-2xl md:text-3xl">👤</span>
                   Meet Your Landlord
                 </h2>
@@ -332,7 +332,7 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
 
               {/* Quick Info - Enhanced */}
               <div className="bg-white border-2 border-grey-200 rounded-xl p-4 sm:p-6 shadow-large">
-                <h2 className="text-lg sm:text-xl font-bold mb-3 sm:mb-4 text-grey-900 flex items-center gap-2">
+                <h2 className="font-heading text-lg sm:text-xl font-bold mb-3 sm:mb-4 text-grey-900 flex items-center gap-2">
                   <span className="text-xl sm:text-2xl">ℹ️</span>
                   Quick Details
                 </h2>
@@ -365,7 +365,7 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
                 <div className="flex items-start gap-2 sm:gap-3">
                   <span className="text-2xl sm:text-3xl">🛡️</span>
                   <div>
-                    <h3 className="font-bold text-sm sm:text-base text-grey-900 mb-1 sm:mb-2">Verified Listing</h3>
+                    <h3 className="font-heading font-bold text-sm sm:text-base text-grey-900 mb-1 sm:mb-2">Verified Listing</h3>
                     <p className="text-xs sm:text-sm text-grey-700">
                       This listing has been verified by our team for accuracy and safety.
                     </p>
@@ -378,7 +378,7 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
           {/* Reviews Section */}
           <div className="mt-8 sm:mt-12 border-t border-border pt-6 sm:pt-8">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0 mb-4 sm:mb-6">
-              <h2 className="text-xl sm:text-2xl font-semibold">Reviews</h2>
+              <h2 className="font-heading text-xl sm:text-2xl font-semibold">Reviews</h2>
               {isAuthenticated && !isOwner && user?.id !== data.landlordId._id && (
                 <button
                   onClick={() => setShowReviewForm(!showReviewForm)}
