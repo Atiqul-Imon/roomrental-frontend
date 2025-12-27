@@ -13,6 +13,7 @@ import { ErrorState } from '@/components/ui/ErrorState';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { queryConfig } from '@/lib/query-config';
 import { Loader2 } from 'lucide-react';
+import { QuickViewModal } from './QuickViewModal';
 
 export function ListingList() {
   const searchParams = useSearchParams();
@@ -21,6 +22,7 @@ export function ListingList() {
   const [pullDistance, setPullDistance] = useState(0);
   const touchStartY = useRef<number | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const [selectedListing, setSelectedListing] = useState<Listing | null>(null);
   
   // Build query params from URL
   const queryParams: Record<string, string> = {};
@@ -212,10 +214,19 @@ export function ListingList() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {data.listings.map((listing, index) => (
               <div key={listing._id} className="stagger-item fade-in-up-delayed" style={{ animationDelay: `${index * 0.05}s` }}>
-                <ListingCard listing={listing} />
+                <ListingCard 
+                  listing={listing} 
+                  onQuickView={(listing) => setSelectedListing(listing)}
+                />
               </div>
             ))}
           </div>
+          {/* Single modal for all listings */}
+          <QuickViewModal
+            listing={selectedListing}
+            isOpen={!!selectedListing}
+            onClose={() => setSelectedListing(null)}
+          />
           <Pagination
             currentPage={data.page}
             totalPages={data.totalPages}

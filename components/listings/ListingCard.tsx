@@ -5,7 +5,6 @@ import { useState, useRef, useEffect } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { MapPin, Calendar, Sparkles, Navigation, Check, Heart } from 'lucide-react';
 import { imageKitPresets } from '@/lib/imagekit';
-import { QuickViewModal } from './QuickViewModal';
 import { highlightSearchTermsReact } from '@/lib/search-highlight';
 import { useComparisonStore } from '@/lib/comparison-store';
 import { useAuth } from '@/lib/auth-context';
@@ -13,9 +12,10 @@ import { api } from '@/lib/api';
 
 interface ListingCardProps {
   listing: Listing;
+  onQuickView?: (listing: Listing) => void;
 }
 
-export function ListingCard({ listing }: ListingCardProps) {
+export function ListingCard({ listing, onQuickView }: ListingCardProps) {
   const searchParams = useSearchParams();
   const router = useRouter();
   const { isAuthenticated } = useAuth();
@@ -26,7 +26,6 @@ export function ListingCard({ listing }: ListingCardProps) {
     : originalImageUrl;
   const formattedDate = format(new Date(listing.availabilityDate), 'MMM dd, yyyy');
   const [imageError, setImageError] = useState(false);
-  const [isQuickViewOpen, setIsQuickViewOpen] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
   const [swipeOffset, setSwipeOffset] = useState(0);
   const [isSwiping, setIsSwiping] = useState(false);
@@ -133,7 +132,7 @@ export function ListingCard({ listing }: ListingCardProps) {
       return;
     }
     e.preventDefault();
-    setIsQuickViewOpen(true);
+    onQuickView?.(listing);
   };
 
   return (
@@ -146,7 +145,7 @@ export function ListingCard({ listing }: ListingCardProps) {
         onKeyDown={(e) => {
           if (e.key === 'Enter' || e.key === ' ') {
             e.preventDefault();
-            setIsQuickViewOpen(true);
+            onQuickView?.(listing);
           }
         }}
         aria-label={`Quick view listing: ${listing.title} in ${listing.location.city}, ${listing.location.state} for $${listing.price} per month`}
@@ -297,11 +296,6 @@ export function ListingCard({ listing }: ListingCardProps) {
         </div>
       </article>
       </div>
-      <QuickViewModal
-        listing={listing}
-        isOpen={isQuickViewOpen}
-        onClose={() => setIsQuickViewOpen(false)}
-      />
     </>
   );
 }
