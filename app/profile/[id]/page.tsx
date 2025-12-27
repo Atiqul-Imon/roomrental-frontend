@@ -16,16 +16,13 @@ import { ProfileStats } from '@/components/profile/ProfileStats';
 import { ProfileTabs } from '@/components/profile/ProfileTabs';
 import { SavedListings } from '@/components/profile/SavedListings';
 import { UserListings } from '@/components/profile/UserListings';
-import { Home, Star, Activity, User as UserIcon, Heart, Search, List, Clock } from 'lucide-react';
+import { Home, Star, Activity, User as UserIcon, Heart, Search, List } from 'lucide-react';
 import Link from 'next/link';
-import { useState } from 'react';
-import { SearchHistorySidebar } from '@/components/search/SearchHistory';
 
 export default function ProfilePage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = use(params);
   const { user: currentUser } = useAuth();
   const userId = resolvedParams.id;
-  const [isHistoryOpen, setIsHistoryOpen] = useState(false);
 
   const { data: profile, isLoading } = useQuery({
     queryKey: ['profile', userId],
@@ -270,19 +267,6 @@ export default function ProfilePage({ params }: { params: Promise<{ id: string }
             <ProfileStats role={profile.role} stats={stats} />
           </div>
 
-          {/* Search History Button (for own profile) */}
-          {isOwnProfile && currentUser?.role === 'student' && (
-            <div className="mb-4 sm:mb-6 md:mb-8">
-              <button
-                onClick={() => setIsHistoryOpen(true)}
-                className="w-full sm:w-auto px-4 py-3 bg-white border border-grey-200 rounded-xl shadow-medium hover:shadow-large transition-all duration-200 flex items-center justify-center gap-2 text-grey-700 hover:text-primary-600 hover:border-primary-300"
-              >
-                <Clock className="w-5 h-5" />
-                <span className="font-medium">View Search History</span>
-              </button>
-            </div>
-          )}
-
           {/* Tabs */}
           <div className="mt-4 sm:mt-6 md:mt-8">
             <ProfileTabs 
@@ -295,7 +279,6 @@ export default function ProfilePage({ params }: { params: Promise<{ id: string }
         </div>
       </main>
       <Footer />
-      <SearchHistorySidebar isOpen={isHistoryOpen} onClose={() => setIsHistoryOpen(false)} />
     </>
   );
 }

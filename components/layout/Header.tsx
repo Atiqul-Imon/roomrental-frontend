@@ -6,16 +6,14 @@ import { useAuth } from '@/lib/auth-context';
 import { useRouter, usePathname } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 import { Button } from '@/components/ui/Button';
-import { Home, Search, Heart, Plus, LayoutDashboard, User, Settings, LogOut, MessageSquare, Clock, Menu, X } from 'lucide-react';
+import { Home, Search, Heart, Plus, LayoutDashboard, User, Settings, LogOut, MessageSquare, Menu, X } from 'lucide-react';
 import { chatApi } from '@/lib/chat-api';
 import { SavedSearchesDropdown } from '@/components/search/SavedSearchesDropdown';
-import { SearchHistorySidebar } from '@/components/search/SearchHistory';
 
 export function Header() {
   const { user, isAuthenticated, logout } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
-  const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   // Get unread message count
@@ -65,14 +63,6 @@ export function Header() {
             {isAuthenticated && (
               <>
                 <SavedSearchesDropdown />
-                <Button
-                  onClick={() => setIsHistoryOpen(true)}
-                  variant="outline"
-                  className="flex items-center gap-2"
-                >
-                  <Clock className="w-4 h-4" />
-                  History
-                </Button>
               </>
             )}
 
@@ -227,16 +217,6 @@ export function Header() {
               
               {isAuthenticated ? (
                 <>
-                  <button
-                    onClick={() => {
-                      setIsHistoryOpen(true);
-                      setIsMobileMenuOpen(false);
-                    }}
-                    className="px-4 py-3 rounded-lg text-sm font-medium text-grey-700 hover:text-primary-600 hover:bg-grey-50 transition-all duration-200 text-left flex items-center gap-2"
-                  >
-                    <Clock className="w-4 h-4" />
-                    Search History
-                  </button>
                   <Link
                     href="/favorites"
                     onClick={() => setIsMobileMenuOpen(false)}
@@ -363,7 +343,6 @@ export function Header() {
           </div>
         )}
       </div>
-      <SearchHistorySidebar isOpen={isHistoryOpen} onClose={() => setIsHistoryOpen(false)} />
     </header>
   );
 }
