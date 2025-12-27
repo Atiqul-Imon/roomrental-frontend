@@ -4,64 +4,11 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { Home, Search, User } from 'lucide-react';
-import { useState, useEffect, useRef } from 'react';
 import { cn } from '@/lib/utils';
 
 export function BottomNav() {
   const pathname = usePathname();
   const { user, isAuthenticated } = useAuth();
-  const [isVisible, setIsVisible] = useState(true);
-  const [isScrolling, setIsScrolling] = useState(false);
-  const lastScrollY = useRef(0);
-  const scrollTimeout = useRef<NodeJS.Timeout | null>(null);
-
-  // Scroll behavior: hide on scroll down, show on scroll up
-  useEffect(() => {
-    let ticking = false;
-
-    const handleScroll = () => {
-      if (!ticking) {
-        window.requestAnimationFrame(() => {
-          const currentScrollY = window.scrollY;
-          const scrollDifference = currentScrollY - lastScrollY.current;
-
-          // Hide nav when scrolling down, show when scrolling up
-          if (scrollDifference > 5 && currentScrollY > 100) {
-            setIsVisible(false);
-          } else if (scrollDifference < -5) {
-            setIsVisible(true);
-          }
-
-          lastScrollY.current = currentScrollY;
-          ticking = false;
-        });
-        ticking = true;
-      }
-    };
-
-    // Show nav when scrolling stops
-    const handleScrollEnd = () => {
-      setIsScrolling(true);
-      if (scrollTimeout.current) {
-        clearTimeout(scrollTimeout.current);
-      }
-      scrollTimeout.current = setTimeout(() => {
-        setIsScrolling(false);
-        setIsVisible(true);
-      }, 150);
-    };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    window.addEventListener('scroll', handleScrollEnd, { passive: true });
-
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-      window.removeEventListener('scroll', handleScrollEnd);
-      if (scrollTimeout.current) {
-        clearTimeout(scrollTimeout.current);
-      }
-    };
-  }, []);
 
   // Haptic feedback helper
   const triggerHaptic = (type: 'light' | 'medium' | 'heavy' = 'light') => {
@@ -109,8 +56,7 @@ export function BottomNav() {
     <nav 
       className={cn(
         'fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-grey-200 md:hidden',
-        'transition-transform duration-300 ease-in-out',
-        isVisible ? 'translate-y-0' : 'translate-y-full'
+        'shadow-lg'
       )}
       style={{
         paddingBottom: 'env(safe-area-inset-bottom)',
