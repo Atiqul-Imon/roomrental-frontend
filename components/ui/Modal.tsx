@@ -69,11 +69,16 @@ export function Modal({
 
   return (
     <div
-      className="fixed inset-0 z-[100] flex items-end md:items-center justify-center p-0 md:p-2 lg:p-4"
-      style={{
-        paddingTop: 'env(safe-area-inset-top, 0px)',
-        marginTop: '3.5rem', // h-14 for mobile header
-      }}
+      className={cn(
+        'fixed z-[100] flex justify-center',
+        // Mobile: Start below header (h-14 = 3.5rem), Desktop: Full viewport
+        'top-14 md:top-0',
+        'left-0 right-0 bottom-0',
+        // Mobile: Align to bottom (bottom sheet), Desktop: Center vertically
+        'items-end md:items-center',
+        // Padding: None on mobile, padding on desktop
+        'p-0 md:p-2 lg:p-4'
+      )}
       onClick={closeOnOverlayClick ? onClose : undefined}
       role="dialog"
       aria-modal="true"
@@ -84,7 +89,7 @@ export function Modal({
         if (!isOpen) setIsAnimating(false);
       }}
     >
-      {/* Backdrop */}
+      {/* Backdrop - Full viewport coverage */}
       <div
         className={cn(
           "absolute inset-0 bg-black/70 backdrop-blur-sm transition-opacity duration-200",
@@ -104,22 +109,22 @@ export function Modal({
         }}
         className={cn(
           'relative w-full bg-white shadow-2xl border border-grey-200',
-          'max-h-[85vh] md:max-h-[90vh] flex flex-col',
+          'flex flex-col',
           // Mobile: Bottom sheet with rounded top corners
-          'md:rounded-xl',
-          'rounded-t-2xl md:rounded-t-xl',
+          'rounded-t-2xl md:rounded-xl',
           // Mobile: Full width, Desktop: Sized
           'md:w-auto',
           // Mobile: Slide up animation, Desktop: Scale animation
           isOpen 
             ? 'modal-slide-up md:modal-scale-in' 
             : 'translate-y-full md:scale-95 opacity-0',
-          sizeClasses[size]
+          sizeClasses[size],
+          // Height constraints
+          // Mobile: Available space below header, Desktop: 90vh max
+          'max-h-[calc(100vh-3.5rem-env(safe-area-inset-bottom,0px))]',
+          'md:max-h-[90vh]'
         )}
         onClick={(e) => e.stopPropagation()}
-        style={{
-          maxHeight: 'calc(85vh - env(safe-area-inset-bottom, 0px) - 3.5rem)',
-        }}
       >
         {/* Drag Handle (Mobile Only) */}
         <div className="md:hidden flex justify-center pt-3 pb-2 flex-shrink-0">
@@ -137,7 +142,7 @@ export function Modal({
             {showCloseButton && (
               <button
                 onClick={onClose}
-                className="p-2 text-grey-400 hover:text-grey-600 hover:bg-grey-100 rounded-lg transition-colors z-20 touch-target"
+                className="p-2 text-grey-400 hover:text-grey-600 hover:bg-grey-100 rounded-lg transition-colors z-20 touch-target focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 focus:outline-none"
                 aria-label="Close modal"
               >
                 <X className="w-5 h-5" />
@@ -152,4 +157,3 @@ export function Modal({
     </div>
   );
 }
-
