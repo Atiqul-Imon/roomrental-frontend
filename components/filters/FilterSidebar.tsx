@@ -209,32 +209,46 @@ export function FilterSidebar({ isOpen, onClose }: FilterSidebarProps) {
     <>
       {/* Overlay */}
       <div
-        className={`fixed inset-0 bg-black/50 z-40 lg:hidden transition-opacity duration-300 ${
+        className={`fixed inset-0 bg-black/50 z-40 md:hidden transition-opacity duration-300 ${
           isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
         }`}
         onClick={onClose}
       />
       
-      {/* Sidebar */}
-      <div className={`fixed right-0 top-0 h-full w-80 bg-white border-l border-grey-200 z-50 overflow-y-auto shadow-large lg:static lg:z-auto lg:w-72 lg:shadow-none transition-transform duration-300 ${
-        isOpen ? 'translate-x-0' : 'translate-x-full lg:translate-x-0'
-      } ${isOpen ? 'block' : 'hidden lg:block'}`}>
+      {/* Bottom Sheet (Mobile) / Sidebar (Desktop) */}
+      <div className={`
+        fixed bottom-0 left-0 right-0 md:right-auto md:top-0 md:left-auto
+        h-[85vh] md:h-full
+        w-full md:w-80 lg:w-72
+        bg-white border-t md:border-l md:border-t-0 border-grey-200
+        z-50 overflow-y-auto shadow-large
+        md:static md:z-auto md:shadow-none
+        transition-transform duration-300 ease-out
+        ${isOpen ? 'translate-y-0' : 'translate-y-full md:translate-y-0'}
+        ${isOpen ? 'block' : 'hidden md:block'}
+        rounded-t-2xl md:rounded-none
+      `}>
         {/* Header */}
-        <div className="sticky top-0 bg-white border-b border-grey-200 p-5 flex items-center justify-between z-10">
+        <div className="sticky top-0 bg-white border-b border-grey-200 p-4 sm:p-5 flex items-center justify-between z-10">
           <div className="flex items-center gap-2">
             <SlidersHorizontal className="w-5 h-5 text-primary-600" />
             <h2 className="font-bold text-lg text-grey-900">Filters</h2>
           </div>
           <button
             onClick={onClose}
-            className="lg:hidden text-grey-400 hover:text-grey-600 transition-colors p-1 rounded-full hover:bg-grey-100"
+            className="md:hidden text-grey-400 hover:text-grey-600 transition-colors p-1.5 rounded-full hover:bg-grey-100 touch-target"
             aria-label="Close filters"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        <div className="p-5 space-y-6">
+        {/* Drag Handle (Mobile Only) */}
+        <div className="md:hidden flex justify-center pt-2 pb-1">
+          <div className="w-12 h-1 bg-grey-300 rounded-full" />
+        </div>
+
+        <div className="p-4 sm:p-5 space-y-4 sm:space-y-6">
           {/* Location Section */}
           <div className="bg-grey-50 rounded-xl p-4 space-y-4">
             <div className="flex items-center gap-2 mb-3">
@@ -610,18 +624,18 @@ export function FilterSidebar({ isOpen, onClose }: FilterSidebarProps) {
           )}
 
           {/* Actions */}
-          <div className="flex gap-3 pt-4 border-t border-grey-200 sticky bottom-0 bg-white -mx-5 px-5 pb-5">
+          <div className="flex gap-3 pt-4 border-t border-grey-200 sticky bottom-0 bg-white -mx-4 sm:-mx-5 px-4 sm:px-5 pb-4 sm:pb-5 md:pb-5" style={{ paddingBottom: 'max(1rem, env(safe-area-inset-bottom))' }}>
             <Button
               onClick={applyFilters}
               variant="primary"
-              className="flex-1"
+              className="flex-1 min-h-[44px]"
             >
               Apply Filters
             </Button>
             <Button
               onClick={clearFilters}
               variant="outline"
-              className="px-6"
+              className="px-4 sm:px-6 min-h-[44px]"
             >
               Clear
             </Button>

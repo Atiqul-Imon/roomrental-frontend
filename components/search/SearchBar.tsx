@@ -129,8 +129,8 @@ export function SearchBar() {
   return (
     <div ref={searchRef} className="relative w-full max-w-3xl mx-auto">
       <div className="relative">
-        <div className="absolute left-4 top-1/2 transform -translate-y-1/2 z-10">
-          <Search className="w-5 h-5 text-grey-400" />
+        <div className="absolute left-3 sm:left-4 top-1/2 transform -translate-y-1/2 z-10">
+          <Search className="w-4 h-4 sm:w-5 sm:h-5 text-grey-400" />
         </div>
         <input
           type="text"
@@ -145,7 +145,7 @@ export function SearchBar() {
             }
           }}
           placeholder="Search by location, city, or keywords..."
-          className="w-full pl-12 pr-12 py-4 bg-white border-2 border-grey-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200 shadow-medium text-base !text-grey-900 placeholder:text-grey-400"
+          className="w-full pl-10 sm:pl-12 pr-10 sm:pr-12 py-3 sm:py-4 bg-white border-2 border-grey-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200 shadow-medium text-sm sm:text-base !text-grey-900 placeholder:text-grey-400 min-h-[44px]"
           aria-label="Search listings by location, city, or keywords"
           aria-autocomplete="list"
           aria-expanded={showSuggestions}
@@ -158,10 +158,10 @@ export function SearchBar() {
         {searchTerm && (
           <button
             onClick={clearSearch}
-            className="absolute right-4 top-1/2 transform -translate-y-1/2 text-grey-400 hover:text-grey-600 transition-colors duration-200 p-1 rounded-full hover:bg-grey-100"
+            className="absolute right-3 sm:right-4 top-1/2 transform -translate-y-1/2 text-grey-400 hover:text-grey-600 transition-colors duration-200 p-1.5 sm:p-1 rounded-full hover:bg-grey-100 touch-target"
             aria-label="Clear search"
           >
-            <X className="w-5 h-5" />
+            <X className="w-4 h-4 sm:w-5 sm:h-5" />
           </button>
         )}
       </div>
@@ -169,7 +169,7 @@ export function SearchBar() {
       {showSuggestions && (
         <div 
           id="search-suggestions"
-          className="absolute z-[100] w-full mt-3 bg-white border border-grey-200 rounded-xl shadow-large max-h-96 overflow-y-auto"
+          className="absolute z-[100] w-full mt-2 sm:mt-3 bg-white border border-grey-200 rounded-xl shadow-large max-h-[60vh] sm:max-h-96 overflow-y-auto"
           role="listbox"
           aria-label="Search suggestions"
         >
@@ -193,7 +193,7 @@ export function SearchBar() {
                       <li key={index} role="option">
                         <button
                           onClick={() => handleSuggestionClick(suggestion.type, suggestion.value)}
-                          className="w-full text-left px-5 py-3 hover:bg-primary-50 transition-colors duration-200 focus:bg-primary-50 focus:outline-none group"
+                          className="w-full text-left px-4 sm:px-5 py-2.5 sm:py-3 hover:bg-primary-50 transition-colors duration-200 focus:bg-primary-50 focus:outline-none group min-h-[44px] flex items-center"
                           aria-label={`Select ${suggestion.value} (${suggestion.type})`}
                         >
                           <div className="flex items-center justify-between">

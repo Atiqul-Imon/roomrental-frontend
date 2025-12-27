@@ -83,7 +83,7 @@ export function ListingList() {
 
   if (isLoading) {
     return (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" role="status" aria-label="Loading listings">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6" role="status" aria-label="Loading listings">
         {[...Array(6)].map((_, i) => (
           <ListingCardSkeleton key={i} />
         ))}
@@ -115,8 +115,8 @@ export function ListingList() {
 
   return (
     <>
-      <div className="flex items-center justify-between mb-6">
-        <div className="text-sm text-muted-foreground">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0 mb-4 sm:mb-6">
+        <div className="text-xs sm:text-sm text-muted-foreground">
           {data.total > 0 ? (
             <>Found {data.total} {data.total === 1 ? 'listing' : 'listings'}</>
           ) : (
@@ -136,7 +136,7 @@ export function ListingList() {
         />
       ) : (
         <>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {data.listings.map((listing, index) => (
               <div key={listing._id} className="stagger-item">
                 <ListingCard listing={listing} />

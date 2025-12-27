@@ -84,12 +84,12 @@ export function FilterChips() {
   const hasMultipleGroups = Object.values(filterGroups).filter(g => g.length > 0).length > 1;
 
   return (
-    <div className="flex flex-col gap-3">
+    <div className="flex flex-col gap-2 sm:gap-3">
       {/* Filter Count Badge */}
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <Filter className="w-4 h-4 text-grey-500" />
-          <BodySmall className="text-grey-600 font-medium">
+        <div className="flex items-center gap-1.5 sm:gap-2">
+          <Filter className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-grey-500" />
+          <BodySmall className="text-xs sm:text-sm text-grey-600 font-medium">
             {activeFilters.length} {activeFilters.length === 1 ? 'filter' : 'filters'} active
           </BodySmall>
         </div>
@@ -98,7 +98,7 @@ export function FilterChips() {
             variant="ghost"
             size="sm"
             onClick={clearAllFilters}
-            className="text-grey-600 hover:text-grey-900"
+            className="text-xs sm:text-sm text-grey-600 hover:text-grey-900 min-h-[32px] sm:min-h-0"
           >
             Clear all
           </Button>
@@ -106,7 +106,7 @@ export function FilterChips() {
       </div>
 
       {/* Filter Chips */}
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap gap-1.5 sm:gap-2">
         {activeFilters.map((filter) => {
           const typeColors = {
             search: 'bg-primary-50 text-primary-700 border-primary-200',
@@ -121,18 +121,18 @@ export function FilterChips() {
               key={filter.key}
               variant="outline"
               className={cn(
-                'flex items-center gap-2 px-3 py-1.5 rounded-lg border-2',
-                'transition-all duration-200 hover:shadow-sm',
+                'flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg border-2',
+                'transition-all duration-200 hover:shadow-sm text-xs sm:text-sm',
                 typeColors[filter.type as keyof typeof typeColors] || 'bg-grey-50 text-grey-700 border-grey-200'
               )}
             >
-              <span className="font-medium">{filter.value}</span>
+              <span className="font-medium truncate max-w-[120px] sm:max-w-none">{filter.value}</span>
               <button
                 onClick={() => removeFilter(filter.key, filter.value)}
-                className="ml-1 p-0.5 rounded-full hover:bg-white/50 transition-colors"
+                className="ml-0.5 sm:ml-1 p-1 sm:p-0.5 rounded-full hover:bg-white/50 transition-colors touch-target flex-shrink-0"
                 aria-label={`Remove ${filter.label} filter`}
               >
-                <X className="w-3.5 h-3.5" />
+                <X className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
               </button>
             </Badge>
           );

@@ -78,40 +78,40 @@ export default function ListingsPage() {
           </div>
         </section>
 
-        <div className="container mx-auto px-4 py-8">
+        <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-6 md:py-8">
           {/* Filter Presets */}
-          <div className="mb-6">
+          <div className="mb-4 sm:mb-6">
             <Suspense fallback={null}>
               <FilterPresetsContent />
             </Suspense>
           </div>
 
           {/* Filter Toggle and View Controls */}
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
-            <div className="flex items-center gap-4 flex-wrap">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 mb-4 sm:mb-6">
+            <div className="flex items-center gap-2 sm:gap-4 flex-wrap w-full sm:w-auto">
               <ViewToggle view={viewMode} onViewChange={setViewMode} />
               <Suspense fallback={null}>
                 <SaveSearchButton />
               </Suspense>
               <button
                 onClick={() => setIsFilterOpen(!isFilterOpen)}
-                className="flex items-center gap-2 px-4 py-2 bg-white border border-grey-300 rounded-lg hover:bg-grey-50 transition-all duration-200 shadow-soft lg:hidden"
+                className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-white border border-grey-300 rounded-lg hover:bg-grey-50 transition-all duration-200 shadow-soft md:hidden min-h-[44px] touch-target"
               >
-                <SlidersHorizontal className="w-5 h-5" />
-                <span className="font-medium">Filters</span>
+                <SlidersHorizontal className="w-4 h-4 sm:w-5 sm:h-5" />
+                <span className="font-medium text-sm sm:text-base">Filters</span>
               </button>
             </div>
           </div>
 
           {/* Active Filter Chips */}
-          <div className="mb-6">
+          <div className="mb-4 sm:mb-6">
             <Suspense fallback={null}>
               <FilterChipsContent />
             </Suspense>
           </div>
 
           {/* Content with Sidebar */}
-          <div className="flex gap-6 relative">
+          <div className="flex gap-4 sm:gap-6 relative">
             {/* Filter Sidebar */}
             <Suspense fallback={null}>
               <FilterSidebarContent isOpen={isFilterOpen} onClose={() => setIsFilterOpen(false)} />
