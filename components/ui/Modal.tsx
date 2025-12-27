@@ -84,25 +84,31 @@ export function Modal({
         // Mobile: Align to bottom (bottom sheet), Desktop: Center vertically
         'items-end md:items-center',
         // Padding: None on mobile, padding on desktop
-        'p-0 md:p-2 lg:p-4'
+        'p-0 md:p-2 lg:p-4',
+        // Disable pointer events when closing to prevent blocking clicks
+        !isOpen && 'pointer-events-none'
       )}
-      onClick={closeOnOverlayClick ? onClose : undefined}
+      onClick={closeOnOverlayClick && isOpen ? onClose : undefined}
       role="dialog"
       aria-modal="true"
       aria-labelledby={title ? 'modal-title' : undefined}
       aria-describedby={ariaDescribedBy}
       aria-label={ariaLabel}
       onAnimationEnd={() => {
-        if (!isOpen) setIsAnimating(false);
+        if (!isOpen) {
+          setIsAnimating(false);
+        }
       }}
     >
       {/* Backdrop - Full viewport coverage */}
       <div
         className={cn(
           "absolute inset-0 bg-black/70 backdrop-blur-sm transition-opacity duration-200",
-          isOpen ? "opacity-100" : "opacity-0"
+          isOpen ? "opacity-100" : "opacity-0",
+          // Disable pointer events when closing
+          !isOpen && "pointer-events-none"
         )}
-        onClick={closeOnOverlayClick ? onClose : undefined}
+        onClick={closeOnOverlayClick && isOpen ? onClose : undefined}
         aria-hidden="true"
       />
 
