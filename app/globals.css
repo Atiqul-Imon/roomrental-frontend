@@ -84,6 +84,10 @@ body {
     animation: fadeIn 0.3s ease-out;
   }
   
+  .animate-fade-in {
+    animation: fadeIn 0.2s ease-out;
+  }
+  
   /* Stagger animation for lists */
   .stagger-item {
     animation: fadeIn 0.4s ease-out backwards;

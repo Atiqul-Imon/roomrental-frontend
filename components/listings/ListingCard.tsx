@@ -1,13 +1,15 @@
 import Link from 'next/link';
 import { Listing } from '@/types';
 import { format } from 'date-fns';
-import { useState } from 'react';
-import { useSearchParams } from 'next/navigation';
-import { MapPin, Calendar, Sparkles, Navigation, Check } from 'lucide-react';
+import { useState, useRef, useEffect } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
+import { MapPin, Calendar, Sparkles, Navigation, Check, Heart } from 'lucide-react';
 import { imageKitPresets } from '@/lib/imagekit';
 import { QuickViewModal } from './QuickViewModal';
 import { highlightSearchTermsReact } from '@/lib/search-highlight';
 import { useComparisonStore } from '@/lib/comparison-store';
+import { useAuth } from '@/lib/auth-context';
+import { api } from '@/lib/api';
 
 interface ListingCardProps {
   listing: Listing;
@@ -15,6 +17,8 @@ interface ListingCardProps {
 
 export function ListingCard({ listing }: ListingCardProps) {
   const searchParams = useSearchParams();
+  const router = useRouter();
+  const { isAuthenticated } = useAuth();
   const searchQuery = searchParams.get('search') || '';
   const originalImageUrl = listing.images[0] || '/placeholder-room.jpg';
   const imageUrl = originalImageUrl.includes('ik.imagekit.io')
@@ -23,8 +27,105 @@ export function ListingCard({ listing }: ListingCardProps) {
   const formattedDate = format(new Date(listing.availabilityDate), 'MMM dd, yyyy');
   const [imageError, setImageError] = useState(false);
   const [isQuickViewOpen, setIsQuickViewOpen] = useState(false);
+  const [isFavorite, setIsFavorite] = useState(false);
+  const [swipeOffset, setSwipeOffset] = useState(0);
+  const [isSwiping, setIsSwiping] = useState(false);
+  const cardRef = useRef<HTMLDivElement>(null);
+  const touchStartX = useRef<number | null>(null);
   const { addListing, removeListing, isInComparison, canAddMore } = useComparisonStore();
   const isSelected = isInComparison(listing._id);
+
+  // Check favorite status
+  useEffect(() => {
+    if (isAuthenticated) {
+      api.get(`/favorites/check/${listing._id}`)
+        .then((res) => {
+          if (res.data.success) {
+            setIsFavorite(res.data.data.isFavorite || false);
+          }
+        })
+        .catch(() => setIsFavorite(false));
+    }
+  }, [listing._id, isAuthenticated]);
+
+  // Swipe gesture handlers (mobile only)
+  useEffect(() => {
+    const card = cardRef.current;
+    if (!card || typeof window === 'undefined') return;
+    
+    // Only enable on mobile devices
+    const isMobile = window.innerWidth < 768;
+    if (!isMobile) return;
+
+    let startX = 0;
+    let currentX = 0;
+    let isDragging = false;
+
+    const handleTouchStart = (e: TouchEvent) => {
+      startX = e.touches[0].clientX;
+      currentX = startX;
+      isDragging = false;
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      if (startX === 0) return;
+      
+      currentX = e.touches[0].clientX;
+      const diff = currentX - startX;
+      
+      // Only allow left swipe (negative diff) and prevent if swiping right
+      if (diff < 0 && Math.abs(diff) > 10) {
+        isDragging = true;
+        e.preventDefault(); // Prevent scrolling while swiping
+        if (Math.abs(diff) < 100) {
+          setSwipeOffset(diff);
+          setIsSwiping(true);
+        }
+      }
+    };
+
+    const handleTouchEnd = async () => {
+      if (startX === 0) return;
+      
+      const diff = currentX - startX;
+      
+      // If swiped more than 50px to the left, trigger favorite
+      if (diff < -50 && isDragging && isAuthenticated) {
+        try {
+          if (isFavorite) {
+            await api.delete(`/favorites/${listing._id}`);
+            setIsFavorite(false);
+          } else {
+            await api.post(`/favorites/${listing._id}`);
+            setIsFavorite(true);
+          }
+          // Haptic feedback
+          if ('vibrate' in navigator) {
+            navigator.vibrate(20);
+          }
+        } catch (error) {
+          console.error('Error toggling favorite:', error);
+        }
+      }
+      
+      // Reset swipe state
+      setSwipeOffset(0);
+      setIsSwiping(false);
+      startX = 0;
+      currentX = 0;
+      isDragging = false;
+    };
+
+    card.addEventListener('touchstart', handleTouchStart, { passive: true });
+    card.addEventListener('touchmove', handleTouchMove, { passive: false });
+    card.addEventListener('touchend', handleTouchEnd, { passive: true });
+
+    return () => {
+      card.removeEventListener('touchstart', handleTouchStart);
+      card.removeEventListener('touchmove', handleTouchMove);
+      card.removeEventListener('touchend', handleTouchEnd);
+    };
+  }, [isAuthenticated, isFavorite, listing._id]);
 
   const handleCardClick = (e: React.MouseEvent) => {
     // Only open quick view if not clicking on a link
@@ -39,7 +140,7 @@ export function ListingCard({ listing }: ListingCardProps) {
     <>
       <div
         onClick={handleCardClick}
-        className="block group cursor-pointer"
+        className="block group cursor-pointer relative overflow-hidden"
         role="button"
         tabIndex={0}
         onKeyDown={(e) => {
@@ -50,7 +151,20 @@ export function ListingCard({ listing }: ListingCardProps) {
         }}
         aria-label={`Quick view listing: ${listing.title} in ${listing.location.city}, ${listing.location.state} for $${listing.price} per month`}
       >
-      <article className="bg-white border border-grey-200 rounded-xl overflow-hidden card-hover shadow-soft h-full flex flex-col group transition-all duration-300 hover:shadow-large hover:-translate-y-1">
+        {/* Swipe indicator */}
+        {swipeOffset < -30 && isAuthenticated && (
+          <div className="absolute right-0 top-0 bottom-0 w-20 bg-primary-500 flex items-center justify-center z-20 rounded-r-xl pointer-events-none">
+            <Heart className={`w-6 h-6 text-white ${isFavorite ? 'fill-white' : ''}`} />
+          </div>
+        )}
+      <article 
+        ref={cardRef}
+        className="bg-white border border-grey-200 rounded-xl overflow-hidden card-hover shadow-soft h-full flex flex-col group transition-all duration-300 hover:shadow-large hover:-translate-y-1 relative"
+        style={{
+          transform: `translateX(${swipeOffset}px)`,
+          transition: isSwiping ? 'none' : 'transform 0.3s ease-out',
+        }}
+      >
         {/* Image Container */}
         <div className="relative w-full h-48 sm:h-56 bg-gradient-to-br from-grey-100 to-grey-200 overflow-hidden aspect-[16/9] sm:aspect-auto">
           {listing.images[0] && !imageError ? (
