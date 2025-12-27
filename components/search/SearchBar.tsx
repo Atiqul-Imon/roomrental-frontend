@@ -58,25 +58,39 @@ export function SearchBar() {
     }
 
     if (searchTerm.length >= 2) {
+      // Show loading state immediately
+      setIsLoading(true);
+      setShowSuggestions(true);
+      
       debounceRef.current = setTimeout(async () => {
-        setIsLoading(true);
         try {
           const response = await api.get('/search/suggestions', {
             params: { q: searchTerm },
           });
           if (response.data.success) {
             setSuggestions(response.data.data);
-            setShowSuggestions(true);
+          } else {
+            setSuggestions({ cities: [], states: [] });
           }
         } catch (error) {
           console.error('Error fetching suggestions:', error);
+          setSuggestions({ cities: [], states: [] });
         } finally {
           setIsLoading(false);
         }
       }, 300);
+    } else if (searchTerm.length > 0) {
+      // Show suggestions even for single character (might have recent/popular)
+      setSuggestions({ cities: [], states: [] });
+      setIsLoading(false);
+      // Keep suggestions visible if there are recent or popular searches
+      if (recentSearches.length > 0 || popularSearches.length > 0) {
+        setShowSuggestions(true);
+      }
     } else {
       setSuggestions({ cities: [], states: [] });
-      setShowSuggestions(false);
+      setIsLoading(false);
+      // Don't auto-hide - let onFocus handle showing recent/popular
     }
 
     return () => {
@@ -84,7 +98,7 @@ export function SearchBar() {
         clearTimeout(debounceRef.current);
       }
     };
-  }, [searchTerm]);
+  }, [searchTerm, recentSearches.length, popularSearches.length]);
 
   const handleSearch = (value?: string) => {
     const term = value || searchTerm;
@@ -136,6 +150,10 @@ export function SearchBar() {
           type="text"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
+          onFocus={() => {
+            // Always show suggestions when input is focused
+            setShowSuggestions(true);
+          }}
           onKeyDown={(e) => {
             if (e.key === 'Enter') {
               handleSearch();
@@ -239,7 +257,7 @@ export function SearchBar() {
               )}
 
               {/* Popular Searches */}
-              {searchTerm.length === 0 && allSuggestions.length === 0 && (
+              {searchTerm.length === 0 && allSuggestions.length === 0 && recentSearches.length === 0 && (
                 <div className="py-2 border-t border-grey-200">
                   <div className="px-5 py-2 flex items-center gap-2">
                     <TrendingUp className="w-4 h-4 text-grey-400" />
