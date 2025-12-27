@@ -165,7 +165,7 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
   return (
     <>
       <Header />
-      <main className="min-h-screen bg-grey-50 pb-32 md:pb-8">
+      <main className="min-h-screen bg-grey-50 pb-20 md:pb-8">
         <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-6 md:py-8 fade-in">
           {/* Image Gallery - Modern & Student-Friendly */}
           <div className="mb-5 sm:mb-6 md:mb-8 bg-white rounded-xl overflow-hidden shadow-large border-refined border-grey-200">
@@ -408,35 +408,6 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
           </div>
         </div>
 
-        {/* Sticky Action Bar - Mobile Only */}
-        {!isOwner && (
-          <div className="fixed bottom-16 left-0 right-0 md:hidden bg-white border-t border-grey-200 shadow-large z-40" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
-            <div className="container mx-auto px-3 sm:px-4 py-3 flex items-center gap-2">
-              <div className="flex-1">
-                <div className="text-xs text-grey-600 mb-0.5">Price</div>
-                <div className="text-lg font-bold text-primary-600">${data.price}<span className="text-sm font-normal text-grey-600">/mo</span></div>
-              </div>
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={handleShare}
-                  className="p-2.5 border border-grey-300 rounded-lg hover:bg-grey-50 transition-all duration-200 text-grey-600 touch-target"
-                  title="Share listing"
-                >
-                  <Share2 className="w-5 h-5" />
-                </button>
-                <FavoriteButton listingId={data._id} />
-                <div className="flex-1">
-                  <ContactButton
-                    landlordId={data.landlordId._id}
-                    landlordRole={data.landlordId.role}
-                    listingId={data._id}
-                    listingTitle={data.title}
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
       </main>
       <Footer />
     </>
