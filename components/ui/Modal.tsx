@@ -119,21 +119,33 @@ export function Modal({
             ? 'modal-slide-up md:modal-scale-in' 
             : 'translate-y-full md:scale-95 opacity-0',
           sizeClasses[size],
-          // Height constraints
-          // Mobile: Available space below header, Desktop: 90vh max
-          'max-h-[calc(100vh-3.5rem-env(safe-area-inset-bottom,0px))]',
-          'md:max-h-[90vh]'
+          // Mobile: Full height from top to bottom (no gap), Desktop: Auto height with max constraint
+          'h-[calc(100vh-3.5rem)]',
+          'md:h-auto md:max-h-[90vh]'
         )}
+        style={{
+          // Ensure full height on mobile, accounting for safe area
+          height: 'calc(100vh - 3.5rem - env(safe-area-inset-bottom, 0px))',
+        }}
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Drag Handle (Mobile Only) */}
-        <div className="md:hidden flex justify-center pt-3 pb-2 flex-shrink-0">
+        {/* Drag Handle with Close Button (Mobile Only) */}
+        <div className="md:hidden flex items-center justify-center pt-3 pb-2 px-4 flex-shrink-0 relative">
           <div className="w-12 h-1 bg-grey-300 rounded-full" />
+          {showCloseButton && (
+            <button
+              onClick={onClose}
+              className="absolute right-4 top-3 p-2.5 text-grey-700 hover:text-grey-900 hover:bg-grey-100 rounded-lg transition-colors z-30 touch-target focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 focus:outline-none bg-white shadow-medium"
+              aria-label="Close modal"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          )}
         </div>
 
-        {/* Header */}
+        {/* Header (Desktop) */}
         {(title || showCloseButton) && (
-          <div className="flex items-center justify-between p-4 md:p-6 border-b border-grey-200 flex-shrink-0">
+          <div className="hidden md:flex items-center justify-between p-4 md:p-6 border-b border-grey-200 flex-shrink-0">
             {title && (
               <h2 id="modal-title" className="text-lg md:text-xl font-bold text-grey-900">
                 {title}
@@ -152,7 +164,9 @@ export function Modal({
         )}
 
         {/* Body - Scrollable */}
-        <div className="overflow-y-auto flex-1 min-h-0">{children}</div>
+        <div className="overflow-y-auto flex-1 min-h-0 overscroll-contain -webkit-overflow-scrolling-touch">
+          {children}
+        </div>
       </div>
     </div>
   );
