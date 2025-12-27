@@ -16,8 +16,9 @@ import { ProfileStats } from '@/components/profile/ProfileStats';
 import { ProfileTabs } from '@/components/profile/ProfileTabs';
 import { SavedListings } from '@/components/profile/SavedListings';
 import { UserListings } from '@/components/profile/UserListings';
-import { Home, Star, Activity, User as UserIcon, Heart, Search, List } from 'lucide-react';
+import { Home, Star, Activity, User as UserIcon, Heart, Search, List, Clock } from 'lucide-react';
 import Link from 'next/link';
+import { SearchHistoryTab } from '@/components/profile/SearchHistoryTab';
 
 export default function ProfilePage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = use(params);
@@ -226,12 +227,20 @@ export default function ProfilePage({ params }: { params: Promise<{ id: string }
             </div>
           ),
         },
-        ...(isOwnProfile ? [{
-          id: 'saved',
-          label: 'Saved',
-          icon: Heart,
-          content: <SavedListings userId={userId} isOwnProfile={isOwnProfile} />,
-        }] : []),
+        ...(isOwnProfile ? [
+          {
+            id: 'saved',
+            label: 'Saved',
+            icon: Heart,
+            content: <SavedListings userId={userId} isOwnProfile={isOwnProfile} />,
+          },
+          {
+            id: 'history',
+            label: 'Search History',
+            icon: Clock,
+            content: <SearchHistoryTab />,
+          },
+        ] : []),
         {
           id: 'reviews',
           label: 'Reviews',

@@ -146,39 +146,39 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
   return (
     <>
       <Header />
-      <main className="min-h-screen bg-grey-50">
-        <div className="container mx-auto px-4 py-8 fade-in">
+      <main className="min-h-screen bg-grey-50 pb-20 md:pb-8">
+        <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-6 md:py-8 fade-in">
           {/* Image Gallery - Modern & Student-Friendly */}
-          <div className="mb-8 bg-white rounded-xl overflow-hidden shadow-large">
+          <div className="mb-4 sm:mb-6 md:mb-8 bg-white rounded-xl overflow-hidden shadow-large">
             <ImageGallery images={data.images} title={data.title} />
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
             {/* Main Content */}
             <div className="lg:col-span-2 space-y-6">
               {/* Title and Actions */}
-              <div className="bg-white rounded-xl p-6 shadow-soft">
+              <div className="bg-white rounded-xl p-4 sm:p-6 shadow-soft">
                 <div className="flex items-start justify-between mb-4">
-                  <div className="flex-1">
-                    <h1 className="text-3xl md:text-4xl font-bold mb-3 text-grey-900">{data.title}</h1>
-                    <div className="flex items-center gap-4 text-grey-600">
-                      <div className="flex items-center gap-1.5">
-                        <MapPin className="w-5 h-5 text-primary-600" />
-                        <span className="font-medium">
+                  <div className="flex-1 min-w-0">
+                    <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2 sm:mb-3 text-grey-900">{data.title}</h1>
+                    <div className="flex items-center gap-2 sm:gap-4 text-grey-600">
+                      <div className="flex items-center gap-1 sm:gap-1.5 min-w-0">
+                        <MapPin className="w-4 h-4 sm:w-5 sm:h-5 text-primary-600 flex-shrink-0" />
+                        <span className="font-medium text-sm sm:text-base truncate">
                           {data.location.city}, {data.location.state}
                           {data.location.zip && ` ${data.location.zip}`}
                         </span>
                       </div>
                     </div>
                   </div>
-                  <div className="flex items-center gap-2 ml-4">
+                  <div className="flex items-center gap-1.5 sm:gap-2 ml-2 sm:ml-4 flex-shrink-0">
                     <FavoriteButton listingId={data._id} />
                     <button
                       onClick={handleShare}
-                      className="p-2.5 border border-grey-300 rounded-lg hover:bg-grey-50 transition-all duration-200 hover:border-primary-400 text-grey-600 hover:text-primary-600"
+                      className="p-2 sm:p-2.5 border border-grey-300 rounded-lg hover:bg-grey-50 transition-all duration-200 hover:border-primary-400 text-grey-600 hover:text-primary-600 touch-target"
                       title="Share listing"
                     >
-                      <Share2 className="w-5 h-5" />
+                      <Share2 className="w-4 h-4 sm:w-5 sm:h-5" />
                     </button>
                     {isOwner && (
                       <>
@@ -210,28 +210,28 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
               </div>
 
               {/* Description - Enhanced */}
-              <div className="bg-white rounded-xl p-6 md:p-8 shadow-large border border-grey-100">
-                <h2 className="text-2xl md:text-3xl font-bold mb-6 text-grey-900 flex items-center gap-3">
-                  <span className="text-3xl">📝</span>
+              <div className="bg-white rounded-xl p-4 sm:p-6 md:p-8 shadow-large border border-grey-100">
+                <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-4 sm:mb-6 text-grey-900 flex items-center gap-2 sm:gap-3">
+                  <span className="text-2xl sm:text-3xl">📝</span>
                   About This Room
                 </h2>
-                <p className="text-grey-700 whitespace-pre-line leading-relaxed text-base md:text-lg">
+                <p className="text-grey-700 whitespace-pre-line leading-relaxed text-sm sm:text-base md:text-lg">
                   {data.description}
                 </p>
               </div>
 
               {/* Amenities - Enhanced for Students */}
               {data.amenities.length > 0 && (
-                <div className="bg-white rounded-xl p-6 md:p-8 shadow-large border border-grey-100">
-                  <h2 className="text-2xl md:text-3xl font-bold mb-6 text-grey-900 flex items-center gap-3">
-                    <span className="text-3xl">✨</span>
+                <div className="bg-white rounded-xl p-4 sm:p-6 md:p-8 shadow-large border border-grey-100">
+                  <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-4 sm:mb-6 text-grey-900 flex items-center gap-2 sm:gap-3">
+                    <span className="text-2xl sm:text-3xl">✨</span>
                     What's Included
                   </h2>
-                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-3">
                     {data.amenities.map((amenity, index) => (
                       <div
                         key={index}
-                        className="px-4 py-3 bg-gradient-to-br from-primary-50 to-secondary-50 text-primary-800 rounded-xl text-sm font-semibold border border-primary-200 hover:border-primary-400 hover:shadow-medium transition-all duration-200 hover:scale-105 cursor-default"
+                        className="px-3 sm:px-4 py-2 sm:py-3 bg-gradient-to-br from-primary-50 to-secondary-50 text-primary-800 rounded-lg sm:rounded-xl text-xs sm:text-sm font-semibold border border-primary-200 hover:border-primary-400 hover:shadow-medium transition-all duration-200 hover:scale-105 cursor-default"
                       >
                         {amenity}
                       </div>
@@ -241,28 +241,28 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
               )}
 
               {/* Availability - Enhanced */}
-              <div className="bg-white rounded-xl p-6 md:p-8 shadow-large border border-grey-100">
-                <div className="flex items-center gap-4 text-grey-700">
-                  <div className="p-3 bg-primary-50 rounded-xl">
-                    <Calendar className="w-6 h-6 text-primary-600" />
+              <div className="bg-white rounded-xl p-4 sm:p-6 md:p-8 shadow-large border border-grey-100">
+                <div className="flex items-center gap-3 sm:gap-4 text-grey-700">
+                  <div className="p-2 sm:p-3 bg-primary-50 rounded-lg sm:rounded-xl">
+                    <Calendar className="w-5 h-5 sm:w-6 sm:h-6 text-primary-600" />
                   </div>
                   <div>
-                    <span className="text-sm text-grey-600 block mb-1">Available from</span>
-                    <span className="font-bold text-lg text-grey-900">{formattedDate}</span>
+                    <span className="text-xs sm:text-sm text-grey-600 block mb-1">Available from</span>
+                    <span className="font-bold text-base sm:text-lg text-grey-900">{formattedDate}</span>
                   </div>
                 </div>
               </div>
             </div>
 
             {/* Sticky Sidebar - Enhanced for Students */}
-            <div className="lg:sticky lg:top-20 space-y-6 h-fit">
+            <div className="lg:sticky lg:top-20 space-y-4 sm:space-y-6 h-fit">
               {/* Contact Card - Student-Friendly */}
-              <div className="bg-gradient-to-br from-white to-primary-50/30 border-2 border-primary-200 rounded-xl p-6 shadow-large">
-                <h2 className="text-xl font-bold mb-4 text-grey-900 flex items-center gap-2">
-                  <span className="text-2xl">👤</span>
+              <div className="bg-gradient-to-br from-white to-primary-50/30 border-2 border-primary-200 rounded-xl p-4 sm:p-6 shadow-large">
+                <h2 className="text-lg sm:text-xl font-bold mb-3 sm:mb-4 text-grey-900 flex items-center gap-2">
+                  <span className="text-xl sm:text-2xl">👤</span>
                   Meet Your Landlord
                 </h2>
-                <div className="flex items-center gap-4 mb-4">
+                <div className="flex items-center gap-3 sm:gap-4 mb-3 sm:mb-4">
                   {data.landlordId.profileImage ? (
                     <Image
                       src={data.landlordId.profileImage}
@@ -294,7 +294,7 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
                   </p>
                 )}
                 {!isOwner && (
-                  <div className="mt-4">
+                  <div className="mt-3 sm:mt-4 hidden md:block">
                     <ContactButton
                       landlordId={data.landlordId._id}
                       landlordRole={data.landlordId.role}
@@ -306,9 +306,9 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
               </div>
 
               {/* Quick Info - Enhanced */}
-              <div className="bg-white border-2 border-grey-200 rounded-xl p-6 shadow-large">
-                <h2 className="text-xl font-bold mb-4 text-grey-900 flex items-center gap-2">
-                  <span className="text-2xl">ℹ️</span>
+              <div className="bg-white border-2 border-grey-200 rounded-xl p-4 sm:p-6 shadow-large">
+                <h2 className="text-lg sm:text-xl font-bold mb-3 sm:mb-4 text-grey-900 flex items-center gap-2">
+                  <span className="text-xl sm:text-2xl">ℹ️</span>
                   Quick Details
                 </h2>
                 <div className="space-y-4">
@@ -336,12 +336,12 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
               </div>
 
               {/* Safety & Trust Badge for Students */}
-              <div className="bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-200 rounded-xl p-6 shadow-large">
-                <div className="flex items-start gap-3">
-                  <span className="text-3xl">🛡️</span>
+              <div className="bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-200 rounded-xl p-4 sm:p-6 shadow-large">
+                <div className="flex items-start gap-2 sm:gap-3">
+                  <span className="text-2xl sm:text-3xl">🛡️</span>
                   <div>
-                    <h3 className="font-bold text-grey-900 mb-2">Verified Listing</h3>
-                    <p className="text-sm text-grey-700">
+                    <h3 className="font-bold text-sm sm:text-base text-grey-900 mb-1 sm:mb-2">Verified Listing</h3>
+                    <p className="text-xs sm:text-sm text-grey-700">
                       This listing has been verified by our team for accuracy and safety.
                     </p>
                   </div>
@@ -351,13 +351,13 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
           </div>
 
           {/* Reviews Section */}
-          <div className="mt-12 border-t border-border pt-8">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-semibold">Reviews</h2>
+          <div className="mt-8 sm:mt-12 border-t border-border pt-6 sm:pt-8">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0 mb-4 sm:mb-6">
+              <h2 className="text-xl sm:text-2xl font-semibold">Reviews</h2>
               {isAuthenticated && !isOwner && user?.id !== data.landlordId._id && (
                 <button
                   onClick={() => setShowReviewForm(!showReviewForm)}
-                  className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition"
+                  className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition min-h-[44px] touch-target text-sm sm:text-base"
                 >
                   {showReviewForm ? 'Cancel' : 'Write a Review'}
                 </button>
@@ -382,6 +382,36 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
             <ReviewList userId={data.landlordId._id} listingId={data._id} />
           </div>
         </div>
+
+        {/* Sticky Action Bar - Mobile Only */}
+        {!isOwner && (
+          <div className="fixed bottom-0 left-0 right-0 md:hidden bg-white border-t border-grey-200 shadow-large z-40" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
+            <div className="container mx-auto px-3 sm:px-4 py-3 flex items-center gap-2">
+              <div className="flex-1">
+                <div className="text-xs text-grey-600 mb-0.5">Price</div>
+                <div className="text-lg font-bold text-primary-600">${data.price}<span className="text-sm font-normal text-grey-600">/mo</span></div>
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={handleShare}
+                  className="p-2.5 border border-grey-300 rounded-lg hover:bg-grey-50 transition-all duration-200 text-grey-600 touch-target"
+                  title="Share listing"
+                >
+                  <Share2 className="w-5 h-5" />
+                </button>
+                <FavoriteButton listingId={data._id} />
+                <div className="flex-1">
+                  <ContactButton
+                    landlordId={data.landlordId._id}
+                    landlordRole={data.landlordId.role}
+                    listingId={data._id}
+                    listingTitle={data.title}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </main>
       <Footer />
     </>

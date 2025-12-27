@@ -36,9 +36,9 @@ export default function CreateListingPage() {
   return (
     <>
       <Header />
-      <main className="min-h-screen">
-        <div className="container mx-auto px-4 py-8">
-          <h1 className="text-3xl font-bold mb-8">Create New Listing</h1>
+      <main className="min-h-screen pb-20 md:pb-8">
+        <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-6 md:py-8">
+          <h1 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6 md:mb-8">Create New Listing</h1>
           <div className="max-w-3xl">
             <CreateListingForm
               onSuccess={() => {

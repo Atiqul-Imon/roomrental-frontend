@@ -173,22 +173,22 @@ export function CreateListingForm({
   ];
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 sm:space-y-6">
       {error && (
-        <div className="p-4 bg-red-50 border-2 border-red-200 rounded-xl text-red-700 flex items-start gap-3">
+        <div className="p-3 sm:p-4 bg-red-50 border-2 border-red-200 rounded-xl text-red-700 flex items-start gap-2 sm:gap-3">
           <div className="flex-1">
-            <p className="font-semibold">Error</p>
-            <p className="text-sm mt-1">{error}</p>
+            <p className="font-semibold text-sm sm:text-base">Error</p>
+            <p className="text-xs sm:text-sm mt-1">{error}</p>
           </div>
         </div>
       )}
 
       {/* Step 1: Basic Information */}
       {step === 1 && (
-        <div className="bg-white rounded-xl p-6 md:p-8 shadow-medium space-y-6">
+        <div className="bg-white rounded-xl p-4 sm:p-6 md:p-8 shadow-medium space-y-4 sm:space-y-6">
           <div>
-            <h2 className="text-2xl md:text-3xl font-bold mb-2 text-grey-900">Basic Information</h2>
-            <p className="text-grey-600">Tell us about your room</p>
+            <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-1 sm:mb-2 text-grey-900">Basic Information</h2>
+            <p className="text-sm sm:text-base text-grey-600">Tell us about your room</p>
           </div>
 
           {/* Admin Landlord Selection */}
@@ -223,7 +223,7 @@ export function CreateListingForm({
             </label>
             <input
               {...register('title')}
-              className="w-full px-4 py-3 border-2 border-grey-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200 bg-white"
+              className="w-full px-3 sm:px-4 py-3 border-2 border-grey-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200 bg-white text-base sm:text-sm min-h-[44px]"
               placeholder="e.g., Cozy Room in Downtown"
             />
             {errors.title && (
@@ -238,7 +238,7 @@ export function CreateListingForm({
             <textarea
               {...register('description')}
               rows={6}
-              className="w-full px-4 py-3 border-2 border-grey-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200 bg-white resize-none"
+              className="w-full px-3 sm:px-4 py-3 border-2 border-grey-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200 bg-white resize-none text-base sm:text-sm"
               placeholder="Describe the room, neighborhood, and what makes it special..."
             />
             {errors.description && (
@@ -255,7 +255,7 @@ export function CreateListingForm({
               type="number"
               min="0"
               step="1"
-              className="w-full px-4 py-3 border-2 border-grey-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200 bg-white"
+              className="w-full px-3 sm:px-4 py-3 border-2 border-grey-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200 bg-white text-base sm:text-sm min-h-[44px]"
               placeholder="0"
             />
             {errors.price && (
@@ -263,11 +263,11 @@ export function CreateListingForm({
             )}
           </div>
 
-          <div className="flex justify-end pt-4">
+          <div className="flex justify-end pt-3 sm:pt-4">
             <button
               type="button"
               onClick={() => setStep(2)}
-              className="px-6 py-3 btn-gradient text-white rounded-lg font-semibold hover:scale-105 transition-all duration-200 shadow-medium flex items-center gap-2"
+              className="px-4 sm:px-6 py-3 btn-gradient text-white rounded-lg font-semibold hover:scale-105 transition-all duration-200 shadow-medium flex items-center gap-2 min-h-[44px] touch-target text-sm sm:text-base"
             >
               Next <ChevronRight className="w-4 h-4" />
             </button>

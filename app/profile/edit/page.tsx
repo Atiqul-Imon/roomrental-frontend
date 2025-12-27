@@ -233,11 +233,11 @@ export default function EditProfilePage() {
   return (
     <>
       <Header />
-      <main className="min-h-screen bg-grey-50">
-        <div className="container mx-auto px-4 py-8">
-          <h1 className="text-3xl font-bold mb-8 text-grey-900">Edit Profile</h1>
+      <main className="min-h-screen bg-grey-50 pb-20 md:pb-8">
+        <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-6 md:py-8">
+          <h1 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6 md:mb-8 text-grey-900">Edit Profile</h1>
           <div className="max-w-2xl">
-            <form onSubmit={handleSubmit} className="space-y-6 bg-white rounded-xl p-6 shadow-medium border border-grey-200">
+            <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6 bg-white rounded-xl p-4 sm:p-6 shadow-medium border border-grey-200">
               {/* Profile Image */}
               <div>
                 <label className="block text-sm font-medium mb-2 text-grey-900">Profile Image</label>
@@ -344,7 +344,7 @@ export default function EditProfilePage() {
                   value={formData.name}
                   onChange={(e) => setFormData((prev) => ({ ...prev, name: e.target.value }))}
                   required
-                  className="w-full px-4 py-2 border border-grey-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
+                  className="w-full px-3 sm:px-4 py-3 sm:py-2.5 border border-grey-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors text-base sm:text-sm min-h-[44px]"
                 />
               </div>
 
@@ -356,7 +356,7 @@ export default function EditProfilePage() {
                   onChange={(e) => setFormData((prev) => ({ ...prev, bio: e.target.value }))}
                   rows={4}
                   maxLength={500}
-                  className="w-full px-4 py-2 border border-grey-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors resize-none"
+                  className="w-full px-3 sm:px-4 py-3 sm:py-2.5 border border-grey-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors resize-none text-base sm:text-sm"
                   placeholder="Tell us about yourself..."
                 />
                 <p className="text-xs text-grey-500 mt-1">
@@ -371,7 +371,7 @@ export default function EditProfilePage() {
                   type="tel"
                   value={formData.phone}
                   onChange={(e) => setFormData((prev) => ({ ...prev, phone: e.target.value }))}
-                  className="w-full px-4 py-2 border border-grey-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
+                  className="w-full px-3 sm:px-4 py-3 sm:py-2.5 border border-grey-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors text-base sm:text-sm min-h-[44px]"
                   placeholder="+1 (555) 123-4567"
                 />
               </div>
@@ -390,7 +390,7 @@ export default function EditProfilePage() {
                           emailNotifications: e.target.checked,
                         }))
                       }
-                      className="w-4 h-4 text-primary-600 border-grey-300 rounded focus:ring-primary-500"
+                      className="w-5 h-5 sm:w-4 sm:h-4 text-primary-600 border-grey-300 rounded focus:ring-primary-500 touch-target"
                     />
                     <span className="text-sm text-grey-700">Email Notifications</span>
                   </label>
