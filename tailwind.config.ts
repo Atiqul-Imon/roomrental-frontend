@@ -9,6 +9,11 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        heading: ['var(--font-heading)', 'system-ui', 'sans-serif'],
+        body: ['var(--font-body)', 'system-ui', 'sans-serif'],
+        ui: ['var(--font-body)', 'system-ui', 'sans-serif'], // UI elements use body font
+      },
       colors: {
         background: 'var(--background)',
         foreground: 'var(--foreground)',

@@ -15,6 +15,7 @@
 }
 
 body {
+  font-family: var(--font-body), system-ui, sans-serif;
   color: hsl(var(--foreground));
   background: hsl(var(--background));
   font-feature-settings: 'rlig' 1, 'calt' 1;
@@ -50,6 +51,7 @@ body {
 
 /* Phase 2: Typography Refinement */
 h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading), system-ui, sans-serif;
   line-height: 1.2;
   letter-spacing: -0.02em;
   font-weight: 700;

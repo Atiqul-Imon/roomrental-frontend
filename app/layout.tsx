@@ -1,11 +1,24 @@
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
+import { Inter, Plus_Jakarta_Sans } from 'next/font/google';
 import './globals.css';
 import { Providers } from './providers';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { BottomNav } from '@/components/layout/BottomNav';
 
-const inter = Inter({ subsets: ['latin'] });
+// Body font - Inter (for body text, UI elements)
+const inter = Inter({ 
+  subsets: ['latin'],
+  variable: '--font-body',
+  display: 'swap',
+});
+
+// Heading font - Plus Jakarta Sans (for headings)
+const plusJakartaSans = Plus_Jakarta_Sans({
+  subsets: ['latin'],
+  variable: '--font-heading',
+  display: 'swap',
+  weight: ['200', '300', '400', '500', '600', '700', '800'],
+});
 
 export const metadata: Metadata = {
   title: {
@@ -71,7 +84,7 @@ export default function RootLayout({
       <head>
         <link rel="icon" href="/favicon.ico" />
       </head>
-      <body className={inter.className}>
+      <body className={`${inter.variable} ${plusJakartaSans.variable} ${inter.className}`}>
         <a href="#main-content" className="skip-to-main">
           Skip to main content
         </a>
