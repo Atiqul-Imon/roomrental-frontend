@@ -60,11 +60,11 @@ export default function ListingsPage() {
       <Header />
       <main className="min-h-screen bg-grey-50">
         {/* Hero Section */}
-        <section className="bg-gradient-primary text-white py-12">
-          <div className="container mx-auto px-4">
+        <section className="bg-gradient-primary text-white py-12 sm:py-16 md:py-20">
+          <div className="container mx-auto px-3 sm:px-4">
             <div className="max-w-4xl mx-auto text-center">
-              <h1 className="text-4xl md:text-5xl font-bold mb-4">Find Your Perfect Room</h1>
-              <p className="text-xl text-white/90 mb-8">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 sm:mb-5 md:mb-6 leading-tight tracking-tight">Find Your Perfect Room</h1>
+              <p className="text-lg sm:text-xl md:text-2xl text-white/90 mb-6 sm:mb-8 md:mb-10 leading-relaxed">
                 Search through thousands of available rooms across the United States
               </p>
               
@@ -78,16 +78,16 @@ export default function ListingsPage() {
           </div>
         </section>
 
-        <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-6 md:py-8">
+        <div className="container mx-auto px-3 sm:px-4 py-5 sm:py-6 md:py-8">
           {/* Filter Presets */}
-          <div className="mb-4 sm:mb-6">
+          <div className="mb-5 sm:mb-6 md:mb-8">
             <Suspense fallback={null}>
               <FilterPresetsContent />
             </Suspense>
           </div>
 
           {/* Filter Toggle and View Controls */}
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 mb-4 sm:mb-6">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 mb-5 sm:mb-6 md:mb-8">
             <div className="flex items-center gap-2 sm:gap-4 flex-wrap w-full sm:w-auto">
               <ViewToggle view={viewMode} onViewChange={setViewMode} />
               <Suspense fallback={null}>

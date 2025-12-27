@@ -94,16 +94,29 @@ const config: Config = {
         sm: 'calc(var(--radius) - 4px)',
       },
       boxShadow: {
-        'soft': '0 2px 8px rgba(0, 0, 0, 0.08)',
-        'medium': '0 4px 16px rgba(0, 0, 0, 0.12)',
-        'large': '0 8px 24px rgba(0, 0, 0, 0.16)',
+        // Refined shadow hierarchy - subtle and layered
+        'soft': '0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04)',
+        'medium': '0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -1px rgba(0, 0, 0, 0.04)',
+        'large': '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+        'xl': '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+        // Hover shadows
+        'hover-soft': '0 2px 4px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.06)',
+        'hover-medium': '0 6px 8px -2px rgba(0, 0, 0, 0.1), 0 3px 5px -1px rgba(0, 0, 0, 0.06)',
+        'hover-large': '0 12px 18px -4px rgba(0, 0, 0, 0.12), 0 6px 8px -3px rgba(0, 0, 0, 0.08)',
         // Dark mode shadows
         'dark-soft': '0 2px 8px rgba(0, 0, 0, 0.3)',
         'dark-medium': '0 4px 16px rgba(0, 0, 0, 0.4)',
         'dark-large': '0 10px 25px rgba(0, 0, 0, 0.5)',
         'dark-xl': '0 20px 25px rgba(0, 0, 0, 0.6)',
+        // Glow effects
         'glow-blue': '0 0 20px rgba(59, 130, 246, 0.3)',
         'glow-primary': '0 0 20px rgba(59, 130, 246, 0.2)',
+        'glow-subtle': '0 0 12px rgba(59, 130, 246, 0.15)',
+      },
+      borderWidth: {
+        '1': '1px',
+        '2': '2px',
+        '3': '3px',
       },
       backgroundImage: {
         'gradient-primary': 'linear-gradient(135deg, #3B82F6 0%, #EC4899 100%)',
@@ -121,6 +134,38 @@ const config: Config = {
       },
       spacing: {
         'touch': '44px', // Minimum touch target size
+        // 4px base scale for consistent spacing
+        '0.5': '2px',
+        '1': '4px',
+        '1.5': '6px',
+        '2': '8px',
+        '2.5': '10px',
+        '3': '12px',
+        '3.5': '14px',
+        '4': '16px',
+        '5': '20px',
+        '6': '24px',
+        '7': '28px',
+        '8': '32px',
+        '9': '36px',
+        '10': '40px',
+        '11': '44px',
+        '12': '48px',
+        '14': '56px',
+        '16': '64px',
+      },
+      lineHeight: {
+        'tight': '1.2',
+        'snug': '1.375',
+        'normal': '1.5',
+        'relaxed': '1.625',
+        'loose': '2',
+      },
+      letterSpacing: {
+        'tighter': '-0.03em',
+        'tight': '-0.02em',
+        'normal': '-0.01em',
+        'wide': '0.01em',
       },
     },
   },

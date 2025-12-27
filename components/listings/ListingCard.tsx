@@ -159,7 +159,7 @@ export function ListingCard({ listing }: ListingCardProps) {
         )}
       <article 
         ref={cardRef}
-        className="bg-white border border-grey-200 rounded-xl overflow-hidden card-hover-enhanced shadow-soft h-full flex flex-col group relative"
+        className="bg-white border-refined border-grey-200 rounded-xl overflow-hidden card-hover-enhanced shadow-soft h-full flex flex-col group relative"
         style={{
           transform: `translateX(${swipeOffset}px) translateZ(0)`,
           transition: isSwiping ? 'none' : 'transform 0.3s ease-out',
@@ -238,9 +238,9 @@ export function ListingCard({ listing }: ListingCardProps) {
         </div>
 
         {/* Content */}
-        <div className="p-3 sm:p-4 md:p-5 flex-1 flex flex-col">
+        <div className="p-4 sm:p-5 md:p-6 flex-1 flex flex-col">
           {/* Title */}
-          <h3 className="font-semibold text-base sm:text-lg text-grey-900 line-clamp-1 mb-1.5 sm:mb-2 group-hover:text-primary-600 transition-colors duration-200">
+          <h3 className="font-semibold text-base sm:text-lg text-grey-900 line-clamp-1 mb-2 sm:mb-3 group-hover:text-primary-600 transition-colors duration-200 leading-tight">
             {searchQuery ? (
               <span>{highlightSearchTermsReact(listing.title, searchQuery)}</span>
             ) : (
@@ -272,7 +272,7 @@ export function ListingCard({ listing }: ListingCardProps) {
           </div>
 
           {/* Description */}
-          <p className="text-xs sm:text-sm text-grey-600 line-clamp-2 mb-3 sm:mb-4 flex-1">
+          <p className="text-xs sm:text-sm text-grey-600 line-clamp-2 mb-4 sm:mb-5 flex-1 leading-relaxed">
             {searchQuery ? (
               <span>{highlightSearchTermsReact(listing.description, searchQuery)}</span>
             ) : (
@@ -281,7 +281,7 @@ export function ListingCard({ listing }: ListingCardProps) {
           </p>
 
           {/* Footer Info */}
-          <div className="flex items-center justify-between pt-3 sm:pt-4 border-t border-grey-100">
+          <div className="flex items-center justify-between pt-4 sm:pt-5 border-t border-grey-200">
             <div className="flex items-center gap-1 sm:gap-1.5 text-[10px] sm:text-xs text-grey-500">
               <Calendar className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
               <span>{formattedDate}</span>

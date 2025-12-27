@@ -168,7 +168,7 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
       <main className="min-h-screen bg-grey-50 pb-20 md:pb-8">
         <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-6 md:py-8 fade-in">
           {/* Image Gallery - Modern & Student-Friendly */}
-          <div className="mb-4 sm:mb-6 md:mb-8 bg-white rounded-xl overflow-hidden shadow-large">
+          <div className="mb-5 sm:mb-6 md:mb-8 bg-white rounded-xl overflow-hidden shadow-large border-refined border-grey-200">
             <ImageGallery images={data.images} title={data.title} />
           </div>
 
@@ -176,10 +176,10 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
             {/* Main Content */}
             <div className="lg:col-span-2 space-y-6">
               {/* Title and Actions */}
-              <div className="bg-white rounded-xl p-4 sm:p-6 shadow-soft">
-                <div className="flex items-start justify-between mb-4">
+              <div className="bg-white rounded-xl p-5 sm:p-6 md:p-8 shadow-soft border-refined border-grey-200">
+                <div className="flex items-start justify-between mb-5 sm:mb-6">
                   <div className="flex-1 min-w-0">
-                    <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2 sm:mb-3 text-grey-900">{data.title}</h1>
+                    <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4 text-grey-900 leading-tight">{data.title}</h1>
                     <div className="flex items-center gap-2 sm:gap-4 text-grey-600">
                       <div className="flex items-center gap-1 sm:gap-1.5 min-w-0">
                         <MapPin className="w-4 h-4 sm:w-5 sm:h-5 text-primary-600 flex-shrink-0" />
