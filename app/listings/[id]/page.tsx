@@ -26,6 +26,7 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { PageSkeleton } from '@/components/LoadingSkeleton';
 import { ErrorState } from '@/components/ui/ErrorState';
+import { useToast } from '@/components/ui/ToastProvider';
 
 export default function ListingDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = use(params);
@@ -81,7 +82,7 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
   const isOwner = isAuthenticated && user?.id === data?.landlordId._id;
   const formattedDate = data ? format(new Date(data.availabilityDate), 'MMMM dd, yyyy') : '';
 
-  const [shareFeedback, setShareFeedback] = useState<string | null>(null);
+  const { success, error: showError } = useToast();
 
   const handleShare = async () => {
     const shareData = {
@@ -94,8 +95,7 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
     if (navigator.share && navigator.canShare && navigator.canShare(shareData)) {
       try {
         await navigator.share(shareData);
-        setShareFeedback('Shared successfully!');
-        setTimeout(() => setShareFeedback(null), 2000);
+        success('Shared successfully!', { duration: 2000 });
       } catch (error: any) {
         // User cancelled or error occurred - don't show error for cancellation
         if (error.name !== 'AbortError') {
@@ -112,11 +112,9 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
   const handleClipboardShare = async () => {
     try {
       await navigator.clipboard.writeText(window.location.href);
-      setShareFeedback('Link copied to clipboard!');
-      setTimeout(() => setShareFeedback(null), 2000);
-    } catch (error) {
-      // Fallback: show URL in alert
-      alert(`Share this listing: ${window.location.href}`);
+      success('Link copied to clipboard!', { duration: 2000 });
+    } catch (err) {
+      showError('Failed to copy link. Please try again.', { duration: 3000 });
     }
   };
 
@@ -194,20 +192,19 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
                   </div>
                   <div className="flex items-center gap-1.5 sm:gap-2 ml-2 sm:ml-4 flex-shrink-0">
                     <FavoriteButton listingId={data._id} />
-                    <div className="relative">
-                      <button
-                        onClick={handleShare}
-                        className="p-2 sm:p-2.5 border border-grey-300 rounded-lg hover:bg-grey-50 transition-all duration-200 hover:border-primary-400 text-grey-600 hover:text-primary-600 touch-target"
-                        title="Share listing"
-                      >
-                        <Share2 className="w-4 h-4 sm:w-5 sm:h-5" />
-                      </button>
-                      {shareFeedback && (
-                        <div className="absolute top-full right-0 mt-2 px-3 py-1.5 bg-grey-900 text-white text-xs rounded-lg shadow-lg z-50 whitespace-nowrap animate-fade-in">
-                          {shareFeedback}
-                        </div>
-                      )}
-                    </div>
+                    <button
+                      onClick={(e) => {
+                        handleShare();
+                        e.currentTarget.classList.add('share-bounce');
+                        setTimeout(() => {
+                          e.currentTarget.classList.remove('share-bounce');
+                        }, 300);
+                      }}
+                      className="p-2 sm:p-2.5 border border-grey-300 rounded-lg hover:bg-grey-50 transition-all duration-200 hover:border-primary-400 text-grey-600 hover:text-primary-600 touch-target"
+                      title="Share listing"
+                    >
+                      <Share2 className="w-4 h-4 sm:w-5 sm:h-5" />
+                    </button>
                     {isOwner && (
                       <>
                         <Link

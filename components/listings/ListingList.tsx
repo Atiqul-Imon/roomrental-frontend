@@ -211,7 +211,7 @@ export function ListingList() {
         <>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {data.listings.map((listing, index) => (
-              <div key={listing._id} className="stagger-item">
+              <div key={listing._id} className="stagger-item fade-in-up-delayed" style={{ animationDelay: `${index * 0.05}s` }}>
                 <ListingCard listing={listing} />
               </div>
             ))}

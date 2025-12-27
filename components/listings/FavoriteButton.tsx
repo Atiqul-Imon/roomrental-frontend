@@ -42,6 +42,7 @@ export function FavoriteButton({ listingId, className = '' }: FavoriteButtonProp
     }
 
     setIsLoading(true);
+    const wasFavorite = isFavorite;
     try {
       if (isFavorite) {
         await api.delete(`/favorites/${listingId}`);
@@ -49,6 +50,16 @@ export function FavoriteButton({ listingId, className = '' }: FavoriteButtonProp
       } else {
         await api.post(`/favorites/${listingId}`);
         setIsFavorite(true);
+        // Trigger heart fill animation
+        if (!wasFavorite) {
+          const heartElement = document.querySelector(`[data-listing-id="${listingId}"] .heart-icon`);
+          if (heartElement) {
+            heartElement.classList.add('heart-fill');
+            setTimeout(() => {
+              heartElement.classList.remove('heart-fill');
+            }, 300);
+          }
+        }
       }
     } catch (error: any) {
       console.error('Error toggling favorite:', error);
@@ -84,7 +95,8 @@ export function FavoriteButton({ listingId, className = '' }: FavoriteButtonProp
       title={isFavorite ? 'Remove from favorites' : 'Add to favorites'}
     >
       <Heart
-        className={`w-5 h-5 transition-all duration-200 ${
+        data-listing-id={listingId}
+        className={`w-5 h-5 transition-all duration-200 heart-icon ${
           isFavorite
             ? 'fill-secondary-500 text-secondary-500 scale-110'
             : 'text-grey-400 hover:text-secondary-400'

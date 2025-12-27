@@ -362,5 +362,163 @@ body {
       gap: 1rem; /* 16px */
     }
   }
+
+  /* Phase 6: Lightweight Micro-Interactions */
+  
+  /* Heart fill animation - GPU accelerated */
+  @keyframes heartFill {
+    0% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.2);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+  
+  .heart-fill {
+    animation: heartFill 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: transform;
+  }
+  
+  /* Checkmark success animation */
+  @keyframes checkmark {
+    0% {
+      transform: scale(0) rotate(45deg);
+      opacity: 0;
+    }
+    50% {
+      transform: scale(1.1) rotate(45deg);
+    }
+    100% {
+      transform: scale(1) rotate(45deg);
+      opacity: 1;
+    }
+  }
+  
+  .checkmark-animate {
+    animation: checkmark 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: transform, opacity;
+  }
+  
+  /* Subtle bounce for share button - GPU accelerated */
+  @keyframes subtleBounce {
+    0%, 100% {
+      transform: translateY(0) translateZ(0);
+    }
+    50% {
+      transform: translateY(-2px) translateZ(0);
+    }
+  }
+  
+  .share-bounce {
+    animation: subtleBounce 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: transform;
+  }
+  
+  .active\:share-bounce:active {
+    animation: subtleBounce 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  /* Toast slide-in from top - GPU accelerated */
+  @keyframes toastSlideIn {
+    from {
+      transform: translateY(-100%) translateZ(0);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0) translateZ(0);
+      opacity: 1;
+    }
+  }
+  
+  @keyframes toastSlideOut {
+    from {
+      transform: translateY(0) translateZ(0);
+      opacity: 1;
+    }
+    to {
+      transform: translateY(-100%) translateZ(0);
+      opacity: 0;
+    }
+  }
+  
+  .toast-enter {
+    animation: toastSlideIn 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    will-change: transform, opacity;
+  }
+  
+  .toast-exit {
+    animation: toastSlideOut 0.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    will-change: transform, opacity;
+  }
+  
+  /* Fade-in on scroll - GPU accelerated */
+  @keyframes fadeInUp {
+    from {
+      transform: translateY(20px) translateZ(0);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0) translateZ(0);
+      opacity: 1;
+    }
+  }
+  
+  .fade-in-up {
+    animation: fadeInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    will-change: transform, opacity;
+  }
+  
+  .fade-in-up-delayed {
+    opacity: 0;
+    animation: fadeInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    will-change: transform, opacity;
+  }
+  
+  /* Gentle shake for errors */
+  @keyframes gentleShake {
+    0%, 100% {
+      transform: translateX(0) translateZ(0);
+    }
+    25% {
+      transform: translateX(-4px) translateZ(0);
+    }
+    75% {
+      transform: translateX(4px) translateZ(0);
+    }
+  }
+  
+  .error-shake {
+    animation: gentleShake 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: transform;
+  }
+  
+  /* Respect reduced motion preference */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+    
+    .fade-in-up,
+    .fade-in-up-delayed {
+      animation: none;
+      opacity: 1;
+      transform: none;
+    }
+  }
+  
+  /* Optimize for GPU acceleration */
+  .gpu-accelerated {
+    transform: translateZ(0);
+    will-change: transform, opacity;
+  }
 }
 
