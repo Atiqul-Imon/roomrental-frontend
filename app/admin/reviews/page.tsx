@@ -81,7 +81,7 @@ export default function ReviewsPage() {
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
                       <div className="flex items-center gap-4 mb-3">
-                        <div className="w-12 h-12 bg-gradient-primary rounded-full flex items-center justify-center text-white font-bold shadow-glow-primary">
+                        <div className="w-12 h-12 bg-emerald-600 rounded-full flex items-center justify-center text-white font-bold shadow-md">
                           {review.reviewerId.name.charAt(0).toUpperCase()}
                         </div>
                         <div>

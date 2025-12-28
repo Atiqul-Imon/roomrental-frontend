@@ -133,7 +133,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
       case 'super_admin':
         return 'bg-red-100 text-red-700 border-red-300';
       case 'admin':
-        return 'bg-blue-100 text-blue-700 border-blue-300';
+        return 'bg-emerald-100 text-emerald-700 border-emerald-300';
       case 'staff':
         return 'bg-green-100 text-green-700 border-green-300';
       default:
@@ -142,7 +142,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50">
+    <div className="min-h-screen bg-gray-50">
       {/* Mobile Sidebar Overlay */}
       {sidebarOpen && (
         <div
@@ -159,7 +159,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
       >
         <div className="flex flex-col h-full">
           {/* Header */}
-          <div className="p-6 border-b border-gray-200 bg-gradient-to-r from-blue-500 to-purple-500">
+          <div className="p-6 border-b border-gray-200 bg-emerald-600">
             <div className="flex items-center justify-between mb-4">
               <h1 className="text-2xl font-bold text-white">Admin Panel</h1>
               <button
@@ -218,12 +218,12 @@ export function AdminLayout({ children }: AdminLayoutProps) {
                       onClick={() => toggleMenu(item.href)}
                       className={`group w-full flex items-center justify-between gap-3 px-4 py-3 rounded-lg transition-all duration-200 relative ${
                         isActive || isExpanded
-                          ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-md'
-                          : 'text-gray-700 hover:bg-blue-50 hover:text-blue-600'
+                          ? 'bg-emerald-50 text-emerald-700 font-semibold border-l-4 border-emerald-600'
+                          : 'text-gray-700 hover:bg-emerald-50 hover:text-emerald-600'
                       }`}
                     >
                       <div className="flex items-center gap-3 flex-1">
-                        <Icon className={`w-5 h-5 transition-transform duration-200 ${isActive ? 'scale-110' : 'group-hover:scale-110'}`} />
+                        <Icon className={`w-5 h-5 transition-transform duration-200 ${isActive || isExpanded ? 'text-emerald-600 scale-110' : 'group-hover:scale-110'}`} />
                         <span className="font-medium">{item.label}</span>
                       </div>
                       {isExpanded ? (
@@ -238,21 +238,18 @@ export function AdminLayout({ children }: AdminLayoutProps) {
                       onClick={() => setSidebarOpen(false)}
                       className={`group flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 relative ${
                         isActive
-                          ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-md'
-                          : 'text-gray-700 hover:bg-blue-50 hover:text-blue-600'
+                          ? 'bg-emerald-50 text-emerald-700 font-semibold border-l-4 border-emerald-600'
+                          : 'text-gray-700 hover:bg-emerald-50 hover:text-emerald-600'
                       }`}
                     >
-                      {isActive && (
-                        <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-white rounded-r-full" />
-                      )}
-                      <Icon className={`w-5 h-5 transition-transform duration-200 ${isActive ? 'scale-110' : 'group-hover:scale-110'}`} />
+                      <Icon className={`w-5 h-5 transition-transform duration-200 ${isActive ? 'text-emerald-600 scale-110' : 'group-hover:scale-110'}`} />
                       <span className="font-medium">{item.label}</span>
                     </Link>
                   )}
                   
                   {/* Submenu */}
                   {hasSubmenu && isExpanded && visibleSubmenuItems.length > 0 && (
-                    <div className="ml-4 mt-1 space-y-1 border-l-2 border-blue-200 pl-2">
+                    <div className="ml-4 mt-1 space-y-1 border-l-2 border-emerald-200 pl-2">
                       {visibleSubmenuItems.map((subItem) => {
                         const SubIcon = subItem.icon;
                         const isSubActive = pathname === subItem.href || pathname?.startsWith(subItem.href + '/');
@@ -264,14 +261,11 @@ export function AdminLayout({ children }: AdminLayoutProps) {
                             onClick={() => setSidebarOpen(false)}
                             className={`group flex items-center gap-3 px-4 py-2 rounded-lg transition-all duration-200 relative ${
                               isSubActive
-                                ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-md'
-                                : 'text-gray-600 hover:bg-blue-50 hover:text-blue-600'
+                                ? 'bg-emerald-50 text-emerald-700 font-semibold border-l-4 border-emerald-600'
+                                : 'text-gray-600 hover:bg-emerald-50 hover:text-emerald-600'
                             }`}
                           >
-                            {isSubActive && (
-                              <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-4 bg-white rounded-r-full" />
-                            )}
-                            <SubIcon className="w-4 h-4" />
+                            <SubIcon className={`w-4 h-4 ${isSubActive ? 'text-emerald-600' : ''}`} />
                             <span className="font-medium text-sm">{subItem.label}</span>
                           </Link>
                         );
@@ -303,14 +297,14 @@ export function AdminLayout({ children }: AdminLayoutProps) {
           <div className="flex items-center justify-between px-6 h-16 gap-4">
             <button
               onClick={() => setSidebarOpen(true)}
-              className="lg:hidden text-gray-700 hover:text-blue-600 transition-colors"
+              className="lg:hidden text-gray-700 hover:text-emerald-600 transition-colors"
             >
               <Menu className="w-6 h-6" />
             </button>
             <div className="flex-1" />
             <button
               onClick={commandPalette.open}
-              className="hidden md:flex items-center gap-2 px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-gray-700 hover:text-blue-600 hover:border-blue-300 hover:bg-blue-50 transition-colors text-sm"
+              className="hidden md:flex items-center gap-2 px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-gray-700 hover:text-emerald-600 hover:border-emerald-300 hover:bg-emerald-50 transition-colors text-sm"
             >
               <Search className="w-4 h-4" />
               <span>Search</span>
@@ -320,7 +314,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
             </button>
             <Link
               href="/"
-              className="text-sm text-gray-700 hover:text-blue-600 font-medium transition-colors"
+              className="text-sm text-gray-700 hover:text-emerald-600 font-medium transition-colors"
             >
               View Site
             </Link>

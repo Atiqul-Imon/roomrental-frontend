@@ -7,7 +7,7 @@ import { useQuery } from '@tanstack/react-query';
 import { api } from '@/lib/api';
 import { User } from '@/types';
 import { Button } from '@/components/ui/Button';
-import { Search, Filter, MoreVertical, Edit, Trash2, User as UserIcon, Mail, Phone } from 'lucide-react';
+import { Search, Filter, MoreVertical, Edit, Trash2, User as UserIcon, Mail, Phone, CheckCircle, Users } from 'lucide-react';
 import Link from 'next/link';
 
 export default function UsersPage() {
@@ -51,13 +51,18 @@ export default function UsersPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">User Management</h1>
-        <p className="text-gray-600">Manage all users on the platform</p>
+      <div className="mb-6">
+        <div className="flex items-center gap-3 mb-2">
+          <div className="p-2 bg-emerald-100 rounded-lg">
+            <Users className="w-6 h-6 text-emerald-600" />
+          </div>
+          <h1 className="text-3xl font-bold text-gray-900">User Management</h1>
+        </div>
+        <p className="text-gray-600 ml-12">Manage all users on the platform</p>
       </div>
 
       {/* Filters */}
-      <div className="bg-white rounded-xl p-4 shadow-md border border-gray-200">
+      <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-200">
         <div className="flex flex-col md:flex-row gap-4">
           <div className="flex-1 relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
@@ -66,13 +71,13 @@ export default function UsersPage() {
               placeholder="Search by name or email..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200"
             />
           </div>
           <select
             value={roleFilter}
             onChange={(e) => setRoleFilter(e.target.value)}
-            className="px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            className="px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200"
           >
             <option value="all">All Roles</option>
             <option value="student">Student</option>
@@ -98,22 +103,22 @@ export default function UsersPage() {
           <>
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-gradient-to-r from-blue-50 to-purple-50 border-b border-gray-200">
+                <thead className="bg-emerald-50 border-b-2 border-emerald-100">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">User</th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Role</th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Contact</th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Verification</th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Joined</th>
-                    <th className="px-6 py-3 text-right text-xs font-semibold text-gray-700 uppercase">Actions</th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-emerald-900 uppercase tracking-wider">User</th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-emerald-900 uppercase tracking-wider">Role</th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-emerald-900 uppercase tracking-wider">Contact</th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-emerald-900 uppercase tracking-wider">Verification</th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-emerald-900 uppercase tracking-wider">Joined</th>
+                    <th className="px-6 py-4 text-right text-xs font-semibold text-emerald-900 uppercase tracking-wider">Actions</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-200">
-                  {data.users.map((user: User) => (
-                    <tr key={user.id} className="hover:bg-blue-50 transition-colors">
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {data.users.map((user: User, index: number) => (
+                    <tr key={user.id} className={`hover:bg-emerald-50 transition-colors duration-150 ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'}`}>
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white font-bold shadow-md">
+                          <div className="w-10 h-10 bg-emerald-600 rounded-full flex items-center justify-center text-white font-bold shadow-md">
                             {user.name.charAt(0).toUpperCase()}
                           </div>
                           <div>
@@ -144,12 +149,14 @@ export default function UsersPage() {
                       <td className="px-6 py-4">
                         <div className="flex flex-col gap-1">
                           {user.verification?.emailVerified && (
-                            <span className="inline-block w-fit px-2 py-0.5 bg-green-100 text-green-700 rounded text-xs font-medium border border-green-300">
+                            <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-green-100 text-green-700 rounded-full text-xs font-medium border border-green-300">
+                              <CheckCircle className="w-3 h-3" />
                               Email Verified
                             </span>
                           )}
                           {user.verification?.phoneVerified && (
-                            <span className="inline-block w-fit px-2 py-0.5 bg-green-100 text-green-700 rounded text-xs font-medium border border-green-300">
+                            <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-green-100 text-green-700 rounded-full text-xs font-medium border border-green-300">
+                              <CheckCircle className="w-3 h-3" />
                               Phone Verified
                             </span>
                           )}
@@ -164,7 +171,8 @@ export default function UsersPage() {
                         <div className="flex items-center justify-end gap-2">
                           <Link
                             href={`/admin/users/${user.id}`}
-                            className="p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                            className="p-2.5 text-gray-600 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-all duration-200 hover:scale-110"
+                            title="Edit User"
                           >
                             <Edit className="w-4 h-4" />
                           </Link>

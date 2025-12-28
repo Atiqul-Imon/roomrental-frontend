@@ -98,7 +98,7 @@ export default function AnalyticsPage() {
       title: 'Total Users',
       value: analytics?.totalUsers || 0,
       icon: Users,
-      color: 'bg-blue-500',
+      color: 'bg-emerald-500',
       change: analytics?.userGrowth || 0,
       changeLabel: 'vs last month',
     },
@@ -267,7 +267,7 @@ export default function AnalyticsPage() {
             {analytics?.recentUsers && analytics.recentUsers.length > 0 ? (
               analytics.recentUsers.map((user, index) => (
                 <div key={index} className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
-                  <div className="w-10 h-10 bg-gradient-primary rounded-full flex items-center justify-center text-white font-bold shadow-glow-primary">
+                  <div className="w-10 h-10 bg-emerald-600 rounded-full flex items-center justify-center text-white font-bold shadow-md">
                     {user.name.charAt(0).toUpperCase()}
                   </div>
                   <div className="flex-1">
@@ -297,7 +297,7 @@ export default function AnalyticsPage() {
                       {location.city}, {location.state}
                     </p>
                   </div>
-                  <span className="text-lg font-bold text-blue-600">{location.count}</span>
+                  <span className="text-lg font-bold text-emerald-600">{location.count}</span>
                 </div>
               ))
             ) : (

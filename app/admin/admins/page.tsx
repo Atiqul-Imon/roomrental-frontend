@@ -67,13 +67,18 @@ export default function AdminsPage() {
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Admin Management</h1>
-          <p className="text-gray-600">Manage admin users and their permissions</p>
+        <div className="mb-6">
+          <div className="flex items-center gap-3 mb-2">
+            <div className="p-2 bg-emerald-100 rounded-lg">
+              <Shield className="w-6 h-6 text-emerald-600" />
+            </div>
+            <h1 className="text-3xl font-bold text-gray-900">Admin Management</h1>
+          </div>
+          <p className="text-gray-600 ml-12">Manage admin users and their permissions</p>
         </div>
         <Link
           href="/admin/admins/create"
-          className="px-4 py-2 btn-gradient text-white rounded-lg font-semibold hover:scale-105 transition-all duration-200 shadow-medium inline-flex items-center gap-2"
+          className="px-4 py-2 bg-emerald-600 text-white rounded-lg font-semibold hover:bg-emerald-700 transition-all duration-200 shadow-md inline-flex items-center gap-2"
         >
           <Plus className="w-4 h-4" />
           Create Admin
@@ -140,7 +145,7 @@ export default function AdminsPage() {
                       <tr key={admin.id} className="hover:bg-gray-50 transition-colors">
                         <td className="px-6 py-4">
                           <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 bg-gradient-primary rounded-full flex items-center justify-center text-white font-bold shadow-glow-primary">
+                            <div className="w-10 h-10 bg-emerald-600 rounded-full flex items-center justify-center text-white font-bold shadow-md">
                               {admin.name.charAt(0).toUpperCase()}
                             </div>
                             <div>

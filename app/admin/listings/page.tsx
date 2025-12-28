@@ -64,13 +64,13 @@ export default function AdminListingsPage() {
     switch (status) {
       case 'active':
       case 'available':
-        return 'bg-green-100 text-green-700 border-green-300';
+        return 'bg-green-100 text-green-700 border-green-300 font-semibold';
       case 'pending':
-        return 'bg-yellow-100 text-yellow-700 border-yellow-300';
+        return 'bg-amber-100 text-amber-700 border-amber-300 font-semibold';
       case 'rented':
-        return 'bg-purple-100 text-purple-700 border-purple-300';
+        return 'bg-purple-100 text-purple-700 border-purple-300 font-semibold';
       case 'inactive':
-        return 'bg-gray-100 text-gray-700 border-gray-300';
+        return 'bg-gray-100 text-gray-700 border-gray-300 font-semibold';
       default:
         return 'bg-gray-100 text-gray-700 border-gray-300';
     }
@@ -79,14 +79,19 @@ export default function AdminListingsPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Listing Management</h1>
-          <p className="text-gray-600">Manage and moderate all listings on the platform</p>
+          <div className="flex items-center gap-3 mb-2">
+            <div className="p-2 bg-emerald-100 rounded-lg">
+              <Building2 className="w-6 h-6 text-emerald-600" />
+            </div>
+            <h1 className="text-3xl font-bold text-gray-900">Listing Management</h1>
+          </div>
+          <p className="text-gray-600 ml-12">Manage and moderate all listings on the platform</p>
         </div>
         <Link
           href="/admin/listings/create"
-          className="flex items-center gap-2 px-6 py-3 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors font-semibold shadow-medium"
+          className="flex items-center gap-2 px-5 py-2.5 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-all duration-200 font-semibold shadow-sm hover:shadow-md"
         >
           <Building2 className="w-5 h-5" />
           Create Listing
@@ -94,7 +99,7 @@ export default function AdminListingsPage() {
       </div>
 
       {/* Filters */}
-      <div className="bg-white rounded-xl p-4 shadow-md border border-gray-200">
+      <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-200">
         <div className="flex flex-col md:flex-row gap-4">
           <div className="flex-1 relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-500" />
@@ -103,13 +108,13 @@ export default function AdminListingsPage() {
               placeholder="Search by title, location..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+              className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200"
             />
           </div>
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+            className="px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200"
           >
             <option value="all">All Status</option>
             <option value="active">Active</option>
@@ -120,7 +125,7 @@ export default function AdminListingsPage() {
       </div>
 
       {/* Listings Table */}
-      <div className="bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden">
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
         {isLoading ? (
           <div className="p-12 text-center">
             <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary-500"></div>
@@ -136,20 +141,20 @@ export default function AdminListingsPage() {
           <>
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-gradient-to-r from-blue-50 to-purple-50 border-b border-gray-200">
+                <thead className="bg-emerald-50 border-b-2 border-emerald-100">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Listing</th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Landlord</th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Price</th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Location</th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Status</th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Created</th>
-                    <th className="px-6 py-3 text-right text-xs font-semibold text-gray-600 uppercase">Actions</th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-emerald-900 uppercase tracking-wider">Listing</th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-emerald-900 uppercase tracking-wider">Landlord</th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-emerald-900 uppercase tracking-wider">Price</th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-emerald-900 uppercase tracking-wider">Location</th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-emerald-900 uppercase tracking-wider">Status</th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-emerald-900 uppercase tracking-wider">Created</th>
+                    <th className="px-6 py-4 text-right text-xs font-semibold text-emerald-900 uppercase tracking-wider">Actions</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-200">
+                <tbody className="bg-white divide-y divide-gray-200">
                   {data.listings.map((listing: Listing, index: number) => (
-                    <tr key={listing._id || `listing-${index}`} className="hover:bg-blue-50 transition-colors">
+                    <tr key={listing._id || `listing-${index}`} className={`hover:bg-emerald-50 transition-colors duration-150 ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'}`}>
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
                           {listing.images && listing.images.length > 0 && listing.images[0] && (

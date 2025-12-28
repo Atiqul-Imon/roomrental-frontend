@@ -167,7 +167,7 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Type a command or search..."
-            className="w-full pl-10 pr-10 py-3 bg-gray-50 border border-gray-200 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            className="w-full pl-10 pr-10 py-3 bg-gray-50 border border-gray-200 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
           />
           <button
             onClick={onClose}
@@ -201,8 +201,8 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
                           onClick={() => handleCommandClick(cmd)}
                           className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
                             isSelected
-                              ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white'
-                              : 'hover:bg-blue-50 text-gray-700'
+                              ? 'bg-emerald-600 text-white'
+                              : 'hover:bg-emerald-50 text-gray-700'
                           }`}
                         >
                           <div className={isSelected ? 'text-white' : 'text-gray-500'}>{cmd.icon}</div>

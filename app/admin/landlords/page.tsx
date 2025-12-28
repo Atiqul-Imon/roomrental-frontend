@@ -7,7 +7,7 @@ import { useQuery } from '@tanstack/react-query';
 import { api } from '@/lib/api';
 import { User } from '@/types';
 import { Button } from '@/components/ui/Button';
-import { Search, Edit, Building2, DollarSign, TrendingUp, CheckCircle, XCircle, Mail, Phone, Calendar } from 'lucide-react';
+import { Search, Edit, Building2, DollarSign, TrendingUp, CheckCircle, XCircle, Mail, Phone, Calendar, Home } from 'lucide-react';
 import Link from 'next/link';
 
 interface LandlordStats {
@@ -63,9 +63,14 @@ export default function LandlordsPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Landlord Management</h1>
-        <p className="text-gray-600">View and manage all registered landlords and their listing statistics</p>
+      <div className="mb-6">
+        <div className="flex items-center gap-3 mb-2">
+          <div className="p-2 bg-emerald-100 rounded-lg">
+            <Home className="w-6 h-6 text-emerald-600" />
+          </div>
+          <h1 className="text-3xl font-bold text-gray-900">Landlord Management</h1>
+        </div>
+        <p className="text-gray-600 ml-12">View and manage all registered landlords and their listing statistics</p>
       </div>
 
       {/* Summary Cards */}
@@ -77,7 +82,7 @@ export default function LandlordsPage() {
                 <p className="text-sm text-gray-500 mb-1">Total Landlords</p>
                 <p className="text-2xl font-bold text-gray-900">{data.total}</p>
               </div>
-              <Building2 className="w-8 h-8 text-blue-600" />
+              <Building2 className="w-8 h-8 text-emerald-600" />
             </div>
           </div>
           <div className="bg-white rounded-xl p-4 shadow-md border border-gray-200">
@@ -99,7 +104,7 @@ export default function LandlordsPage() {
                   {data.landlords.reduce((sum: number, landlord: LandlordWithStats) => sum + landlord.stats.activeListings, 0)}
                 </p>
               </div>
-              <CheckCircle className="w-8 h-8 text-blue-600" />
+              <CheckCircle className="w-8 h-8 text-emerald-600" />
             </div>
           </div>
           <div className="bg-white rounded-xl p-4 shadow-md border border-gray-200">
@@ -175,7 +180,7 @@ export default function LandlordsPage() {
                     <tr key={landlord.id} className="hover:bg-gray-50 transition-colors">
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 bg-gradient-primary rounded-full flex items-center justify-center text-white font-bold shadow-glow-primary">
+                          <div className="w-10 h-10 bg-emerald-600 rounded-full flex items-center justify-center text-white font-bold shadow-md">
                             {landlord.name.charAt(0).toUpperCase()}
                           </div>
                           <div>
@@ -210,7 +215,7 @@ export default function LandlordsPage() {
                             </span>
                           </div>
                           <div className="flex gap-2 text-xs">
-                            <span className="px-2 py-0.5 bg-blue-500/20 text-blue-600 rounded">
+                            <span className="px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded border border-emerald-300">
                               {landlord.stats.activeListings} Active
                             </span>
                             <span className="px-2 py-0.5 bg-yellow-500/20 text-yellow-400 rounded">
@@ -277,7 +282,7 @@ export default function LandlordsPage() {
                         <div className="flex items-center justify-end gap-2">
                           <Link
                             href={`/admin/users/${landlord.id}`}
-                            className="p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                            className="p-2 text-gray-600 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors"
                             title="View Details"
                           >
                             <Edit className="w-4 h-4" />
