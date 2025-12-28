@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, Suspense, useEffect } from 'react';
+import { useState, Suspense } from 'react';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { ListingList } from '@/components/listings/ListingList';
@@ -12,7 +12,6 @@ import { FilterPresets } from '@/components/filters/FilterPresets';
 import { ViewToggle } from '@/components/listings/ViewToggle';
 import { SaveSearchButton } from '@/components/search/SaveSearchButton';
 import { ComparisonButton } from '@/components/listings/ComparisonButton';
-import { ComparisonModal } from '@/components/listings/ComparisonModal';
 import { SlidersHorizontal } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
@@ -45,15 +44,6 @@ function FilterSidebarContent({ isOpen, onClose }: { isOpen: boolean; onClose: (
 export default function ListingsPage() {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [viewMode, setViewMode] = useState<'list' | 'map'>('list');
-  const [isComparisonOpen, setIsComparisonOpen] = useState(false);
-
-  useEffect(() => {
-    const handleOpenComparison = () => {
-      setIsComparisonOpen(true);
-    };
-    window.addEventListener('openComparison', handleOpenComparison);
-    return () => window.removeEventListener('openComparison', handleOpenComparison);
-  }, []);
 
   return (
     <>
@@ -134,7 +124,6 @@ export default function ListingsPage() {
       </main>
       <Footer />
       <ComparisonButton />
-      <ComparisonModal isOpen={isComparisonOpen} onClose={() => setIsComparisonOpen(false)} />
     </>
   );
 }

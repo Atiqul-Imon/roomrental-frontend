@@ -1,15 +1,21 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import { useComparisonStore } from '@/lib/comparison-store';
 import { Button } from '@/components/ui/Button';
 import { GitCompare, X } from 'lucide-react';
 
 export function ComparisonButton() {
+  const router = useRouter();
   const { listings, clearAll } = useComparisonStore();
 
   if (listings.length === 0) {
     return null;
   }
+
+  const handleCompare = () => {
+    router.push('/compare');
+  };
 
   return (
     <div className="fixed bottom-20 md:bottom-6 right-4 md:right-6 z-[60]">
@@ -22,13 +28,10 @@ export function ComparisonButton() {
         </div>
         <div className="flex items-center gap-2 w-full sm:w-auto">
           <Button
-            onClick={() => {
-              // Will be handled by ComparisonModal
-              const event = new CustomEvent('openComparison');
-              window.dispatchEvent(event);
-            }}
+            onClick={handleCompare}
             variant="primary"
             size="sm"
+            className="flex-1 sm:flex-none"
           >
             Compare
           </Button>

@@ -5,9 +5,8 @@ import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { ListingList } from '@/components/listings/ListingList';
 import { ComparisonButton } from '@/components/listings/ComparisonButton';
-import { ComparisonModal } from '@/components/listings/ComparisonModal';
 import { Search, Home as HomeIcon, Users } from 'lucide-react';
-import { useState, useEffect, Suspense } from 'react';
+import { Suspense } from 'react';
 
 export const dynamic = 'force-dynamic';
 
@@ -20,16 +19,6 @@ function ListingListContent() {
 }
 
 export default function Home() {
-  const [isComparisonOpen, setIsComparisonOpen] = useState(false);
-
-  useEffect(() => {
-    const handleOpenComparison = () => {
-      setIsComparisonOpen(true);
-    };
-    window.addEventListener('openComparison', handleOpenComparison);
-    return () => window.removeEventListener('openComparison', handleOpenComparison);
-  }, []);
-
   return (
     <>
       <Header />
@@ -89,7 +78,6 @@ export default function Home() {
       </main>
       <Footer />
       <ComparisonButton />
-      <ComparisonModal isOpen={isComparisonOpen} onClose={() => setIsComparisonOpen(false)} />
     </>
   );
 }
