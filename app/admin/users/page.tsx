@@ -16,7 +16,7 @@ export default function UsersPage() {
   const [roleFilter, setRoleFilter] = useState<string>('all');
   const [statusFilter, setStatusFilter] = useState<string>('all');
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, error } = useQuery({
     queryKey: ['admin-users', page, search, roleFilter, statusFilter],
     queryFn: async () => {
       const params: any = { page, limit: 20 };
@@ -24,12 +24,15 @@ export default function UsersPage() {
       if (roleFilter !== 'all') params.role = roleFilter;
       
       const response = await api.get('/admin/users', { params });
-      return response.data.data as {
-        users: User[];
-        total: number;
-        page: number;
-        limit: number;
-        totalPages: number;
+      const backendData = response.data.data;
+      
+      // Backend returns: { users, pagination: { total, page, limit, totalPages } }
+      return {
+        users: backendData.users || [],
+        total: backendData.pagination?.total || 0,
+        page: backendData.pagination?.page || page,
+        limit: backendData.pagination?.limit || 20,
+        totalPages: backendData.pagination?.totalPages || 0,
       };
     },
   });
@@ -84,6 +87,13 @@ export default function UsersPage() {
           <div className="p-12 text-center">
             <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary-500"></div>
           </div>
+        ) : error ? (
+          <div className="p-12 text-center">
+            <p className="text-red-400 mb-2">Error loading users</p>
+            <p className="text-dark-text-muted text-sm">
+              {error instanceof Error ? error.message : 'Unknown error occurred'}
+            </p>
+          </div>
         ) : data && data.users.length > 0 ? (
           <>
             <div className="overflow-x-auto">
@@ -99,7 +109,7 @@ export default function UsersPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-dark-border-default">
-                  {data.users.map((user) => (
+                  {data.users.map((user: User) => (
                     <tr key={user.id} className="hover:bg-dark-bg-tertiary transition-colors">
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
