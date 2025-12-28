@@ -17,25 +17,28 @@ export default function AdminListingsPage() {
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const queryClient = useQueryClient();
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, error } = useQuery({
     queryKey: ['admin-listings', page, search, statusFilter],
     queryFn: async () => {
       const params: any = { page, limit: 20 };
       if (search) params.search = search;
       if (statusFilter !== 'all') params.status = statusFilter;
       
-      const response = await api.get('/listings', { params });
-      return response.data.data as {
-        listings: Listing[];
-        total: number;
-        page: number;
-        limit: number;
-        totalPages: number;
+      const response = await api.get('/admin/listings', { params });
+      const backendData = response.data.data;
+      
+      // Backend returns: { listings, pagination: { total, page, limit, totalPages } }
+      return {
+        listings: backendData.listings || [],
+        total: backendData.pagination?.total || 0,
+        page: backendData.pagination?.page || page,
+        limit: backendData.pagination?.limit || 20,
+        totalPages: backendData.pagination?.totalPages || 0,
       };
     },
   });
 
-  const handleStatusChange = async (listingId: string, newStatus: 'active' | 'pending' | 'rented') => {
+  const handleStatusChange = async (listingId: string, newStatus: 'active' | 'pending' | 'rented' | 'available' | 'inactive') => {
     try {
       await api.put(`/listings/${listingId}/status`, { status: newStatus });
       queryClient.invalidateQueries({ queryKey: ['admin-listings'] });
@@ -60,11 +63,14 @@ export default function AdminListingsPage() {
   const getStatusBadgeColor = (status: string) => {
     switch (status) {
       case 'active':
+      case 'available':
         return 'bg-green-500/20 text-green-400 border-green-500/30';
       case 'pending':
         return 'bg-warning/20 text-warning border-warning/30';
       case 'rented':
         return 'bg-dark-bg-tertiary text-dark-text-secondary border-dark-border-default';
+      case 'inactive':
+        return 'bg-grey-500/20 text-grey-400 border-grey-500/30';
       default:
         return 'bg-dark-bg-tertiary text-dark-text-secondary border-dark-border-default';
     }
@@ -119,6 +125,13 @@ export default function AdminListingsPage() {
           <div className="p-12 text-center">
             <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary-500"></div>
           </div>
+        ) : error ? (
+          <div className="p-12 text-center">
+            <p className="text-red-400 mb-2">Error loading listings</p>
+            <p className="text-dark-text-muted text-sm">
+              {error instanceof Error ? error.message : 'Unknown error occurred'}
+            </p>
+          </div>
         ) : data && data.listings.length > 0 ? (
           <>
             <div className="overflow-x-auto">
@@ -135,26 +148,30 @@ export default function AdminListingsPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-dark-border-default">
-                  {data.listings.map((listing) => (
-                    <tr key={listing._id} className="hover:bg-dark-bg-tertiary transition-colors">
+                  {data.listings.map((listing: Listing, index: number) => (
+                    <tr key={listing._id || `listing-${index}`} className="hover:bg-dark-bg-tertiary transition-colors">
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
-                          {listing.images[0] && (
+                          {listing.images && listing.images.length > 0 && listing.images[0] && (
                             <img
                               src={listing.images[0]}
-                              alt={listing.title}
+                              alt={listing.title || 'Listing'}
                               className="w-12 h-12 object-cover rounded-lg"
                             />
                           )}
                           <div>
-                            <p className="font-semibold text-dark-text-primary">{listing.title}</p>
-                            <p className="text-sm text-dark-text-muted line-clamp-1">{listing.description}</p>
+                            <p className="font-semibold text-dark-text-primary">{listing.title || 'Untitled'}</p>
+                            <p className="text-sm text-dark-text-muted line-clamp-1">{listing.description || 'No description'}</p>
                           </div>
                         </div>
                       </td>
                       <td className="px-6 py-4">
-                        <p className="text-sm font-medium text-dark-text-primary">{listing.landlordId.name}</p>
-                        <p className="text-xs text-dark-text-muted">{listing.landlordId.email}</p>
+                        <p className="text-sm font-medium text-dark-text-primary">
+                          {listing.landlordId?.name || 'N/A'}
+                        </p>
+                        <p className="text-xs text-dark-text-muted">
+                          {listing.landlordId?.email || 'N/A'}
+                        </p>
                       </td>
                       <td className="px-6 py-4">
                         <p className="font-semibold text-dark-text-primary">${listing.price}</p>
@@ -162,18 +179,24 @@ export default function AdminListingsPage() {
                       </td>
                       <td className="px-6 py-4">
                         <p className="text-sm text-dark-text-secondary">
-                          {listing.location.city}, {listing.location.state}
+                          {listing.location?.city && listing.location?.state
+                            ? `${listing.location.city}, ${listing.location.state}`
+                            : listing.location?.city || listing.location?.state || 'N/A'}
                         </p>
                       </td>
                       <td className="px-6 py-4">
                         <select
-                          value={listing.status}
-                          onChange={(e) => handleStatusChange(listing._id, e.target.value as any)}
+                          value={listing.status === 'available' ? 'active' : listing.status === 'inactive' ? 'inactive' : listing.status}
+                          onChange={(e) => {
+                            const newStatus = e.target.value === 'active' ? 'available' : e.target.value;
+                            handleStatusChange(listing._id || '', newStatus as any);
+                          }}
                           className={`px-3 py-1 rounded-full text-xs font-semibold border bg-dark-bg-tertiary text-dark-text-primary ${getStatusBadgeColor(listing.status)} focus:outline-none focus:ring-2 focus:ring-primary-500`}
                         >
                           <option value="pending">Pending</option>
                           <option value="active">Active</option>
                           <option value="rented">Rented</option>
+                          <option value="inactive">Inactive</option>
                         </select>
                       </td>
                       <td className="px-6 py-4">
@@ -183,15 +206,24 @@ export default function AdminListingsPage() {
                       </td>
                       <td className="px-6 py-4 text-right">
                         <div className="flex items-center justify-end gap-2">
-                          <Link
-                            href={`/listings/${listing._id}`}
-                            className="p-2 text-dark-text-secondary hover:text-primary-400 hover:bg-primary-500/20 rounded-lg transition-colors"
-                            title="View"
-                          >
-                            <Eye className="w-4 h-4" />
-                          </Link>
+                          {listing._id ? (
+                            <Link
+                              href={`/admin/listings/${listing._id}`}
+                              className="p-2 text-dark-text-secondary hover:text-primary-400 hover:bg-primary-500/20 rounded-lg transition-colors"
+                              title="View Details"
+                            >
+                              <Eye className="w-4 h-4" />
+                            </Link>
+                          ) : (
+                            <span
+                              className="p-2 text-dark-text-muted cursor-not-allowed opacity-50"
+                              title="Listing ID missing"
+                            >
+                              <Eye className="w-4 h-4" />
+                            </span>
+                          )}
                           <button
-                            onClick={() => handleDelete(listing._id)}
+                            onClick={() => handleDelete(listing._id || '')}
                             className="p-2 text-dark-text-secondary hover:text-red-400 hover:bg-red-500/20 rounded-lg transition-colors"
                             title="Delete"
                           >

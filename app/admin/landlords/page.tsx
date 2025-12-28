@@ -28,7 +28,7 @@ export default function LandlordsPage() {
   const [search, setSearch] = useState('');
   const [emailVerifiedFilter, setEmailVerifiedFilter] = useState<string>('all');
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, error } = useQuery({
     queryKey: ['admin-landlords', page, search, emailVerifiedFilter],
     queryFn: async () => {
       const params: any = { page, limit: 20 };
@@ -38,12 +38,15 @@ export default function LandlordsPage() {
       }
       
       const response = await api.get('/admin/landlords', { params });
-      return response.data.data as {
-        landlords: LandlordWithStats[];
-        total: number;
-        page: number;
-        limit: number;
-        totalPages: number;
+      const backendData = response.data.data;
+      
+      // Backend returns: { landlords, pagination: { total, page, limit, totalPages } }
+      return {
+        landlords: backendData.landlords || [],
+        total: backendData.pagination?.total || 0,
+        page: backendData.pagination?.page || page,
+        limit: backendData.pagination?.limit || 20,
+        totalPages: backendData.pagination?.totalPages || 0,
       };
     },
   });
@@ -82,7 +85,7 @@ export default function LandlordsPage() {
               <div>
                 <p className="text-sm text-dark-text-muted mb-1">Total Listings</p>
                 <p className="text-2xl font-bold text-dark-text-primary">
-                  {data.landlords.reduce((sum, landlord) => sum + landlord.stats.totalListings, 0)}
+                  {data.landlords.reduce((sum: number, landlord: LandlordWithStats) => sum + landlord.stats.totalListings, 0)}
                 </p>
               </div>
               <TrendingUp className="w-8 h-8 text-green-400" />
@@ -93,7 +96,7 @@ export default function LandlordsPage() {
               <div>
                 <p className="text-sm text-dark-text-muted mb-1">Active Listings</p>
                 <p className="text-2xl font-bold text-dark-text-primary">
-                  {data.landlords.reduce((sum, landlord) => sum + landlord.stats.activeListings, 0)}
+                  {data.landlords.reduce((sum: number, landlord: LandlordWithStats) => sum + landlord.stats.activeListings, 0)}
                 </p>
               </div>
               <CheckCircle className="w-8 h-8 text-blue-400" />
@@ -104,7 +107,7 @@ export default function LandlordsPage() {
               <div>
                 <p className="text-sm text-dark-text-muted mb-1">Total Value</p>
                 <p className="text-2xl font-bold text-dark-text-primary">
-                  {formatCurrency(data.landlords.reduce((sum, landlord) => sum + landlord.stats.totalValue, 0))}
+                  {formatCurrency(data.landlords.reduce((sum: number, landlord: LandlordWithStats) => sum + landlord.stats.totalValue, 0))}
                 </p>
               </div>
               <DollarSign className="w-8 h-8 text-yellow-400" />
@@ -144,6 +147,13 @@ export default function LandlordsPage() {
           <div className="p-12 text-center">
             <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary-500"></div>
           </div>
+        ) : error ? (
+          <div className="p-12 text-center">
+            <p className="text-red-400 mb-2">Error loading landlords</p>
+            <p className="text-dark-text-muted text-sm">
+              {error instanceof Error ? error.message : 'Unknown error occurred'}
+            </p>
+          </div>
         ) : data && data.landlords.length > 0 ? (
           <>
             <div className="overflow-x-auto">
@@ -161,7 +171,7 @@ export default function LandlordsPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-dark-border-default">
-                  {data.landlords.map((landlord) => (
+                  {data.landlords.map((landlord: LandlordWithStats) => (
                     <tr key={landlord.id} className="hover:bg-dark-bg-tertiary transition-colors">
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
