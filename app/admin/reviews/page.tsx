@@ -49,35 +49,35 @@ export default function ReviewsPage() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-dark-text-primary mb-2">Review Management</h1>
-        <p className="text-dark-text-secondary">Manage and moderate all reviews on the platform</p>
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">Review Management</h1>
+        <p className="text-gray-600">Manage and moderate all reviews on the platform</p>
       </div>
 
       {/* Filters */}
-      <div className="bg-dark-bg-secondary rounded-xl p-4 shadow-dark-medium border border-dark-border-default">
+      <div className="bg-white rounded-xl p-4 shadow-md border border-gray-200">
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-dark-text-muted" />
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-500" />
           <input
             type="text"
             placeholder="Search reviews..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 bg-dark-bg-tertiary border border-dark-border-default rounded-lg text-dark-text-primary placeholder-dark-text-muted focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+            className="w-full pl-10 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
           />
         </div>
       </div>
 
       {/* Reviews List */}
-      <div className="bg-dark-bg-secondary rounded-xl shadow-dark-medium border border-dark-border-default overflow-hidden">
+      <div className="bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden">
         {isLoading ? (
           <div className="p-12 text-center">
             <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary-500"></div>
           </div>
         ) : data && data.reviews.length > 0 ? (
           <>
-            <div className="divide-y divide-dark-border-default">
+            <div className="divide-y divide-gray-200">
               {data.reviews.map((review) => (
-                <div key={review._id} className="p-6 hover:bg-dark-bg-tertiary transition-colors">
+                <div key={review._id} className="p-6 hover:bg-gray-50 transition-colors">
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
                       <div className="flex items-center gap-4 mb-3">
@@ -85,8 +85,8 @@ export default function ReviewsPage() {
                           {review.reviewerId.name.charAt(0).toUpperCase()}
                         </div>
                         <div>
-                          <p className="font-semibold text-dark-text-primary">{review.reviewerId.name}</p>
-                          <p className="text-sm text-dark-text-muted">{review.reviewerId.email}</p>
+                          <p className="font-semibold text-gray-900">{review.reviewerId.name}</p>
+                          <p className="text-sm text-gray-500">{review.reviewerId.email}</p>
                         </div>
                         <div className="flex items-center gap-1">
                           {[...Array(5)].map((_, i) => (
@@ -95,26 +95,26 @@ export default function ReviewsPage() {
                               className={`w-4 h-4 ${
                                 i < review.rating
                                   ? 'fill-yellow-400 text-yellow-400'
-                                  : 'text-dark-text-muted'
+                                  : 'text-gray-500'
                               }`}
                             />
                           ))}
                         </div>
                       </div>
-                      <p className="text-dark-text-secondary mb-2">{review.comment}</p>
+                      <p className="text-gray-600 mb-2">{review.comment}</p>
                       {review.listingId && (
-                        <p className="text-sm text-dark-text-muted">
-                          For listing: <span className="font-medium text-dark-text-primary">{review.listingId.title}</span>
+                        <p className="text-sm text-gray-500">
+                          For listing: <span className="font-medium text-gray-900">{review.listingId.title}</span>
                         </p>
                       )}
-                      <p className="text-xs text-dark-text-muted mt-2">
+                      <p className="text-xs text-gray-500 mt-2">
                         {format(new Date(review.createdAt), 'MMM dd, yyyy HH:mm')}
                       </p>
                     </div>
                     <div className="flex items-center gap-2">
                       <button
                         onClick={() => handleDelete(review._id)}
-                        className="p-2 text-dark-text-secondary hover:text-red-400 hover:bg-red-500/20 rounded-lg transition-colors"
+                        className="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                         title="Delete"
                       >
                         <Trash2 className="w-4 h-4" />
@@ -126,8 +126,8 @@ export default function ReviewsPage() {
             </div>
             {/* Pagination */}
             {data.totalPages > 1 && (
-              <div className="px-6 py-4 border-t border-dark-border-default flex items-center justify-between">
-                <p className="text-sm text-dark-text-secondary">
+              <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
+                <p className="text-sm text-gray-600">
                   Showing {(data.page - 1) * data.limit + 1} to {Math.min(data.page * data.limit, data.total)} of {data.total} reviews
                 </p>
                 <div className="flex gap-2">
@@ -153,7 +153,7 @@ export default function ReviewsPage() {
           </>
         ) : (
           <div className="p-12 text-center">
-            <p className="text-dark-text-secondary">No reviews found</p>
+            <p className="text-gray-600">No reviews found</p>
           </div>
         )}
       </div>

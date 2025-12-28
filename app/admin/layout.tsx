@@ -23,7 +23,7 @@ export default function AdminLayoutWrapper({
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-dark-bg-primary">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-500"></div>
       </div>
     );

@@ -38,7 +38,7 @@ export default function AdminCreateListingPage() {
         <div className="flex items-center justify-center min-h-[60vh]">
           <div className="text-center">
             <Loader2 className="w-8 h-8 animate-spin text-primary-500 mx-auto mb-4" />
-            <p className="text-dark-text-secondary">Loading...</p>
+            <p className="text-gray-600">Loading...</p>
           </div>
         </div>
       </AdminLayout>
@@ -55,16 +55,16 @@ export default function AdminCreateListingPage() {
         {/* Header */}
         <div className="flex items-center gap-3">
           <div className="p-3 bg-primary-500/20 rounded-xl">
-            <Building2 className="w-6 h-6 text-primary-400" />
+            <Building2 className="w-6 h-6 text-blue-600" />
           </div>
           <div>
-            <h1 className="text-3xl font-bold text-dark-text-primary">Create New Listing</h1>
-            <p className="text-dark-text-secondary mt-1">Create a listing and assign it to a landlord</p>
+            <h1 className="text-3xl font-bold text-gray-900">Create New Listing</h1>
+            <p className="text-gray-600 mt-1">Create a listing and assign it to a landlord</p>
           </div>
         </div>
 
         {/* Create Listing Form */}
-        <div className="bg-dark-bg-secondary rounded-xl p-6 border border-dark-border-default">
+        <div className="bg-white rounded-xl p-6 border border-gray-200">
           {landlordsData && landlordsData.length > 0 ? (
             <CreateListingForm
               isAdmin={true}
@@ -77,9 +77,9 @@ export default function AdminCreateListingPage() {
             />
           ) : (
             <div className="text-center py-12">
-              <Building2 className="w-16 h-16 text-dark-text-muted mx-auto mb-4" />
-              <h3 className="text-xl font-semibold text-dark-text-primary mb-2">No Landlords Available</h3>
-              <p className="text-dark-text-secondary mb-6">
+              <Building2 className="w-16 h-16 text-gray-500 mx-auto mb-4" />
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">No Landlords Available</h3>
+              <p className="text-gray-600 mb-6">
                 You need at least one landlord account to create listings.
               </p>
               <button
@@ -94,13 +94,13 @@ export default function AdminCreateListingPage() {
 
         {/* Landlord Selection Info */}
         {landlordsData && landlordsData.length > 0 && (
-          <div className="bg-blue-500/10 border border-blue-500/30 rounded-xl p-4">
+          <div className="bg-blue-500/10 border border-blue-300 rounded-xl p-4">
             <div className="flex items-start gap-3">
               <div className="flex-shrink-0">
-                <Building2 className="w-5 h-5 text-blue-400 mt-0.5" />
+                <Building2 className="w-5 h-5 text-blue-600 mt-0.5" />
               </div>
               <div className="flex-1">
-                <h4 className="font-semibold text-blue-400 mb-1">Admin Listing Creation</h4>
+                <h4 className="font-semibold text-blue-600 mb-1">Admin Listing Creation</h4>
                 <p className="text-sm text-blue-300/80">
                   As an admin, you can create listings and assign them to any landlord. 
                   If no landlord is selected, the listing will be assigned to your admin account.

@@ -131,51 +131,51 @@ export function AdminLayout({ children }: AdminLayoutProps) {
   const getRoleBadgeColor = (role: string) => {
     switch (role) {
       case 'super_admin':
-        return 'bg-red-500/20 text-red-400 border-red-500/30';
+        return 'bg-red-100 text-red-700 border-red-300';
       case 'admin':
-        return 'bg-blue-500/20 text-blue-400 border-blue-500/30';
+        return 'bg-blue-100 text-blue-700 border-blue-300';
       case 'staff':
-        return 'bg-green-500/20 text-green-400 border-green-500/30';
+        return 'bg-green-100 text-green-700 border-green-300';
       default:
-        return 'bg-dark-bg-tertiary text-dark-text-secondary border-dark-border-default';
+        return 'bg-gray-100 text-gray-700 border-gray-300';
     }
   };
 
   return (
-    <div className="min-h-screen bg-dark-bg-primary">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50">
       {/* Mobile Sidebar Overlay */}
       {sidebarOpen && (
         <div
-          className="fixed inset-0 bg-black/70 backdrop-blur-sm z-40 lg:hidden"
+          className="fixed inset-0 bg-black/30 backdrop-blur-sm z-40 lg:hidden"
           onClick={() => setSidebarOpen(false)}
         />
       )}
 
       {/* Sidebar */}
       <aside
-        className={`fixed left-0 top-0 h-full w-64 bg-dark-bg-secondary border-r border-dark-border-default z-50 transform transition-transform duration-300 lg:translate-x-0 ${
+        className={`fixed left-0 top-0 h-full w-64 bg-white border-r border-gray-200 shadow-lg z-50 transform transition-transform duration-300 lg:translate-x-0 ${
           sidebarOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
         <div className="flex flex-col h-full">
           {/* Header */}
-          <div className="p-6 border-b border-dark-border-default">
+          <div className="p-6 border-b border-gray-200 bg-gradient-to-r from-blue-500 to-purple-500">
             <div className="flex items-center justify-between mb-4">
-              <h1 className="text-2xl font-bold text-gradient">Admin Panel</h1>
+              <h1 className="text-2xl font-bold text-white">Admin Panel</h1>
               <button
                 onClick={() => setSidebarOpen(false)}
-                className="lg:hidden text-dark-text-muted hover:text-dark-text-primary transition-colors"
+                className="lg:hidden text-white/80 hover:text-white transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-primary rounded-full flex items-center justify-center text-white font-bold shadow-glow-primary">
+              <div className="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white font-bold shadow-lg border-2 border-white/30">
                 {user?.name.charAt(0).toUpperCase()}
               </div>
               <div className="flex-1 min-w-0">
-                <p className="font-semibold text-sm text-dark-text-primary truncate">{user?.name}</p>
-                <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-medium border mt-1 ${getRoleBadgeColor(user?.role || '')}`}>
+                <p className="font-semibold text-sm text-white truncate">{user?.name}</p>
+                <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-medium border border-white/30 bg-white/20 backdrop-blur-sm text-white mt-1`}>
                   {user?.role?.replace('_', ' ').toUpperCase()}
                 </span>
               </div>
@@ -183,7 +183,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
           </div>
 
           {/* Navigation */}
-          <nav className="flex-1 overflow-y-auto p-4 space-y-1">
+          <nav className="flex-1 overflow-y-auto p-4 space-y-1 bg-white">
             {menuItems.map((item) => {
               const Icon = item.icon;
               const isActive = pathname === item.href || pathname?.startsWith(item.href + '/');
@@ -218,8 +218,8 @@ export function AdminLayout({ children }: AdminLayoutProps) {
                       onClick={() => toggleMenu(item.href)}
                       className={`group w-full flex items-center justify-between gap-3 px-4 py-3 rounded-lg transition-all duration-200 relative ${
                         isActive || isExpanded
-                          ? 'bg-primary-500/20 text-primary-400 border border-primary-500/30 shadow-glow-primary'
-                          : 'text-dark-text-secondary hover:bg-dark-bg-tertiary hover:text-primary-400'
+                          ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-md'
+                          : 'text-gray-700 hover:bg-blue-50 hover:text-blue-600'
                       }`}
                     >
                       <div className="flex items-center gap-3 flex-1">
@@ -238,12 +238,12 @@ export function AdminLayout({ children }: AdminLayoutProps) {
                       onClick={() => setSidebarOpen(false)}
                       className={`group flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 relative ${
                         isActive
-                          ? 'bg-primary-500/20 text-primary-400 border border-primary-500/30 shadow-glow-primary'
-                          : 'text-dark-text-secondary hover:bg-dark-bg-tertiary hover:text-primary-400'
+                          ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-md'
+                          : 'text-gray-700 hover:bg-blue-50 hover:text-blue-600'
                       }`}
                     >
                       {isActive && (
-                        <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-primary-500 rounded-r-full animate-pulse" />
+                        <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-white rounded-r-full" />
                       )}
                       <Icon className={`w-5 h-5 transition-transform duration-200 ${isActive ? 'scale-110' : 'group-hover:scale-110'}`} />
                       <span className="font-medium">{item.label}</span>
@@ -252,7 +252,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
                   
                   {/* Submenu */}
                   {hasSubmenu && isExpanded && visibleSubmenuItems.length > 0 && (
-                    <div className="ml-4 mt-1 space-y-1 border-l border-dark-border-default pl-2">
+                    <div className="ml-4 mt-1 space-y-1 border-l-2 border-blue-200 pl-2">
                       {visibleSubmenuItems.map((subItem) => {
                         const SubIcon = subItem.icon;
                         const isSubActive = pathname === subItem.href || pathname?.startsWith(subItem.href + '/');
@@ -264,12 +264,12 @@ export function AdminLayout({ children }: AdminLayoutProps) {
                             onClick={() => setSidebarOpen(false)}
                             className={`group flex items-center gap-3 px-4 py-2 rounded-lg transition-all duration-200 relative ${
                               isSubActive
-                                ? 'bg-primary-500/20 text-primary-400 border border-primary-500/30'
-                                : 'text-dark-text-secondary hover:bg-dark-bg-tertiary hover:text-primary-400'
+                                ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-md'
+                                : 'text-gray-600 hover:bg-blue-50 hover:text-blue-600'
                             }`}
                           >
                             {isSubActive && (
-                              <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-4 bg-primary-500 rounded-r-full" />
+                              <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-4 bg-white rounded-r-full" />
                             )}
                             <SubIcon className="w-4 h-4" />
                             <span className="font-medium text-sm">{subItem.label}</span>
@@ -284,10 +284,10 @@ export function AdminLayout({ children }: AdminLayoutProps) {
           </nav>
 
           {/* Footer */}
-          <div className="p-4 border-t border-dark-border-default">
+          <div className="p-4 border-t border-gray-200 bg-white">
             <button
               onClick={handleLogout}
-              className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-dark-text-secondary hover:bg-red-500/20 hover:text-red-400 transition-all duration-200"
+              className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-red-50 hover:text-red-600 transition-all duration-200"
             >
               <LogOut className="w-5 h-5" />
               <span className="font-medium">Logout</span>
@@ -299,28 +299,28 @@ export function AdminLayout({ children }: AdminLayoutProps) {
       {/* Main Content */}
       <div className="lg:pl-64">
         {/* Top Bar */}
-        <header className="sticky top-0 z-30 bg-dark-bg-secondary/80 backdrop-blur-md border-b border-dark-border-default shadow-dark-medium">
+        <header className="sticky top-0 z-30 bg-white/90 backdrop-blur-md border-b border-gray-200 shadow-sm">
           <div className="flex items-center justify-between px-6 h-16 gap-4">
             <button
               onClick={() => setSidebarOpen(true)}
-              className="lg:hidden text-dark-text-secondary hover:text-dark-text-primary transition-colors"
+              className="lg:hidden text-gray-700 hover:text-blue-600 transition-colors"
             >
               <Menu className="w-6 h-6" />
             </button>
             <div className="flex-1" />
             <button
               onClick={commandPalette.open}
-              className="hidden md:flex items-center gap-2 px-4 py-2 bg-dark-bg-tertiary border border-dark-border-default rounded-lg text-dark-text-secondary hover:text-primary-400 hover:border-primary-500/50 transition-colors text-sm"
+              className="hidden md:flex items-center gap-2 px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-gray-700 hover:text-blue-600 hover:border-blue-300 hover:bg-blue-50 transition-colors text-sm"
             >
               <Search className="w-4 h-4" />
               <span>Search</span>
-              <kbd className="hidden lg:inline-flex px-1.5 py-0.5 text-xs bg-dark-bg-elevated rounded border border-dark-border-default">
+              <kbd className="hidden lg:inline-flex px-1.5 py-0.5 text-xs bg-white rounded border border-gray-300 text-gray-600">
                 ⌘K
               </kbd>
             </button>
             <Link
               href="/"
-              className="text-sm text-dark-text-secondary hover:text-primary-400 font-medium transition-colors"
+              className="text-sm text-gray-700 hover:text-blue-600 font-medium transition-colors"
             >
               View Site
             </Link>
@@ -328,7 +328,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
         </header>
 
         {/* Page Content */}
-        <main className="p-6 bg-dark-bg-primary min-h-screen">{children}</main>
+        <main className="p-6 min-h-screen">{children}</main>
       </div>
 
       {/* Command Palette */}

@@ -238,11 +238,11 @@ export default function AdminListingDetailPage({ params }: { params: Promise<{ i
   if (queryError) {
     return (
       <div className="text-center py-12">
-        <p className="text-red-400 mb-2">Error loading listing</p>
-        <p className="text-dark-text-muted text-sm mb-4">
+        <p className="text-red-600 mb-2">Error loading listing</p>
+        <p className="text-gray-500 text-sm mb-4">
           {queryError instanceof Error ? queryError.message : 'Unknown error occurred'}
         </p>
-        <Link href="/admin/listings" className="text-primary-400 hover:underline">
+        <Link href="/admin/listings" className="text-blue-600 hover:underline">
           Back to Listings
         </Link>
       </div>
@@ -252,8 +252,8 @@ export default function AdminListingDetailPage({ params }: { params: Promise<{ i
   if (!listingData?.listing) {
     return (
       <div className="text-center py-12">
-        <p className="text-dark-text-secondary mb-4">Listing not found</p>
-        <Link href="/admin/listings" className="text-primary-400 hover:underline">
+        <p className="text-gray-600 mb-4">Listing not found</p>
+        <Link href="/admin/listings" className="text-blue-600 hover:underline">
           Back to Listings
         </Link>
       </div>
@@ -266,15 +266,15 @@ export default function AdminListingDetailPage({ params }: { params: Promise<{ i
     switch (status) {
       case 'active':
       case 'available':
-        return 'bg-green-500/20 text-green-400 border-green-500/30';
+        return 'bg-green-500/20 text-green-600 border-green-300';
       case 'pending':
         return 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30';
       case 'rented':
-        return 'bg-blue-500/20 text-blue-400 border-blue-500/30';
+        return 'bg-blue-500/20 text-blue-600 border-blue-300';
       case 'inactive':
         return 'bg-grey-500/20 text-grey-400 border-grey-500/30';
       default:
-        return 'bg-dark-bg-tertiary text-dark-text-secondary border-dark-border-default';
+        return 'bg-gray-50 text-gray-600 border-gray-200';
     }
   };
 
@@ -285,27 +285,27 @@ export default function AdminListingDetailPage({ params }: { params: Promise<{ i
         <div className="flex items-center gap-4">
           <Link
             href="/admin/listings"
-            className="p-2 text-dark-text-secondary hover:text-dark-text-primary hover:bg-dark-bg-tertiary rounded-lg transition-colors"
+            className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-colors"
           >
             <ArrowLeft className="w-5 h-5" />
           </Link>
           <div>
-            <h1 className="text-3xl font-bold text-dark-text-primary">Listing Details</h1>
-            <p className="text-dark-text-secondary">{listing.title}</p>
+            <h1 className="text-3xl font-bold text-gray-900">Listing Details</h1>
+            <p className="text-gray-600">{listing.title}</p>
           </div>
         </div>
         <div className="flex items-center gap-3">
           <Link
             href={`/listings/${listing._id}`}
             target="_blank"
-            className="px-4 py-2 bg-dark-bg-tertiary border border-dark-border-default rounded-lg text-dark-text-secondary hover:text-primary-400 hover:border-primary-500/50 transition-colors font-semibold flex items-center gap-2"
+            className="px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-gray-600 hover:text-blue-600 hover:border-primary-500/50 transition-colors font-semibold flex items-center gap-2"
           >
             <Eye className="w-4 h-4" />
             View Public Page
           </Link>
           <button
             onClick={handleDelete}
-            className="px-4 py-2 bg-red-500/20 text-red-400 rounded-lg hover:bg-red-500/30 transition-colors font-semibold flex items-center gap-2"
+            className="px-4 py-2 bg-red-500/20 text-red-600 rounded-lg hover:bg-red-500/30 transition-colors font-semibold flex items-center gap-2"
           >
             <Trash2 className="w-4 h-4" />
             Delete
@@ -314,7 +314,7 @@ export default function AdminListingDetailPage({ params }: { params: Promise<{ i
       </div>
 
       {error && (
-        <div className="p-4 bg-red-500/20 border-2 border-red-500/30 rounded-lg text-red-400">
+        <div className="p-4 bg-red-500/20 border-2 border-red-300 rounded-lg text-red-600">
           {error}
         </div>
       )}
@@ -324,7 +324,7 @@ export default function AdminListingDetailPage({ params }: { params: Promise<{ i
         <div className="lg:col-span-2 space-y-6">
           {/* Images */}
           {listing.images && listing.images.length > 0 && (
-            <div className="bg-dark-bg-secondary rounded-xl overflow-hidden shadow-dark-medium border border-dark-border-default">
+            <div className="bg-white rounded-xl overflow-hidden shadow-md border border-gray-200">
               <div className="grid grid-cols-2 md:grid-cols-3 gap-2 p-2">
                 {listing.images.slice(0, 6).map((image, index) => (
                   <div key={index} className="relative aspect-square overflow-hidden rounded-lg">
@@ -340,9 +340,9 @@ export default function AdminListingDetailPage({ params }: { params: Promise<{ i
           )}
 
           {/* Basic Information */}
-          <div className="bg-dark-bg-secondary rounded-xl p-6 shadow-dark-medium border border-dark-border-default">
+          <div className="bg-white rounded-xl p-6 shadow-md border border-gray-200">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-bold text-dark-text-primary">Basic Information</h2>
+              <h2 className="text-xl font-bold text-gray-900">Basic Information</h2>
               {!isEditing && (
                 <Button
                   variant="outline"
@@ -359,40 +359,40 @@ export default function AdminListingDetailPage({ params }: { params: Promise<{ i
             {isEditing ? (
               <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                 <div>
-                  <label className="block text-sm font-semibold text-dark-text-secondary mb-2">Title</label>
+                  <label className="block text-sm font-semibold text-gray-600 mb-2">Title</label>
                   <input
                     {...register('title', { required: 'Title is required' })}
-                    className="w-full px-4 py-3 border-2 border-dark-border-default rounded-lg bg-dark-bg-tertiary text-dark-text-primary focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg bg-gray-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500"
                   />
-                  {errors.title && <p className="text-sm text-red-400 mt-1">{errors.title.message}</p>}
+                  {errors.title && <p className="text-sm text-red-600 mt-1">{errors.title.message}</p>}
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-dark-text-secondary mb-2">Description</label>
+                  <label className="block text-sm font-semibold text-gray-600 mb-2">Description</label>
                   <textarea
                     {...register('description', { required: 'Description is required' })}
                     rows={6}
-                    className="w-full px-4 py-3 border-2 border-dark-border-default rounded-lg bg-dark-bg-tertiary text-dark-text-primary focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg bg-gray-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500"
                   />
-                  {errors.description && <p className="text-sm text-red-400 mt-1">{errors.description.message}</p>}
+                  {errors.description && <p className="text-sm text-red-600 mt-1">{errors.description.message}</p>}
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-semibold text-dark-text-secondary mb-2">Price ($/month)</label>
+                    <label className="block text-sm font-semibold text-gray-600 mb-2">Price ($/month)</label>
                     <input
                       {...register('price', { required: 'Price is required', min: 0 })}
                       type="number"
-                      className="w-full px-4 py-3 border-2 border-dark-border-default rounded-lg bg-dark-bg-tertiary text-dark-text-primary focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg bg-gray-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500"
                     />
-                    {errors.price && <p className="text-sm text-red-400 mt-1">{errors.price.message}</p>}
+                    {errors.price && <p className="text-sm text-red-600 mt-1">{errors.price.message}</p>}
                   </div>
 
                   <div>
-                    <label className="block text-sm font-semibold text-dark-text-secondary mb-2">Status</label>
+                    <label className="block text-sm font-semibold text-gray-600 mb-2">Status</label>
                     <select
                       {...register('status')}
-                      className="w-full px-4 py-3 border-2 border-dark-border-default rounded-lg bg-dark-bg-tertiary text-dark-text-primary focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg bg-gray-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500"
                     >
                       <option value="available">Available</option>
                       <option value="pending">Pending</option>
@@ -404,33 +404,33 @@ export default function AdminListingDetailPage({ params }: { params: Promise<{ i
 
                 <div className="grid grid-cols-3 gap-4">
                   <div>
-                    <label className="block text-sm font-semibold text-dark-text-secondary mb-2">Bedrooms</label>
+                    <label className="block text-sm font-semibold text-gray-600 mb-2">Bedrooms</label>
                     <input
                       {...register('bedrooms', { required: 'Bedrooms is required', min: 0 })}
                       type="number"
-                      className="w-full px-4 py-3 border-2 border-dark-border-default rounded-lg bg-dark-bg-tertiary text-dark-text-primary focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg bg-gray-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-semibold text-dark-text-secondary mb-2">Bathrooms</label>
+                    <label className="block text-sm font-semibold text-gray-600 mb-2">Bathrooms</label>
                     <input
                       {...register('bathrooms', { required: 'Bathrooms is required', min: 0 })}
                       type="number"
                       step="0.5"
-                      className="w-full px-4 py-3 border-2 border-dark-border-default rounded-lg bg-dark-bg-tertiary text-dark-text-primary focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg bg-gray-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-semibold text-dark-text-secondary mb-2">Square Feet</label>
+                    <label className="block text-sm font-semibold text-gray-600 mb-2">Square Feet</label>
                     <input
                       {...register('squareFeet', { min: 0 })}
                       type="number"
-                      className="w-full px-4 py-3 border-2 border-dark-border-default rounded-lg bg-dark-bg-tertiary text-dark-text-primary focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg bg-gray-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500"
                     />
                   </div>
                 </div>
 
-                <div className="flex items-center justify-end gap-4 pt-4 border-t border-dark-border-default">
+                <div className="flex items-center justify-end gap-4 pt-4 border-t border-gray-200">
                   <Button
                     type="button"
                     variant="outline"
@@ -452,35 +452,35 @@ export default function AdminListingDetailPage({ params }: { params: Promise<{ i
             ) : (
               <div className="space-y-4">
                 <div>
-                  <p className="text-sm text-dark-text-muted mb-1">Title</p>
-                  <p className="text-lg font-semibold text-dark-text-primary">{listing.title}</p>
+                  <p className="text-sm text-gray-500 mb-1">Title</p>
+                  <p className="text-lg font-semibold text-gray-900">{listing.title}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-dark-text-muted mb-1">Description</p>
-                  <p className="text-dark-text-secondary whitespace-pre-wrap">{listing.description}</p>
+                  <p className="text-sm text-gray-500 mb-1">Description</p>
+                  <p className="text-gray-600 whitespace-pre-wrap">{listing.description}</p>
                 </div>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-4 border-t border-dark-border-default">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-4 border-t border-gray-200">
                   <div>
-                    <p className="text-sm text-dark-text-muted mb-1">Price</p>
-                    <p className="text-xl font-bold text-primary-400">${listing.price.toLocaleString()}/mo</p>
+                    <p className="text-sm text-gray-500 mb-1">Price</p>
+                    <p className="text-xl font-bold text-blue-600">${listing.price.toLocaleString()}/mo</p>
                   </div>
                   <div>
-                    <p className="text-sm text-dark-text-muted mb-1">Bedrooms</p>
-                    <p className="text-lg font-semibold text-dark-text-primary flex items-center gap-1">
+                    <p className="text-sm text-gray-500 mb-1">Bedrooms</p>
+                    <p className="text-lg font-semibold text-gray-900 flex items-center gap-1">
                       <BedDouble className="w-4 h-4" />
                       {listing.bedrooms || 'N/A'}
                     </p>
                   </div>
                   <div>
-                    <p className="text-sm text-dark-text-muted mb-1">Bathrooms</p>
-                    <p className="text-lg font-semibold text-dark-text-primary flex items-center gap-1">
+                    <p className="text-sm text-gray-500 mb-1">Bathrooms</p>
+                    <p className="text-lg font-semibold text-gray-900 flex items-center gap-1">
                       <Bath className="w-4 h-4" />
                       {listing.bathrooms || 'N/A'}
                     </p>
                   </div>
                   <div>
-                    <p className="text-sm text-dark-text-muted mb-1">Square Feet</p>
-                    <p className="text-lg font-semibold text-dark-text-primary flex items-center gap-1">
+                    <p className="text-sm text-gray-500 mb-1">Square Feet</p>
+                    <p className="text-lg font-semibold text-gray-900 flex items-center gap-1">
                       <Ruler className="w-4 h-4" />
                       {listing.squareFeet ? listing.squareFeet.toLocaleString() : 'N/A'}
                     </p>
@@ -491,13 +491,13 @@ export default function AdminListingDetailPage({ params }: { params: Promise<{ i
           </div>
 
           {/* Location Information */}
-          <div className="bg-dark-bg-secondary rounded-xl p-6 shadow-dark-medium border border-dark-border-default">
-            <h2 className="text-xl font-bold text-dark-text-primary mb-4 flex items-center gap-2">
+          <div className="bg-white rounded-xl p-6 shadow-md border border-gray-200">
+            <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
               <MapPin className="w-5 h-5" />
               Location
             </h2>
             <div className="space-y-2">
-              <p className="text-dark-text-primary">
+              <p className="text-gray-900">
                 {listing.location?.address && (
                   <>
                     <span className="font-semibold">{listing.location.address}</span>
@@ -511,7 +511,7 @@ export default function AdminListingDetailPage({ params }: { params: Promise<{ i
                 )}
               </p>
               {listing.location?.coordinates && (
-                <p className="text-sm text-dark-text-muted">
+                <p className="text-sm text-gray-500">
                   Coordinates: {listing.location.coordinates.lat.toFixed(6)}, {listing.location.coordinates.lng.toFixed(6)}
                 </p>
               )}
@@ -520,8 +520,8 @@ export default function AdminListingDetailPage({ params }: { params: Promise<{ i
 
           {/* Amenities */}
           {listing.amenities && listing.amenities.length > 0 && (
-            <div className="bg-dark-bg-secondary rounded-xl p-6 shadow-dark-medium border border-dark-border-default">
-              <h2 className="text-xl font-bold text-dark-text-primary mb-4 flex items-center gap-2">
+            <div className="bg-white rounded-xl p-6 shadow-md border border-gray-200">
+              <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
                 <Sparkles className="w-5 h-5" />
                 Amenities
               </h2>
@@ -529,7 +529,7 @@ export default function AdminListingDetailPage({ params }: { params: Promise<{ i
                 {listing.amenities.map((amenity, index) => (
                   <span
                     key={index}
-                    className="px-3 py-1.5 bg-primary-500/20 text-primary-400 rounded-full text-sm font-medium border border-primary-500/30"
+                    className="px-3 py-1.5 bg-primary-500/20 text-blue-600 rounded-full text-sm font-medium border border-primary-500/30"
                   >
                     {amenity}
                   </span>
@@ -539,17 +539,17 @@ export default function AdminListingDetailPage({ params }: { params: Promise<{ i
           )}
 
           {/* Additional Details */}
-          <div className="bg-dark-bg-secondary rounded-xl p-6 shadow-dark-medium border border-dark-border-default">
-            <h2 className="text-xl font-bold text-dark-text-primary mb-4">Additional Details</h2>
+          <div className="bg-white rounded-xl p-6 shadow-md border border-gray-200">
+            <h2 className="text-xl font-bold text-gray-900 mb-4">Additional Details</h2>
             <div className="grid grid-cols-2 gap-4">
               <div className="flex items-center gap-2">
-                <span className="text-sm text-dark-text-muted">Property Type:</span>
-                <span className="text-dark-text-primary font-medium capitalize">{listing.propertyType || 'N/A'}</span>
+                <span className="text-sm text-gray-500">Property Type:</span>
+                <span className="text-gray-900 font-medium capitalize">{listing.propertyType || 'N/A'}</span>
               </div>
               <div className="flex items-center gap-2">
-                <span className="text-sm text-dark-text-muted">Pet Friendly:</span>
+                <span className="text-sm text-gray-500">Pet Friendly:</span>
                 {listing.petFriendly ? (
-                  <span className="text-green-400 flex items-center gap-1">
+                  <span className="text-green-600 flex items-center gap-1">
                     <Check className="w-4 h-4" />
                     Yes
                   </span>
@@ -561,9 +561,9 @@ export default function AdminListingDetailPage({ params }: { params: Promise<{ i
                 )}
               </div>
               <div className="flex items-center gap-2">
-                <span className="text-sm text-dark-text-muted">Smoking Allowed:</span>
+                <span className="text-sm text-gray-500">Smoking Allowed:</span>
                 {listing.smokingAllowed ? (
-                  <span className="text-green-400 flex items-center gap-1">
+                  <span className="text-green-600 flex items-center gap-1">
                     <Check className="w-4 h-4" />
                     Yes
                   </span>
@@ -575,9 +575,9 @@ export default function AdminListingDetailPage({ params }: { params: Promise<{ i
                 )}
               </div>
               <div className="flex items-center gap-2">
-                <span className="text-sm text-dark-text-muted">Parking Available:</span>
+                <span className="text-sm text-gray-500">Parking Available:</span>
                 {listing.parkingAvailable ? (
-                  <span className="text-green-400 flex items-center gap-1">
+                  <span className="text-green-600 flex items-center gap-1">
                     <Check className="w-4 h-4" />
                     Yes
                   </span>
@@ -590,14 +590,14 @@ export default function AdminListingDetailPage({ params }: { params: Promise<{ i
               </div>
               {listing.genderPreference && (
                 <div className="flex items-center gap-2">
-                  <span className="text-sm text-dark-text-muted">Gender Preference:</span>
-                  <span className="text-dark-text-primary font-medium capitalize">{listing.genderPreference}</span>
+                  <span className="text-sm text-gray-500">Gender Preference:</span>
+                  <span className="text-gray-900 font-medium capitalize">{listing.genderPreference}</span>
                 </div>
               )}
               {listing.walkabilityScore && (
                 <div className="flex items-center gap-2">
-                  <span className="text-sm text-dark-text-muted">Walkability Score:</span>
-                  <span className="text-dark-text-primary font-medium">{listing.walkabilityScore}/100</span>
+                  <span className="text-sm text-gray-500">Walkability Score:</span>
+                  <span className="text-gray-900 font-medium">{listing.walkabilityScore}/100</span>
                 </div>
               )}
             </div>
@@ -607,13 +607,13 @@ export default function AdminListingDetailPage({ params }: { params: Promise<{ i
         {/* Sidebar */}
         <div className="space-y-6">
           {/* Status Card */}
-          <div className="bg-dark-bg-secondary rounded-xl p-6 shadow-dark-medium border border-dark-border-default">
-            <h3 className="text-lg font-bold text-dark-text-primary mb-4">Status</h3>
+          <div className="bg-white rounded-xl p-6 shadow-md border border-gray-200">
+            <h3 className="text-lg font-bold text-gray-900 mb-4">Status</h3>
             <div className="space-y-3">
               <span className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold border ${getStatusBadgeColor(listing.status)}`}>
                 {listing.status === 'available' ? 'Active' : listing.status.charAt(0).toUpperCase() + listing.status.slice(1)}
               </span>
-              <div className="flex flex-col gap-2 pt-2 border-t border-dark-border-default">
+              <div className="flex flex-col gap-2 pt-2 border-t border-gray-200">
                 <Button
                   variant="outline"
                   size="sm"
@@ -655,23 +655,23 @@ export default function AdminListingDetailPage({ params }: { params: Promise<{ i
           </div>
 
           {/* Landlord Information */}
-          <div className="bg-dark-bg-secondary rounded-xl p-6 shadow-dark-medium border border-dark-border-default">
-            <h3 className="text-lg font-bold text-dark-text-primary mb-4 flex items-center gap-2">
+          <div className="bg-white rounded-xl p-6 shadow-md border border-gray-200">
+            <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
               <User className="w-5 h-5" />
               Landlord
             </h3>
             <div className="space-y-3">
               <div>
-                <p className="text-sm text-dark-text-muted mb-1">Name</p>
-                <p className="text-dark-text-primary font-semibold">{listing.landlordId?.name || 'N/A'}</p>
+                <p className="text-sm text-gray-500 mb-1">Name</p>
+                <p className="text-gray-900 font-semibold">{listing.landlordId?.name || 'N/A'}</p>
               </div>
               <div>
-                <p className="text-sm text-dark-text-muted mb-1">Email</p>
+                <p className="text-sm text-gray-500 mb-1">Email</p>
                 <div className="flex items-center gap-2">
-                  <Mail className="w-4 h-4 text-dark-text-muted" />
+                  <Mail className="w-4 h-4 text-gray-500" />
                   <a
                     href={`mailto:${listing.landlordId?.email}`}
-                    className="text-primary-400 hover:text-primary-300 transition-colors"
+                    className="text-blue-600 hover:text-primary-300 transition-colors"
                   >
                     {listing.landlordId?.email || 'N/A'}
                   </a>
@@ -679,7 +679,7 @@ export default function AdminListingDetailPage({ params }: { params: Promise<{ i
               </div>
               <Link
                 href={`/admin/users/${listing.landlordId?._id || ''}`}
-                className="block mt-4 text-primary-400 hover:text-primary-300 transition-colors text-sm font-medium"
+                className="block mt-4 text-blue-600 hover:text-primary-300 transition-colors text-sm font-medium"
               >
                 View Landlord Profile →
               </Link>
@@ -687,30 +687,30 @@ export default function AdminListingDetailPage({ params }: { params: Promise<{ i
           </div>
 
           {/* Listing Statistics */}
-          <div className="bg-dark-bg-secondary rounded-xl p-6 shadow-dark-medium border border-dark-border-default">
-            <h3 className="text-lg font-bold text-dark-text-primary mb-4">Statistics</h3>
+          <div className="bg-white rounded-xl p-6 shadow-md border border-gray-200">
+            <h3 className="text-lg font-bold text-gray-900 mb-4">Statistics</h3>
             <div className="space-y-3">
               <div>
-                <p className="text-sm text-dark-text-muted mb-1">Views</p>
-                <p className="text-dark-text-primary font-semibold">{listing.viewCount || 0}</p>
+                <p className="text-sm text-gray-500 mb-1">Views</p>
+                <p className="text-gray-900 font-semibold">{listing.viewCount || 0}</p>
               </div>
               <div>
-                <p className="text-sm text-dark-text-muted mb-1">Created</p>
-                <p className="text-dark-text-primary font-semibold flex items-center gap-2">
+                <p className="text-sm text-gray-500 mb-1">Created</p>
+                <p className="text-gray-900 font-semibold flex items-center gap-2">
                   <Calendar className="w-4 h-4" />
                   {listing.createdAt ? format(new Date(listing.createdAt), 'MMM dd, yyyy') : 'N/A'}
                 </p>
               </div>
               <div>
-                <p className="text-sm text-dark-text-muted mb-1">Last Updated</p>
-                <p className="text-dark-text-primary font-semibold flex items-center gap-2">
+                <p className="text-sm text-gray-500 mb-1">Last Updated</p>
+                <p className="text-gray-900 font-semibold flex items-center gap-2">
                   <Calendar className="w-4 h-4" />
                   {listing.updatedAt ? format(new Date(listing.updatedAt), 'MMM dd, yyyy') : 'N/A'}
                 </p>
               </div>
               <div>
-                <p className="text-sm text-dark-text-muted mb-1">Availability Date</p>
-                <p className="text-dark-text-primary font-semibold flex items-center gap-2">
+                <p className="text-sm text-gray-500 mb-1">Availability Date</p>
+                <p className="text-gray-900 font-semibold flex items-center gap-2">
                   <Calendar className="w-4 h-4" />
                   {listing.availabilityDate ? format(new Date(listing.availabilityDate), 'MMM dd, yyyy') : 'N/A'}
                 </p>
@@ -720,16 +720,16 @@ export default function AdminListingDetailPage({ params }: { params: Promise<{ i
 
           {/* Nearby Information */}
           {(listing.nearbyUniversities && listing.nearbyUniversities.length > 0) || (listing.nearbyTransit && listing.nearbyTransit.length > 0) ? (
-            <div className="bg-dark-bg-secondary rounded-xl p-6 shadow-dark-medium border border-dark-border-default">
-              <h3 className="text-lg font-bold text-dark-text-primary mb-4">Nearby</h3>
+            <div className="bg-white rounded-xl p-6 shadow-md border border-gray-200">
+              <h3 className="text-lg font-bold text-gray-900 mb-4">Nearby</h3>
               {listing.nearbyUniversities && listing.nearbyUniversities.length > 0 && (
                 <div className="mb-4">
-                  <p className="text-sm text-dark-text-muted mb-2">Universities</p>
+                  <p className="text-sm text-gray-500 mb-2">Universities</p>
                   <div className="flex flex-wrap gap-2">
                     {listing.nearbyUniversities.map((uni, index) => (
                       <span
                         key={index}
-                        className="px-2 py-1 bg-blue-500/20 text-blue-400 rounded text-xs font-medium"
+                        className="px-2 py-1 bg-blue-500/20 text-blue-600 rounded text-xs font-medium"
                       >
                         {uni}
                       </span>
@@ -739,12 +739,12 @@ export default function AdminListingDetailPage({ params }: { params: Promise<{ i
               )}
               {listing.nearbyTransit && listing.nearbyTransit.length > 0 && (
                 <div>
-                  <p className="text-sm text-dark-text-muted mb-2">Transit</p>
+                  <p className="text-sm text-gray-500 mb-2">Transit</p>
                   <div className="flex flex-wrap gap-2">
                     {listing.nearbyTransit.map((transit, index) => (
                       <span
                         key={index}
-                        className="px-2 py-1 bg-green-500/20 text-green-400 rounded text-xs font-medium"
+                        className="px-2 py-1 bg-green-500/20 text-green-600 rounded text-xs font-medium"
                       >
                         {transit}
                       </span>

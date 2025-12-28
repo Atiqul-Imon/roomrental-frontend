@@ -119,8 +119,8 @@ export default function AdminDashboard() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-dark-text-primary mb-2">Dashboard</h1>
-        <p className="text-dark-text-secondary">Welcome back! Here&apos;s what&apos;s happening with your platform.</p>
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">Dashboard</h1>
+        <p className="text-gray-600">Welcome back! Here&apos;s what&apos;s happening with your platform.</p>
       </div>
 
       {/* Stats Grid */}
@@ -130,16 +130,16 @@ export default function AdminDashboard() {
           return (
             <div
               key={index}
-              className="bg-dark-bg-secondary rounded-xl p-6 shadow-dark-medium border border-dark-border-default hover:shadow-dark-large hover:border-primary-500/30 transition-all duration-200"
+              className="bg-white rounded-xl p-6 shadow-md border border-gray-200 hover:shadow-lg hover:border-blue-300 transition-all duration-200"
             >
               <div className="flex items-center justify-between mb-4">
                 <div className={`p-3 rounded-lg ${stat.color} bg-opacity-20`}>
                   <Icon className={`w-6 h-6 ${stat.color.replace('bg-', 'text-')}`} />
                 </div>
               </div>
-              <h3 className="text-2xl font-bold text-dark-text-primary mb-1">{stat.value.toLocaleString()}</h3>
-              <p className="text-sm font-medium text-dark-text-secondary mb-2">{stat.title}</p>
-              <p className="text-xs text-dark-text-muted mb-3">{stat.change}</p>
+              <h3 className="text-2xl font-bold text-gray-900 mb-1">{stat.value.toLocaleString()}</h3>
+              <p className="text-sm font-medium text-gray-600 mb-2">{stat.title}</p>
+              <p className="text-xs text-gray-500 mb-3">{stat.change}</p>
               {stat.trendData.length > 0 && (
                 <div className="h-16 -mx-2">
                   <MiniChart
@@ -159,45 +159,45 @@ export default function AdminDashboard() {
       {/* Quick Actions */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Recent Activity */}
-        <div className="bg-dark-bg-secondary rounded-xl p-6 shadow-dark-medium border border-dark-border-default">
-          <h2 className="text-xl font-bold text-dark-text-primary mb-4">Recent Activity</h2>
+        <div className="bg-white rounded-xl p-6 shadow-md border border-gray-200">
+          <h2 className="text-xl font-bold text-gray-900 mb-4">Recent Activity</h2>
           <div className="space-y-4">
-            <div className="flex items-center gap-4 p-3 bg-dark-bg-tertiary rounded-lg hover:bg-dark-bg-elevated transition-colors">
+            <div className="flex items-center gap-4 p-3 bg-gray-50 rounded-lg hover:bg-blue-50 transition-colors">
               <div className="w-10 h-10 bg-primary-500/20 rounded-full flex items-center justify-center">
-                <Users className="w-5 h-5 text-primary-400" />
+                <Users className="w-5 h-5 text-blue-600" />
               </div>
               <div className="flex-1">
-                <p className="text-sm font-medium text-dark-text-primary">New user registered</p>
-                <p className="text-xs text-dark-text-muted">2 minutes ago</p>
+                <p className="text-sm font-medium text-gray-900">New user registered</p>
+                <p className="text-xs text-gray-500">2 minutes ago</p>
               </div>
             </div>
-            <div className="flex items-center gap-4 p-3 bg-dark-bg-tertiary rounded-lg hover:bg-dark-bg-elevated transition-colors">
+            <div className="flex items-center gap-4 p-3 bg-gray-50 rounded-lg hover:bg-blue-50 transition-colors">
               <div className="w-10 h-10 bg-green-500/20 rounded-full flex items-center justify-center">
-                <Building2 className="w-5 h-5 text-green-400" />
+                <Building2 className="w-5 h-5 text-green-600" />
               </div>
               <div className="flex-1">
-                <p className="text-sm font-medium text-dark-text-primary">New listing created</p>
-                <p className="text-xs text-dark-text-muted">15 minutes ago</p>
+                <p className="text-sm font-medium text-gray-900">New listing created</p>
+                <p className="text-xs text-gray-500">15 minutes ago</p>
               </div>
             </div>
           </div>
         </div>
 
         {/* Quick Stats */}
-        <div className="bg-dark-bg-secondary rounded-xl p-6 shadow-dark-medium border border-dark-border-default">
-          <h2 className="text-xl font-bold text-dark-text-primary mb-4">Quick Stats</h2>
+        <div className="bg-white rounded-xl p-6 shadow-md border border-gray-200">
+          <h2 className="text-xl font-bold text-gray-900 mb-4">Quick Stats</h2>
           <div className="space-y-4">
-            <div className="flex items-center justify-between p-3 bg-dark-bg-tertiary rounded-lg hover:bg-dark-bg-elevated transition-colors">
-              <span className="text-sm font-medium text-dark-text-secondary">Pending Approvals</span>
-              <span className="text-lg font-bold text-primary-400">{stats?.pendingListings || 0}</span>
+            <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-blue-50 transition-colors">
+              <span className="text-sm font-medium text-gray-600">Pending Approvals</span>
+              <span className="text-lg font-bold text-blue-600">{stats?.pendingListings || 0}</span>
             </div>
-            <div className="flex items-center justify-between p-3 bg-dark-bg-tertiary rounded-lg hover:bg-dark-bg-elevated transition-colors">
-              <span className="text-sm font-medium text-dark-text-secondary">Active Users Today</span>
-              <span className="text-lg font-bold text-green-400">0</span>
+            <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-blue-50 transition-colors">
+              <span className="text-sm font-medium text-gray-600">Active Users Today</span>
+              <span className="text-lg font-bold text-green-600">0</span>
             </div>
-            <div className="flex items-center justify-between p-3 bg-dark-bg-tertiary rounded-lg hover:bg-dark-bg-elevated transition-colors">
-              <span className="text-sm font-medium text-dark-text-secondary">System Health</span>
-              <span className="text-lg font-bold text-green-400">100%</span>
+            <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-blue-50 transition-colors">
+              <span className="text-sm font-medium text-gray-600">System Health</span>
+              <span className="text-lg font-bold text-green-600">100%</span>
             </div>
           </div>
         </div>

@@ -132,8 +132,8 @@ export default function AnalyticsPage() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-dark-text-primary mb-2">Analytics & Reports</h1>
-        <p className="text-dark-text-secondary">Platform insights and performance metrics</p>
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">Analytics & Reports</h1>
+        <p className="text-gray-600">Platform insights and performance metrics</p>
       </div>
 
       {/* Stats Grid */}
@@ -144,22 +144,22 @@ export default function AnalyticsPage() {
           return (
             <div
               key={index}
-              className="bg-dark-bg-secondary rounded-xl p-6 shadow-dark-medium border border-dark-border-default hover:shadow-dark-large hover:border-primary-500/30 transition-all duration-200"
+              className="bg-white rounded-xl p-6 shadow-md border border-gray-200 hover:shadow-dark-large hover:border-primary-500/30 transition-all duration-200"
             >
               <div className="flex items-center justify-between mb-4">
                 <div className={`p-3 rounded-lg ${stat.color} bg-opacity-20`}>
                   <Icon className={`w-6 h-6 ${stat.color.replace('bg-', 'text-')}`} />
                 </div>
                 {stat.change !== 0 && (
-                  <div className={`flex items-center gap-1 ${isPositive ? 'text-green-400' : 'text-red-400'}`}>
+                  <div className={`flex items-center gap-1 ${isPositive ? 'text-green-600' : 'text-red-600'}`}>
                     {isPositive ? <ArrowUp className="w-4 h-4" /> : <ArrowDown className="w-4 h-4" />}
                     <span className="text-sm font-semibold">{Math.abs(stat.change)}%</span>
                   </div>
                 )}
               </div>
-              <h3 className="text-2xl font-bold text-dark-text-primary mb-1">{stat.value.toLocaleString()}</h3>
-              <p className="text-sm font-medium text-dark-text-secondary mb-2">{stat.title}</p>
-              <p className="text-xs text-dark-text-muted">{stat.changeLabel}</p>
+              <h3 className="text-2xl font-bold text-gray-900 mb-1">{stat.value.toLocaleString()}</h3>
+              <p className="text-sm font-medium text-gray-600 mb-2">{stat.title}</p>
+              <p className="text-xs text-gray-500">{stat.changeLabel}</p>
             </div>
           );
         })}
@@ -261,47 +261,47 @@ export default function AnalyticsPage() {
       {/* Additional Stats */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Recent Users */}
-        <div className="bg-dark-bg-secondary rounded-xl p-6 shadow-dark-medium border border-dark-border-default">
-          <h2 className="text-xl font-bold text-dark-text-primary mb-4">Recent Users</h2>
+        <div className="bg-white rounded-xl p-6 shadow-md border border-gray-200">
+          <h2 className="text-xl font-bold text-gray-900 mb-4">Recent Users</h2>
           <div className="space-y-3">
             {analytics?.recentUsers && analytics.recentUsers.length > 0 ? (
               analytics.recentUsers.map((user, index) => (
-                <div key={index} className="flex items-center gap-3 p-3 bg-dark-bg-tertiary rounded-lg hover:bg-dark-bg-elevated transition-colors">
+                <div key={index} className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
                   <div className="w-10 h-10 bg-gradient-primary rounded-full flex items-center justify-center text-white font-bold shadow-glow-primary">
                     {user.name.charAt(0).toUpperCase()}
                   </div>
                   <div className="flex-1">
-                    <p className="font-medium text-dark-text-primary">{user.name}</p>
-                    <p className="text-sm text-dark-text-muted">{user.email}</p>
+                    <p className="font-medium text-gray-900">{user.name}</p>
+                    <p className="text-sm text-gray-500">{user.email}</p>
                   </div>
-                  <p className="text-xs text-dark-text-muted">
+                  <p className="text-xs text-gray-500">
                     {new Date(user.createdAt).toLocaleDateString()}
                   </p>
                 </div>
               ))
             ) : (
-              <p className="text-dark-text-muted text-center py-8">No recent users</p>
+              <p className="text-gray-500 text-center py-8">No recent users</p>
             )}
           </div>
         </div>
 
         {/* Top Locations */}
-        <div className="bg-dark-bg-secondary rounded-xl p-6 shadow-dark-medium border border-dark-border-default">
-          <h2 className="text-xl font-bold text-dark-text-primary mb-4">Top Locations</h2>
+        <div className="bg-white rounded-xl p-6 shadow-md border border-gray-200">
+          <h2 className="text-xl font-bold text-gray-900 mb-4">Top Locations</h2>
           <div className="space-y-3">
             {analytics?.topLocations && analytics.topLocations.length > 0 ? (
               analytics.topLocations.map((location, index) => (
-                <div key={index} className="flex items-center justify-between p-3 bg-dark-bg-tertiary rounded-lg hover:bg-dark-bg-elevated transition-colors">
+                <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
                   <div>
-                    <p className="font-medium text-dark-text-primary">
+                    <p className="font-medium text-gray-900">
                       {location.city}, {location.state}
                     </p>
                   </div>
-                  <span className="text-lg font-bold text-primary-400">{location.count}</span>
+                  <span className="text-lg font-bold text-blue-600">{location.count}</span>
                 </div>
               ))
             ) : (
-              <p className="text-dark-text-muted text-center py-8">No location data</p>
+              <p className="text-gray-500 text-center py-8">No location data</p>
             )}
           </div>
         </div>

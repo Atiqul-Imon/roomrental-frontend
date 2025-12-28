@@ -64,15 +64,15 @@ export default function AdminListingsPage() {
     switch (status) {
       case 'active':
       case 'available':
-        return 'bg-green-500/20 text-green-400 border-green-500/30';
+        return 'bg-green-100 text-green-700 border-green-300';
       case 'pending':
-        return 'bg-warning/20 text-warning border-warning/30';
+        return 'bg-yellow-100 text-yellow-700 border-yellow-300';
       case 'rented':
-        return 'bg-dark-bg-tertiary text-dark-text-secondary border-dark-border-default';
+        return 'bg-purple-100 text-purple-700 border-purple-300';
       case 'inactive':
-        return 'bg-grey-500/20 text-grey-400 border-grey-500/30';
+        return 'bg-gray-100 text-gray-700 border-gray-300';
       default:
-        return 'bg-dark-bg-tertiary text-dark-text-secondary border-dark-border-default';
+        return 'bg-gray-100 text-gray-700 border-gray-300';
     }
   };
 
@@ -81,8 +81,8 @@ export default function AdminListingsPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-dark-text-primary mb-2">Listing Management</h1>
-          <p className="text-dark-text-secondary">Manage and moderate all listings on the platform</p>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Listing Management</h1>
+          <p className="text-gray-600">Manage and moderate all listings on the platform</p>
         </div>
         <Link
           href="/admin/listings/create"
@@ -94,22 +94,22 @@ export default function AdminListingsPage() {
       </div>
 
       {/* Filters */}
-      <div className="bg-dark-bg-secondary rounded-xl p-4 shadow-dark-medium border border-dark-border-default">
+      <div className="bg-white rounded-xl p-4 shadow-md border border-gray-200">
         <div className="flex flex-col md:flex-row gap-4">
           <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-dark-text-muted" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-500" />
             <input
               type="text"
               placeholder="Search by title, location..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 bg-dark-bg-tertiary border border-dark-border-default rounded-lg text-dark-text-primary placeholder-dark-text-muted focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+              className="w-full pl-10 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
             />
           </div>
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="px-4 py-2 bg-dark-bg-tertiary border border-dark-border-default rounded-lg text-dark-text-primary focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+            className="px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
           >
             <option value="all">All Status</option>
             <option value="active">Active</option>
@@ -120,15 +120,15 @@ export default function AdminListingsPage() {
       </div>
 
       {/* Listings Table */}
-      <div className="bg-dark-bg-secondary rounded-xl shadow-dark-medium border border-dark-border-default overflow-hidden">
+      <div className="bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden">
         {isLoading ? (
           <div className="p-12 text-center">
             <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary-500"></div>
           </div>
         ) : error ? (
           <div className="p-12 text-center">
-            <p className="text-red-400 mb-2">Error loading listings</p>
-            <p className="text-dark-text-muted text-sm">
+            <p className="text-red-600 mb-2">Error loading listings</p>
+            <p className="text-gray-500 text-sm">
               {error instanceof Error ? error.message : 'Unknown error occurred'}
             </p>
           </div>
@@ -136,20 +136,20 @@ export default function AdminListingsPage() {
           <>
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-dark-bg-tertiary border-b border-dark-border-default">
+                <thead className="bg-gradient-to-r from-blue-50 to-purple-50 border-b border-gray-200">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-dark-text-secondary uppercase">Listing</th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-dark-text-secondary uppercase">Landlord</th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-dark-text-secondary uppercase">Price</th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-dark-text-secondary uppercase">Location</th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-dark-text-secondary uppercase">Status</th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-dark-text-secondary uppercase">Created</th>
-                    <th className="px-6 py-3 text-right text-xs font-semibold text-dark-text-secondary uppercase">Actions</th>
+                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Listing</th>
+                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Landlord</th>
+                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Price</th>
+                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Location</th>
+                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Status</th>
+                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Created</th>
+                    <th className="px-6 py-3 text-right text-xs font-semibold text-gray-600 uppercase">Actions</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-dark-border-default">
+                <tbody className="divide-y divide-gray-200">
                   {data.listings.map((listing: Listing, index: number) => (
-                    <tr key={listing._id || `listing-${index}`} className="hover:bg-dark-bg-tertiary transition-colors">
+                    <tr key={listing._id || `listing-${index}`} className="hover:bg-blue-50 transition-colors">
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
                           {listing.images && listing.images.length > 0 && listing.images[0] && (
@@ -160,25 +160,25 @@ export default function AdminListingsPage() {
                             />
                           )}
                           <div>
-                            <p className="font-semibold text-dark-text-primary">{listing.title || 'Untitled'}</p>
-                            <p className="text-sm text-dark-text-muted line-clamp-1">{listing.description || 'No description'}</p>
+                            <p className="font-semibold text-gray-900">{listing.title || 'Untitled'}</p>
+                            <p className="text-sm text-gray-500 line-clamp-1">{listing.description || 'No description'}</p>
                           </div>
                         </div>
                       </td>
                       <td className="px-6 py-4">
-                        <p className="text-sm font-medium text-dark-text-primary">
+                        <p className="text-sm font-medium text-gray-900">
                           {listing.landlordId?.name || 'N/A'}
                         </p>
-                        <p className="text-xs text-dark-text-muted">
+                        <p className="text-xs text-gray-500">
                           {listing.landlordId?.email || 'N/A'}
                         </p>
                       </td>
                       <td className="px-6 py-4">
-                        <p className="font-semibold text-dark-text-primary">${listing.price}</p>
-                        <p className="text-xs text-dark-text-muted">/month</p>
+                        <p className="font-semibold text-gray-900">${listing.price}</p>
+                        <p className="text-xs text-gray-500">/month</p>
                       </td>
                       <td className="px-6 py-4">
-                        <p className="text-sm text-dark-text-secondary">
+                        <p className="text-sm text-gray-600">
                           {listing.location?.city && listing.location?.state
                             ? `${listing.location.city}, ${listing.location.state}`
                             : listing.location?.city || listing.location?.state || 'N/A'}
@@ -191,7 +191,7 @@ export default function AdminListingsPage() {
                             const newStatus = e.target.value === 'active' ? 'available' : e.target.value;
                             handleStatusChange(listing._id || '', newStatus as any);
                           }}
-                          className={`px-3 py-1 rounded-full text-xs font-semibold border bg-dark-bg-tertiary text-dark-text-primary ${getStatusBadgeColor(listing.status)} focus:outline-none focus:ring-2 focus:ring-primary-500`}
+                          className={`px-3 py-1 rounded-full text-xs font-semibold border bg-gray-50 text-gray-900 ${getStatusBadgeColor(listing.status)} focus:outline-none focus:ring-2 focus:ring-primary-500`}
                         >
                           <option value="pending">Pending</option>
                           <option value="active">Active</option>
@@ -200,7 +200,7 @@ export default function AdminListingsPage() {
                         </select>
                       </td>
                       <td className="px-6 py-4">
-                        <span className="text-sm text-dark-text-secondary">
+                        <span className="text-sm text-gray-600">
                           {listing.createdAt ? format(new Date(listing.createdAt), 'MMM dd, yyyy') : 'N/A'}
                         </span>
                       </td>
@@ -209,14 +209,14 @@ export default function AdminListingsPage() {
                           {listing._id ? (
                             <Link
                               href={`/admin/listings/${listing._id}`}
-                              className="p-2 text-dark-text-secondary hover:text-primary-400 hover:bg-primary-500/20 rounded-lg transition-colors"
+                              className="p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
                               title="View Details"
                             >
                               <Eye className="w-4 h-4" />
                             </Link>
                           ) : (
                             <span
-                              className="p-2 text-dark-text-muted cursor-not-allowed opacity-50"
+                              className="p-2 text-gray-500 cursor-not-allowed opacity-50"
                               title="Listing ID missing"
                             >
                               <Eye className="w-4 h-4" />
@@ -224,7 +224,7 @@ export default function AdminListingsPage() {
                           )}
                           <button
                             onClick={() => handleDelete(listing._id || '')}
-                            className="p-2 text-dark-text-secondary hover:text-red-400 hover:bg-red-500/20 rounded-lg transition-colors"
+                            className="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                             title="Delete"
                           >
                             <Trash2 className="w-4 h-4" />
@@ -238,8 +238,8 @@ export default function AdminListingsPage() {
             </div>
             {/* Pagination */}
             {data.totalPages > 1 && (
-              <div className="px-6 py-4 border-t border-dark-border-default flex items-center justify-between">
-                <p className="text-sm text-dark-text-secondary">
+              <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
+                <p className="text-sm text-gray-600">
                   Showing {(data.page - 1) * data.limit + 1} to {Math.min(data.page * data.limit, data.total)} of {data.total} listings
                 </p>
                 <div className="flex gap-2">
@@ -265,7 +265,7 @@ export default function AdminListingsPage() {
           </>
         ) : (
           <div className="p-12 text-center">
-            <p className="text-dark-text-secondary">No listings found</p>
+            <p className="text-gray-600">No listings found</p>
           </div>
         )}
       </div>
