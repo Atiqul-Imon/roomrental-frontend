@@ -17,11 +17,23 @@ export default function AdminCreateListingPage() {
   const [selectedLandlordId, setSelectedLandlordId] = useState<string>('');
 
   // Fetch landlords for selection
-  const { data: landlordsData, isLoading: landlordsLoading } = useQuery({
-    queryKey: ['admin-landlords'],
+  const { data: landlordsData, isLoading: landlordsLoading, error: landlordsError } = useQuery({
+    queryKey: ['admin-landlords-create'],
     queryFn: async () => {
-      const response = await api.get('/admin/landlords');
-      return response.data.data || [];
+      try {
+        // Fetch all landlords (use a high limit to get all)
+        const response = await api.get('/admin/landlords', { 
+          params: { page: 1, limit: 1000 } 
+        });
+        const backendData = response.data.data;
+        
+        // Backend returns: { success: true, data: { landlords, pagination: {...} } }
+        // So backendData is { landlords, pagination }
+        return backendData?.landlords || [];
+      } catch (error) {
+        console.error('Error fetching landlords:', error);
+        return [];
+      }
     },
     enabled: isAdmin(),
   });
@@ -65,7 +77,21 @@ export default function AdminCreateListingPage() {
 
         {/* Create Listing Form */}
         <div className="bg-white rounded-xl p-6 border border-gray-200">
-          {landlordsData && landlordsData.length > 0 ? (
+          {landlordsError ? (
+            <div className="text-center py-12">
+              <Building2 className="w-16 h-16 text-red-500 mx-auto mb-4" />
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">Error Loading Landlords</h3>
+              <p className="text-gray-600 mb-6">
+                {landlordsError instanceof Error ? landlordsError.message : 'Failed to load landlords. Please try again.'}
+              </p>
+              <button
+                onClick={() => router.push('/admin/landlords')}
+                className="px-6 py-3 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors font-semibold"
+              >
+                View Landlords
+              </button>
+            </div>
+          ) : landlordsData && landlordsData.length > 0 ? (
             <CreateListingForm
               isAdmin={true}
               selectedLandlordId={selectedLandlordId}
