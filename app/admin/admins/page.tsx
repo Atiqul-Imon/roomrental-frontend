@@ -16,7 +16,7 @@ export default function AdminsPage() {
   const [roleFilter, setRoleFilter] = useState<string>('all');
   const queryClient = useQueryClient();
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, error } = useQuery({
     queryKey: ['admins', page, search, roleFilter],
     queryFn: async () => {
       const params: any = { page, limit: 20 };
@@ -24,12 +24,15 @@ export default function AdminsPage() {
       if (roleFilter !== 'all') params.role = roleFilter;
       
       const response = await api.get('/admin/admins', { params });
-      return response.data.data as {
-        admins: Admin[];
-        total: number;
-        page: number;
-        limit: number;
-        totalPages: number;
+      const backendData = response.data.data;
+      
+      // Backend returns: { admins, pagination: { total, page, limit, totalPages } }
+      return {
+        admins: backendData.admins || [],
+        total: backendData.pagination?.total || 0,
+        page: backendData.pagination?.page || page,
+        limit: backendData.pagination?.limit || 20,
+        totalPages: backendData.pagination?.totalPages || 0,
       };
     },
   });
@@ -109,6 +112,13 @@ export default function AdminsPage() {
           <div className="p-12 text-center">
             <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary-500"></div>
           </div>
+        ) : error ? (
+          <div className="p-12 text-center">
+            <p className="text-red-400 mb-2">Error loading admins</p>
+            <p className="text-dark-text-muted text-sm">
+              {error instanceof Error ? error.message : 'Unknown error occurred'}
+            </p>
+          </div>
         ) : data && data.admins.length > 0 ? (
           <>
             <div className="overflow-x-auto">
@@ -124,7 +134,7 @@ export default function AdminsPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-dark-border-default">
-                  {data.admins.map((admin) => {
+                  {data.admins.map((admin: Admin) => {
                     const RoleIcon = getRoleIcon(admin.role);
                     return (
                       <tr key={admin.id} className="hover:bg-dark-bg-tertiary transition-colors">

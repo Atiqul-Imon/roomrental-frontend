@@ -27,11 +27,13 @@ export default function UserDetailPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
 
-  const { data: userData, isLoading } = useQuery<{ user: User }>({
+  const { data: userData, isLoading, error: queryError } = useQuery<{ user: User }>({
     queryKey: ['admin-user', userId],
     queryFn: async () => {
       const response = await api.get(`/admin/users/${userId}`);
-      return response.data.data;
+      const backendData = response.data.data;
+      // Backend returns: { user: {...} }
+      return backendData;
     },
     enabled: !!userId,
   });
@@ -95,6 +97,20 @@ export default function UserDetailPage() {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+      </div>
+    );
+  }
+
+  if (queryError) {
+    return (
+      <div className="text-center py-12">
+        <p className="text-red-600 mb-2">Error loading user</p>
+        <p className="text-grey-600 text-sm mb-4">
+          {queryError instanceof Error ? queryError.message : 'Unknown error occurred'}
+        </p>
+        <Link href="/admin/users" className="text-primary-600 hover:underline">
+          Back to Users
+        </Link>
       </div>
     );
   }
