@@ -5,7 +5,7 @@ import { useComparisonStore } from '@/lib/comparison-store';
 import { Modal } from '@/components/ui/Modal';
 import { Button } from '@/components/ui/Button';
 import { Listing } from '@/types';
-import { X, MapPin, BedDouble, Bath, Ruler, DollarSign, Sparkles, ExternalLink, Trash2 } from 'lucide-react';
+import { X, MapPin, BedDouble, Bath, Ruler, DollarSign, Sparkles, ExternalLink, Trash2, Loader2 } from 'lucide-react';
 import { imageKitPresets } from '@/lib/imagekit';
 import { useState, useEffect } from 'react';
 
@@ -18,6 +18,7 @@ export function ComparisonModal({ isOpen, onClose }: ComparisonModalProps) {
   const router = useRouter();
   const { listings, removeListing, clearAll } = useComparisonStore();
   const [isClient, setIsClient] = useState(false);
+  const [navigatingListingId, setNavigatingListingId] = useState<string | null>(null);
 
   useEffect(() => {
     setIsClient(true);
@@ -36,6 +37,7 @@ export function ComparisonModal({ isOpen, onClose }: ComparisonModalProps) {
   }
 
   const handleViewListing = (listingId: string) => {
+    setNavigatingListingId(listingId);
     router.push(`/listings/${listingId}`);
     onClose();
   };
@@ -272,9 +274,19 @@ export function ComparisonModal({ isOpen, onClose }: ComparisonModalProps) {
                       variant="primary"
                       size="sm"
                       className="w-full min-h-[44px] sm:min-h-0 text-xs sm:text-sm"
+                      disabled={navigatingListingId === listing._id}
                     >
-                      <ExternalLink className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1.5 sm:mr-2" />
-                      View Details
+                      {navigatingListingId === listing._id ? (
+                        <>
+                          <Loader2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1.5 sm:mr-2 animate-spin" />
+                          Loading...
+                        </>
+                      ) : (
+                        <>
+                          <ExternalLink className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1.5 sm:mr-2" />
+                          View Details
+                        </>
+                      )}
                     </Button>
                   </td>
                 ))}

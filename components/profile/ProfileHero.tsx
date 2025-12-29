@@ -1,10 +1,11 @@
 'use client';
 
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import { User as UserIcon, CheckCircle, Mail, Phone, Calendar } from 'lucide-react';
+import { User as UserIcon, CheckCircle, Mail, Phone, Calendar, Loader2 } from 'lucide-react';
 import { User as UserType } from '@/types';
 import { format } from 'date-fns';
-import Link from 'next/link';
 import { RatingDisplay } from '@/components/reviews/RatingDisplay';
 
 interface ProfileHeroProps {
@@ -14,6 +15,9 @@ interface ProfileHeroProps {
 }
 
 export function ProfileHero({ profile, ratingData, isOwnProfile }: ProfileHeroProps) {
+  const router = useRouter();
+  const [isNavigating, setIsNavigating] = useState(false);
+  
   const roleColors = {
     student: 'bg-accent-100 text-accent-700',
     landlord: 'bg-coral-100 text-coral-700',
@@ -23,6 +27,11 @@ export function ProfileHero({ profile, ratingData, isOwnProfile }: ProfileHeroPr
   };
 
   const roleColor = roleColors[profile.role] || roleColors.student;
+
+  const handleEditProfile = () => {
+    setIsNavigating(true);
+    router.push('/profile/edit');
+  };
 
   return (
     <div className="relative">
@@ -86,12 +95,20 @@ export function ProfileHero({ profile, ratingData, isOwnProfile }: ProfileHeroPr
                   </div>
                 </div>
                 {isOwnProfile && (
-                  <Link
-                    href="/profile/edit"
-                    className="px-3 sm:px-4 py-2 bg-gradient-primary text-white rounded-lg hover:opacity-90 transition-all font-semibold text-xs sm:text-sm whitespace-nowrap shadow-soft hover:shadow-medium"
+                  <button
+                    onClick={handleEditProfile}
+                    disabled={isNavigating}
+                    className="px-3 sm:px-4 py-2 bg-gradient-primary text-white rounded-lg hover:opacity-90 transition-all font-semibold text-xs sm:text-sm whitespace-nowrap shadow-soft hover:shadow-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                   >
-                    Edit Profile
-                  </Link>
+                    {isNavigating ? (
+                      <>
+                        <Loader2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 animate-spin" />
+                        <span className="hidden sm:inline">Loading...</span>
+                      </>
+                    ) : (
+                      'Edit Profile'
+                    )}
+                  </button>
                 )}
               </div>
 

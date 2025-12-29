@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
@@ -32,7 +33,10 @@ export function SearchHistoryTab() {
     },
   });
 
+  const [navigatingSearchId, setNavigatingSearchId] = useState<string | null>(null);
+
   const applySearch = (history: SearchHistory) => {
+    setNavigatingSearchId(history.id);
     const params = new URLSearchParams();
     
     if (history.searchQuery) {
@@ -123,9 +127,14 @@ export function SearchHistoryTab() {
               <button
                 onClick={() => applySearch(history)}
                 className="flex-1 text-left min-w-0"
+                disabled={navigatingSearchId === history.id}
               >
                 <div className="flex items-start gap-2 sm:gap-3 mb-2">
-                  <Search className="w-4 h-4 sm:w-5 sm:h-5 text-primary-600 flex-shrink-0 mt-0.5" />
+                  {navigatingSearchId === history.id ? (
+                    <Loader2 className="w-4 h-4 sm:w-5 sm:h-5 text-primary-600 flex-shrink-0 mt-0.5 animate-spin" />
+                  ) : (
+                    <Search className="w-4 h-4 sm:w-5 sm:h-5 text-primary-600 flex-shrink-0 mt-0.5" />
+                  )}
                   <div className="flex-1 min-w-0">
                     {history.searchQuery && (
                       <p className="font-semibold text-sm sm:text-base text-grey-900 mb-1 truncate">

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { X, Heart, MapPin, BedDouble, Bath, Ruler, Calendar, Sparkles, ExternalLink, MessageSquare, ChevronLeft, ChevronRight } from 'lucide-react';
+import { X, Heart, MapPin, BedDouble, Bath, Ruler, Calendar, Sparkles, ExternalLink, MessageSquare, ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
 import { Modal } from '@/components/ui/Modal';
 import { Button } from '@/components/ui/Button';
 import { Listing } from '@/types';
@@ -26,6 +26,7 @@ export function QuickViewModal({ listing, isOpen, onClose }: QuickViewModalProps
   const queryClient = useQueryClient();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isFavorite, setIsFavorite] = useState(false);
+  const [isNavigating, setIsNavigating] = useState(false);
 
   // Check if listing is favorited
   useEffect(() => {
@@ -46,6 +47,13 @@ export function QuickViewModal({ listing, isOpen, onClose }: QuickViewModalProps
   useEffect(() => {
     setCurrentImageIndex(0);
   }, [listing?._id]);
+
+  // Reset loading state when modal closes or listing changes
+  useEffect(() => {
+    if (!isOpen) {
+      setIsNavigating(false);
+    }
+  }, [isOpen]);
 
   const toggleFavorite = useMutation({
     mutationFn: async () => {
@@ -74,6 +82,7 @@ export function QuickViewModal({ listing, isOpen, onClose }: QuickViewModalProps
     : 'Not specified';
 
   const handleViewFullDetails = () => {
+    setIsNavigating(true);
     // Close modal first, then navigate
     onClose();
     // Use setTimeout to ensure modal closes before navigation
@@ -108,20 +117,34 @@ export function QuickViewModal({ listing, isOpen, onClose }: QuickViewModalProps
       showCloseButton={true}
       closeOnOverlayClick={true}
     >
-      <div className="relative">
+      <div className="relative" style={{ marginLeft: '-1px', marginRight: '-1px', width: 'calc(100% + 2px)' }}>
         {/* Image Gallery */}
-        <div className="relative w-full bg-grey-200 overflow-hidden group">
+        <div className="relative bg-white overflow-hidden group w-full">
           {listing.images && listing.images.length > 0 ? (
             <>
-              <img
-                src={
-                  currentImage.includes('ik.imagekit.io')
-                    ? imageKitPresets.lightbox(currentImage)
-                    : currentImage
-                }
-                alt={listing.title}
-                className="w-full h-auto object-contain max-h-[50vh] sm:max-h-[60vh] md:max-h-[70vh]"
-              />
+              <div style={{ width: '100%', margin: 0, padding: 0, lineHeight: 0, fontSize: 0 }}>
+                <img
+                  src={
+                    currentImage.includes('ik.imagekit.io')
+                      ? imageKitPresets.lightbox(currentImage)
+                      : currentImage
+                  }
+                  alt={listing.title}
+                  className="w-full h-auto max-h-[50vh] sm:max-h-[60vh] md:max-h-[70vh] object-contain"
+                  style={{ 
+                    display: 'block', 
+                    margin: 0, 
+                    padding: 0, 
+                    width: '100%', 
+                    border: 'none', 
+                    outline: 'none',
+                    verticalAlign: 'top',
+                    lineHeight: 0,
+                    boxSizing: 'border-box',
+                    fontSize: '0'
+                  }} 
+                />
+              </div>
               
               {/* Image Navigation */}
               {listing.images.length > 1 && (
@@ -278,10 +301,21 @@ export function QuickViewModal({ listing, isOpen, onClose }: QuickViewModalProps
               onClick={handleViewFullDetails}
               variant="primary"
               className="flex-1 flex items-center justify-center gap-2 min-h-[44px]"
+              disabled={isNavigating}
             >
-              <ExternalLink className="w-4 h-4" />
-              <span className="hidden sm:inline">View Full Details</span>
-              <span className="sm:hidden">View Details</span>
+              {isNavigating ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <span className="hidden sm:inline">Loading...</span>
+                  <span className="sm:hidden">Loading...</span>
+                </>
+              ) : (
+                <>
+                  <ExternalLink className="w-4 h-4" />
+                  <span className="hidden sm:inline">View Full Details</span>
+                  <span className="sm:hidden">View Details</span>
+                </>
+              )}
             </Button>
             {isAuthenticated && (
               <div className="flex gap-2 sm:gap-3">

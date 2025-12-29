@@ -26,6 +26,7 @@ import {
   Zap,
   Heart,
   Shield,
+  Loader2,
 } from 'lucide-react';
 import { imageKitPresets } from '@/lib/imagekit';
 import { useState, useEffect, useMemo } from 'react';
@@ -35,6 +36,7 @@ export default function ComparePage() {
   const router = useRouter();
   const { listings, removeListing, clearAll } = useComparisonStore();
   const [isClient, setIsClient] = useState(false);
+  const [navigatingListingId, setNavigatingListingId] = useState<string | null>(null);
 
   useEffect(() => {
     setIsClient(true);
@@ -92,6 +94,7 @@ export default function ComparePage() {
   }
 
   const handleViewListing = (listingId: string) => {
+    setNavigatingListingId(listingId);
     router.push(`/listings/${listingId}`);
   };
 
@@ -413,9 +416,19 @@ export default function ComparePage() {
                       onClick={() => handleViewListing(listing._id)}
                       variant="primary"
                       className="w-full py-3 text-base font-bold shadow-lg hover:shadow-xl transition-all"
+                      disabled={navigatingListingId === listing._id}
                     >
-                      <ExternalLink className="w-5 h-5 mr-2" />
-                      View Full Details
+                      {navigatingListingId === listing._id ? (
+                        <>
+                          <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                          Loading...
+                        </>
+                      ) : (
+                        <>
+                          <ExternalLink className="w-5 h-5 mr-2" />
+                          View Full Details
+                        </>
+                      )}
                     </Button>
                   </div>
                 </div>
@@ -705,9 +718,19 @@ export default function ComparePage() {
                             variant="primary"
                             size="sm"
                             className="w-full shadow-md hover:shadow-lg transition-all"
+                            disabled={navigatingListingId === listing._id}
                           >
-                            <ExternalLink className="w-4 h-4 mr-2" />
-                            View Details
+                            {navigatingListingId === listing._id ? (
+                              <>
+                                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                                Loading...
+                              </>
+                            ) : (
+                              <>
+                                <ExternalLink className="w-4 h-4 mr-2" />
+                                View Details
+                              </>
+                            )}
                           </Button>
                         </td>
                       ))}

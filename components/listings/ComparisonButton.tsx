@@ -1,19 +1,22 @@
 'use client';
 
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useComparisonStore } from '@/lib/comparison-store';
 import { Button } from '@/components/ui/Button';
-import { GitCompare, X } from 'lucide-react';
+import { GitCompare, X, Loader2 } from 'lucide-react';
 
 export function ComparisonButton() {
   const router = useRouter();
   const { listings, clearAll } = useComparisonStore();
+  const [isNavigating, setIsNavigating] = useState(false);
 
   if (listings.length === 0) {
     return null;
   }
 
   const handleCompare = () => {
+    setIsNavigating(true);
     router.push('/compare');
   };
 
@@ -32,8 +35,16 @@ export function ComparisonButton() {
             variant="primary"
             size="sm"
             className="flex-1 sm:flex-none"
+            disabled={isNavigating}
           >
-            Compare
+            {isNavigating ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                Loading...
+              </>
+            ) : (
+              'Compare'
+            )}
           </Button>
           <Button
             onClick={clearAll}
