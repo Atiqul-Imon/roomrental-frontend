@@ -71,5 +71,45 @@ export const chatApi = {
     const response = await api.get('/chat/unread-count');
     return response.data.count || 0;
   },
+
+  // Update message
+  updateMessage: async (messageId: string, content: string): Promise<Message> => {
+    const response = await api.put(`/chat/messages/${messageId}`, { content });
+    return response.data.data || response.data;
+  },
+
+  // Delete message
+  deleteMessage: async (messageId: string): Promise<void> => {
+    await api.delete(`/chat/messages/${messageId}`);
+  },
+
+  // Search messages
+  searchMessages: async (
+    conversationId: string,
+    query: string,
+    page: number = 1,
+    limit: number = 20,
+  ): Promise<{
+    messages: Message[];
+    pagination: {
+      total: number;
+      page: number;
+      limit: number;
+      totalPages: number;
+    };
+  }> => {
+    const response = await api.get(`/chat/conversations/${conversationId}/messages/search`, {
+      params: { query, page, limit },
+    });
+    return {
+      messages: response.data.data || [],
+      pagination: response.data.pagination || {
+        total: 0,
+        page,
+        limit,
+        totalPages: 0,
+      },
+    };
+  },
 };
 

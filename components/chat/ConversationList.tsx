@@ -70,10 +70,10 @@ export function ConversationList({
             <button
               key={conversation.id}
               onClick={() => onSelectConversation(conversation)}
-              className={`w-full p-3 rounded-lg transition-all duration-200 text-left ${
+              className={`w-full p-3 rounded-xl transition-all duration-200 text-left shadow-sm ${
                 isSelected
-                  ? 'bg-primary-500 text-white'
-                  : 'bg-white hover:bg-gray-50 border border-gray-200'
+                  ? 'bg-gradient-to-r from-emerald-600 to-emerald-500 text-white shadow-md'
+                  : 'bg-white hover:bg-emerald-50 border border-emerald-100 hover:border-emerald-300'
               }`}
             >
               <div className="flex items-start gap-3">

@@ -247,7 +247,7 @@ export function MessageInput({
     attachments.every((att) => att.url && !att.url.startsWith('blob:'));
 
   return (
-    <div className="border-t border-gray-200 bg-white">
+    <div className="border-t border-emerald-200 bg-white shadow-lg">
       {/* Attachment Previews */}
       {attachments.length > 0 && (
         <div className="p-2 border-b border-gray-200">
@@ -359,7 +359,7 @@ export function MessageInput({
           <Button
             onClick={handleSend}
             disabled={!canSend || disabled}
-            className="px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors flex items-center gap-2"
+            className="px-5 py-2.5 bg-gradient-to-r from-emerald-600 to-emerald-500 text-white rounded-xl hover:from-emerald-700 hover:to-emerald-600 disabled:from-gray-300 disabled:to-gray-300 disabled:cursor-not-allowed transition-all duration-200 shadow-md hover:shadow-lg hover:scale-105 disabled:hover:scale-100 flex items-center gap-2 font-semibold"
           >
             {isUploading ? (
               <Loader2 className="w-4 h-4 animate-spin" />

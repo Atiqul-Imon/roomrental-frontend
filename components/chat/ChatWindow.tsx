@@ -197,11 +197,14 @@ export function ChatWindow({ initialConversationId }: ChatWindowProps) {
   const conversations = conversationsData?.conversations || [];
 
   return (
-    <div className="flex h-[calc(100vh-4rem)] bg-gray-50">
+    <div className="flex h-[calc(100vh-4rem)] bg-gradient-to-br from-gray-50 to-emerald-50/30">
       {/* Conversations Sidebar */}
-      <div className="w-full md:w-80 border-r border-gray-200 bg-white flex flex-col">
-        <div className="p-4 border-b border-gray-200">
-          <h2 className="text-lg font-semibold text-gray-900">Messages</h2>
+      <div className="w-full md:w-80 border-r border-emerald-200 bg-white shadow-lg flex flex-col">
+        <div className="p-4 border-b border-emerald-200 bg-gradient-to-r from-emerald-50 to-white">
+          <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+            <span className="text-2xl">💬</span>
+            Messages
+          </h2>
         </div>
         <ConversationList
           conversations={conversations}
@@ -213,11 +216,11 @@ export function ChatWindow({ initialConversationId }: ChatWindowProps) {
       </div>
 
       {/* Chat Area */}
-      <div className="flex-1 flex flex-col bg-white">
+      <div className="flex-1 flex flex-col bg-white shadow-inner">
         {selectedConversation ? (
           <>
             {/* Chat Header */}
-            <div className="p-4 border-b border-gray-200 bg-white">
+            <div className="p-4 border-b border-emerald-200 bg-gradient-to-r from-white to-emerald-50/50 shadow-sm">
               <div className="flex items-center gap-3">
                 <button
                   onClick={() => setSelectedConversation(null)}
@@ -294,11 +297,13 @@ export function ChatWindow({ initialConversationId }: ChatWindowProps) {
             />
           </>
         ) : (
-          <div className="flex-1 flex items-center justify-center">
-            <div className="text-center">
-              <User className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-              <p className="text-gray-500 text-lg font-medium">Select a conversation</p>
-              <p className="text-gray-400 text-sm mt-2">
+          <div className="flex-1 flex items-center justify-center bg-gradient-to-br from-white to-emerald-50/30">
+            <div className="text-center p-8">
+              <div className="w-24 h-24 bg-gradient-to-br from-emerald-100 to-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <User className="w-12 h-12 text-emerald-600" />
+              </div>
+              <p className="text-gray-700 text-xl font-bold mb-2">Select a conversation</p>
+              <p className="text-gray-500 text-sm">
                 Choose a conversation from the list to start messaging
               </p>
             </div>

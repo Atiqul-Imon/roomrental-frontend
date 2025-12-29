@@ -144,8 +144,8 @@ export function MessageList({
       {messageGroups.map((group, groupIndex) => (
         <div key={group.date}>
           {/* Date Separator */}
-          <div className="flex items-center justify-center my-4">
-            <div className="bg-gray-200 text-gray-600 text-xs px-3 py-1 rounded-full">
+          <div className="flex items-center justify-center my-6">
+            <div className="bg-emerald-100 text-emerald-700 text-xs font-semibold px-4 py-1.5 rounded-full border border-emerald-200">
               {formatGroupDate(group.date)}
             </div>
           </div>
@@ -199,10 +199,10 @@ export function MessageList({
                     )}
 
                     <div
-                      className={`rounded-lg px-4 py-2 ${
+                      className={`rounded-2xl px-4 py-2.5 shadow-sm ${
                         isOwnMessage
-                          ? 'bg-primary-500 text-white'
-                          : 'bg-gray-100 text-gray-900'
+                          ? 'bg-gradient-to-r from-emerald-600 to-emerald-500 text-white'
+                          : 'bg-white border border-gray-200 text-gray-900'
                       }`}
                     >
                       {/* Message Content */}
@@ -274,19 +274,32 @@ export function MessageList({
                         </p>
                       )}
 
-                      <span
-                        className={`text-xs mt-1 block ${
-                          isOwnMessage ? 'text-white/70' : 'text-gray-500'
-                        }`}
-                      >
-                        {formatMessageTime(message.createdAt)}
-                        {isOwnMessage && message.readAt && (
-                          <span className="ml-1">✓✓</span>
+                      <div className="flex items-center justify-end gap-1 mt-1">
+                        <span
+                          className={`text-xs ${
+                            isOwnMessage ? 'text-white/80' : 'text-gray-500'
+                          }`}
+                        >
+                          {formatMessageTime(message.createdAt)}
+                        </span>
+                        {isOwnMessage && (
+                          <div className="flex items-center">
+                            {message.readAt ? (
+                              <span className="text-xs text-blue-300" title="Read">
+                                ✓✓
+                              </span>
+                            ) : message.deliveredAt ? (
+                              <span className="text-xs text-white/70" title="Delivered">
+                                ✓
+                              </span>
+                            ) : (
+                              <span className="text-xs text-white/50" title="Sending">
+                                ⏱
+                              </span>
+                            )}
+                          </div>
                         )}
-                        {isOwnMessage && !message.readAt && message.deliveredAt && (
-                          <span className="ml-1">✓</span>
-                        )}
-                      </span>
+                      </div>
                     </div>
                   </div>
 

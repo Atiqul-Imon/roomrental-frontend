@@ -31,7 +31,7 @@ function ChatContent() {
   }
 
   return (
-    <main className="min-h-screen bg-grey-50">
+    <main className="min-h-screen bg-gradient-to-br from-gray-50 via-emerald-50/20 to-gray-50">
       <ChatWindow initialConversationId={conversationId || undefined} />
     </main>
   );
