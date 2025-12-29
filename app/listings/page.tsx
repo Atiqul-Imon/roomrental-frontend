@@ -50,17 +50,18 @@ export default function ListingsPage() {
       <Header />
       <main className="min-h-screen bg-gradient-comfort">
         {/* Hero Section */}
-        <section className="bg-gradient-primary text-white py-12 sm:py-16 md:py-20 relative overflow-hidden">
-          {/* Warm decorative elements */}
+        <section className="bg-gradient-to-r from-blue-500 to-teal-500 text-white py-12 sm:py-16 md:py-20 relative overflow-hidden">
+          {/* Decorative Background Elements */}
           <div className="absolute inset-0 opacity-20">
-            <div className="absolute top-10 right-10 w-64 h-64 bg-accent-200 rounded-full blur-3xl" />
-            <div className="absolute bottom-10 left-10 w-80 h-80 bg-coral-200 rounded-full blur-3xl" />
+            <div className="absolute top-10 right-10 w-64 h-64 bg-blue-300 rounded-full blur-3xl animate-pulse" />
+            <div className="absolute bottom-10 left-10 w-80 h-80 bg-teal-300 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
+            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-cyan-300 rounded-full blur-3xl opacity-30 animate-pulse" style={{ animationDelay: '2s' }} />
           </div>
           <div className="container mx-auto px-3 sm:px-4 relative z-10">
             <div className="max-w-4xl mx-auto text-center">
-              <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 sm:mb-5 md:mb-6 leading-tight tracking-tight">Find Your Perfect Home</h1>
-              <p className="text-lg sm:text-xl md:text-2xl text-white/95 mb-6 sm:mb-8 md:mb-10 leading-relaxed">
-                Discover cozy, comfortable rooms across the United States
+              <h1 className="font-heading text-3xl sm:text-4xl md:text-5xl font-bold mb-4 sm:mb-5 md:mb-6 leading-[1.2] tracking-tight text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.2)]">Browse Available Rooms</h1>
+              <p className="font-body text-base sm:text-lg md:text-xl font-normal text-white/90 mb-6 sm:mb-8 md:mb-10 leading-relaxed tracking-normal drop-shadow-[0_1px_4px_rgba(0,0,0,0.15)]">
+                Search and filter through thousands of rooms to find your ideal space
               </p>
               
               {/* Enhanced Search Bar */}
