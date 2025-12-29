@@ -21,7 +21,7 @@ import { ReviewForm } from '@/components/reviews/ReviewForm';
 import { RatingDisplay } from '@/components/reviews/RatingDisplay';
 import { useAuth } from '@/lib/auth-context';
 import { format } from 'date-fns';
-import { MapPin, Calendar, DollarSign, Share2, Edit, Trash2 } from 'lucide-react';
+import { MapPin, Calendar, DollarSign, Share2, Edit, Trash2, Bed, Bath, Square, Shield, Star, Clock, CheckCircle2 } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
 import { PageSkeleton } from '@/components/LoadingSkeleton';
@@ -165,100 +165,153 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
   return (
     <>
       <Header />
-      <main className="min-h-screen bg-grey-50 pb-20 md:pb-8">
+      <main className="min-h-screen bg-gradient-to-br from-gray-50 via-emerald-50/20 to-gray-50 pb-20 md:pb-8">
         <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-6 md:py-8 fade-in">
-          {/* Image Gallery - Modern & Student-Friendly */}
-          <div className="mb-5 sm:mb-6 md:mb-8 bg-white rounded-xl overflow-hidden shadow-large border-refined border-grey-200">
+          {/* Image Gallery - Enhanced with better shadow */}
+          <div className="mb-6 sm:mb-8 md:mb-10 bg-white rounded-2xl overflow-hidden shadow-xl border border-gray-100">
             <ImageGallery images={data.images} title={data.title} />
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8 md:gap-10">
             {/* Main Content */}
-            <div className="lg:col-span-2 space-y-6">
-              {/* Title and Actions */}
-              <div className="bg-white rounded-xl p-5 sm:p-6 md:p-8 shadow-soft border-refined border-grey-200">
-                <div className="flex items-start justify-between mb-5 sm:mb-6">
-                  <div className="flex-1 min-w-0">
-                    <h1 className="font-heading text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4 text-grey-900 leading-tight">{data.title}</h1>
-                    <div className="flex items-center gap-2 sm:gap-4 text-grey-600">
-                      <div className="flex items-center gap-1 sm:gap-1.5 min-w-0">
-                        <MapPin className="w-4 h-4 sm:w-5 sm:h-5 text-primary-600 flex-shrink-0" />
-                        <span className="font-medium text-sm sm:text-base truncate">
-                          {data.location.city}, {data.location.state}
-                          {data.location.zip && ` ${data.location.zip}`}
-                        </span>
+            <div className="lg:col-span-2 space-y-6 sm:space-y-8">
+              {/* Title and Header Section - Enhanced */}
+              <div className="bg-white rounded-2xl p-6 sm:p-8 md:p-10 shadow-lg border border-gray-100 overflow-hidden relative">
+                {/* Decorative gradient background */}
+                <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-emerald-100/30 to-transparent rounded-full blur-3xl -z-0"></div>
+                
+                <div className="relative z-10">
+                  <div className="flex items-start justify-between mb-6">
+                    <div className="flex-1 min-w-0 pr-4">
+                      <h1 className="font-heading text-3xl sm:text-4xl md:text-5xl font-bold mb-4 text-gray-900 leading-tight">
+                        {data.title}
+                      </h1>
+                      <div className="flex items-center gap-3 text-gray-600 mb-6">
+                        <div className="flex items-center gap-2 min-w-0 bg-emerald-50 px-3 py-1.5 rounded-lg">
+                          <MapPin className="w-5 h-5 text-emerald-600 flex-shrink-0" />
+                          <span className="font-semibold text-base sm:text-lg text-gray-800 truncate">
+                            {data.location.city}, {data.location.state}
+                            {data.location.zip && ` ${data.location.zip}`}
+                          </span>
+                        </div>
                       </div>
                     </div>
+                    <div className="flex items-center gap-2 flex-shrink-0">
+                      <FavoriteButton listingId={data._id} />
+                      <button
+                        onClick={(e) => {
+                          handleShare();
+                          e.currentTarget.classList.add('share-bounce');
+                          setTimeout(() => {
+                            e.currentTarget.classList.remove('share-bounce');
+                          }, 300);
+                        }}
+                        className="p-3 border-2 border-gray-200 rounded-xl hover:bg-emerald-50 hover:border-emerald-300 transition-all duration-200 text-gray-600 hover:text-emerald-600 touch-target shadow-sm hover:shadow-md"
+                        title="Share listing"
+                      >
+                        <Share2 className="w-5 h-5" />
+                      </button>
+                      {isOwner && (
+                        <>
+                          <Link
+                            href={`/listings/${data._id}/edit`}
+                            className="p-3 border-2 border-gray-200 rounded-xl hover:bg-blue-50 hover:border-blue-300 transition-all duration-200 text-gray-600 hover:text-blue-600 shadow-sm hover:shadow-md"
+                            title="Edit listing"
+                          >
+                            <Edit className="w-5 h-5" />
+                          </Link>
+                          <button
+                            onClick={handleDelete}
+                            className="p-3 border-2 border-red-200 rounded-xl hover:bg-red-50 transition-all duration-200 text-red-600 hover:border-red-400 shadow-sm hover:shadow-md"
+                            title="Delete listing"
+                          >
+                            <Trash2 className="w-5 h-5" />
+                          </button>
+                        </>
+                      )}
+                    </div>
                   </div>
-                  <div className="flex items-center gap-1.5 sm:gap-2 ml-2 sm:ml-4 flex-shrink-0">
-                    <FavoriteButton listingId={data._id} />
-                    <button
-                      onClick={(e) => {
-                        handleShare();
-                        e.currentTarget.classList.add('share-bounce');
-                        setTimeout(() => {
-                          e.currentTarget.classList.remove('share-bounce');
-                        }, 300);
-                      }}
-                      className="p-2 sm:p-2.5 border border-grey-300 rounded-lg hover:bg-grey-50 transition-all duration-200 hover:border-primary-400 text-grey-600 hover:text-primary-600 touch-target"
-                      title="Share listing"
-                    >
-                      <Share2 className="w-4 h-4 sm:w-5 sm:h-5" />
-                    </button>
-                    {isOwner && (
-                      <>
-                        <Link
-                          href={`/listings/${data._id}/edit`}
-                          className="p-2.5 border border-grey-300 rounded-lg hover:bg-grey-50 transition-all duration-200 hover:border-primary-400 text-grey-600 hover:text-primary-600"
-                          title="Edit listing"
-                        >
-                          <Edit className="w-5 h-5" />
-                        </Link>
-                        <button
-                          onClick={handleDelete}
-                          className="p-2.5 border border-red-300 rounded-lg hover:bg-red-50 transition-all duration-200 text-red-600 hover:border-red-400"
-                          title="Delete listing"
-                        >
-                          <Trash2 className="w-5 h-5" />
-                        </button>
-                      </>
+
+                  {/* Price Badge - Enhanced */}
+                  <div className="inline-flex items-center gap-3 px-6 py-4 bg-gradient-to-r from-emerald-600 to-emerald-500 text-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
+                    <div className="bg-white/20 p-2 rounded-lg">
+                      <DollarSign className="w-6 h-6" />
+                    </div>
+                    <div>
+                      <span className="text-4xl font-bold block leading-none">{data.price}</span>
+                      <span className="text-sm font-medium opacity-90">per month</span>
+                    </div>
+                  </div>
+
+                  {/* Quick Stats - New Section */}
+                  <div className="mt-6 grid grid-cols-3 gap-4 pt-6 border-t border-gray-100">
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 bg-emerald-100 rounded-lg">
+                        <Bed className="w-5 h-5 text-emerald-600" />
+                      </div>
+                      <div>
+                        <p className="text-xs text-gray-500 font-medium">Bedrooms</p>
+                        <p className="text-lg font-bold text-gray-900">{data.bedrooms}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 bg-blue-100 rounded-lg">
+                        <Bath className="w-5 h-5 text-blue-600" />
+                      </div>
+                      <div>
+                        <p className="text-xs text-gray-500 font-medium">Bathrooms</p>
+                        <p className="text-lg font-bold text-gray-900">{data.bathrooms}</p>
+                      </div>
+                    </div>
+                    {data.squareFeet && (
+                      <div className="flex items-center gap-3">
+                        <div className="p-2 bg-purple-100 rounded-lg">
+                          <Square className="w-5 h-5 text-purple-600" />
+                        </div>
+                        <div>
+                          <p className="text-xs text-gray-500 font-medium">Square Feet</p>
+                          <p className="text-lg font-bold text-gray-900">{data.squareFeet}</p>
+                        </div>
+                      </div>
                     )}
                   </div>
-                </div>
-
-                {/* Price Badge */}
-                <div className="inline-flex items-center gap-2 px-5 py-3 bg-gradient-primary text-white rounded-xl shadow-medium">
-                  <DollarSign className="w-6 h-6" />
-                  <span className="text-3xl font-bold">{data.price}</span>
-                  <span className="text-lg font-medium opacity-90">/month</span>
                 </div>
               </div>
 
               {/* Description - Enhanced */}
-              <div className="bg-white rounded-xl p-4 sm:p-6 md:p-8 shadow-large border border-grey-100">
-                <h2 className="font-heading text-xl sm:text-2xl md:text-3xl font-bold mb-4 sm:mb-6 text-grey-900 flex items-center gap-2 sm:gap-3">
-                  <span className="text-2xl sm:text-3xl">📝</span>
-                  About This Room
-                </h2>
-                <p className="text-grey-700 whitespace-pre-line leading-relaxed text-sm sm:text-base md:text-lg">
+              <div className="bg-white rounded-2xl p-6 sm:p-8 md:p-10 shadow-lg border border-gray-100">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="p-3 bg-emerald-100 rounded-xl">
+                    <span className="text-2xl">📝</span>
+                  </div>
+                  <h2 className="font-heading text-2xl sm:text-3xl font-bold text-gray-900">
+                    About This Room
+                  </h2>
+                </div>
+                <p className="text-gray-700 whitespace-pre-line leading-relaxed text-base sm:text-lg md:text-xl">
                   {data.description}
                 </p>
               </div>
 
               {/* Amenities - Enhanced for Students */}
               {data.amenities.length > 0 && (
-                <div className="bg-white rounded-xl p-5 sm:p-6 md:p-8 shadow-large border-refined border-grey-200">
-                  <h2 className="font-heading text-xl sm:text-2xl md:text-3xl font-bold mb-5 sm:mb-6 md:mb-8 text-grey-900 flex items-center gap-2 sm:gap-3 leading-tight">
-                    <span className="text-2xl sm:text-3xl md:text-4xl">✨</span>
-                    What's Included
-                  </h2>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-3">
+                <div className="bg-white rounded-2xl p-6 sm:p-8 md:p-10 shadow-lg border border-gray-100">
+                  <div className="flex items-center gap-3 mb-6 sm:mb-8">
+                    <div className="p-3 bg-gradient-to-br from-emerald-100 to-blue-100 rounded-xl">
+                      <span className="text-2xl">✨</span>
+                    </div>
+                    <h2 className="font-heading text-2xl sm:text-3xl font-bold text-gray-900">
+                      What's Included
+                    </h2>
+                  </div>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4">
                     {data.amenities.map((amenity, index) => (
                       <div
                         key={index}
-                        className="px-3 sm:px-4 py-2 sm:py-3 bg-gradient-to-br from-primary-50 to-secondary-50 text-primary-800 rounded-lg sm:rounded-xl text-xs sm:text-sm font-semibold border border-primary-200 hover:border-primary-400 hover:shadow-medium transition-all duration-200 hover:scale-105 cursor-default"
+                        className="group px-4 py-3 bg-gradient-to-br from-emerald-50 to-blue-50 text-emerald-800 rounded-xl text-sm font-semibold border-2 border-emerald-200 hover:border-emerald-400 hover:shadow-md transition-all duration-200 hover:scale-105 cursor-default flex items-center gap-2"
                       >
-                        {amenity}
+                        <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+                        <span>{amenity}</span>
                       </div>
                     ))}
                   </div>
@@ -266,94 +319,112 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
               )}
 
               {/* Availability - Enhanced */}
-              <div className="bg-white rounded-xl p-5 sm:p-6 md:p-8 shadow-large border-refined border-grey-200">
-                <div className="flex items-center gap-3 sm:gap-4 text-grey-700">
-                  <div className="p-2 sm:p-3 bg-primary-50 rounded-lg sm:rounded-xl">
-                    <Calendar className="w-5 h-5 sm:w-6 sm:h-6 text-primary-600" />
+              <div className="bg-gradient-to-br from-white to-emerald-50/50 rounded-2xl p-6 sm:p-8 shadow-lg border-2 border-emerald-100">
+                <div className="flex items-center gap-4">
+                  <div className="p-4 bg-emerald-100 rounded-xl shadow-sm">
+                    <Calendar className="w-6 h-6 text-emerald-600" />
                   </div>
                   <div>
-                    <span className="text-xs sm:text-sm text-grey-600 block mb-1">Available from</span>
-                    <span className="font-bold text-base sm:text-lg text-grey-900">{formattedDate}</span>
+                    <span className="text-sm text-gray-600 block mb-1 font-medium">Available from</span>
+                    <span className="font-bold text-xl text-gray-900">{formattedDate}</span>
                   </div>
                 </div>
               </div>
             </div>
 
             {/* Sticky Sidebar - Enhanced for Students */}
-            <div className="lg:sticky lg:top-20 space-y-4 sm:space-y-6 h-fit">
+            <div className="lg:sticky lg:top-20 space-y-6 h-fit">
               {/* Contact Card - Student-Friendly */}
-              <div className="bg-gradient-to-br from-white to-primary-50/30 border-2 border-primary-200 rounded-xl p-5 sm:p-6 md:p-8 shadow-large">
-                <h2 className="font-heading text-lg sm:text-xl md:text-2xl font-bold mb-4 sm:mb-5 md:mb-6 text-grey-900 flex items-center gap-2 sm:gap-3 leading-tight">
-                  <span className="text-xl sm:text-2xl md:text-3xl">👤</span>
-                  Meet Your Landlord
-                </h2>
-                <div className="flex items-center gap-3 sm:gap-4 mb-3 sm:mb-4">
-                  {data.landlordId.profileImage ? (
-                    <Image
-                      src={data.landlordId.profileImage}
-                      alt={data.landlordId.name}
-                      width={72}
-                      height={72}
-                      className="rounded-full border-3 border-primary-300 shadow-medium"
-                    />
-                  ) : (
-                    <div className="w-18 h-18 bg-gradient-primary rounded-full flex items-center justify-center border-4 border-primary-300 shadow-medium">
-                      <span className="text-3xl font-bold text-white">
-                        {data.landlordId.name.charAt(0).toUpperCase()}
-                      </span>
+              <div className="bg-gradient-to-br from-white via-emerald-50/40 to-white border-2 border-emerald-200 rounded-2xl p-6 sm:p-8 shadow-xl overflow-hidden relative">
+                {/* Decorative element */}
+                <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-200/20 rounded-full blur-2xl"></div>
+                
+                <div className="relative z-10">
+                  <div className="flex items-center gap-3 mb-6">
+                    <div className="p-3 bg-emerald-100 rounded-xl">
+                      <span className="text-2xl">👤</span>
+                    </div>
+                    <h2 className="font-heading text-xl sm:text-2xl font-bold text-gray-900">
+                      Meet Your Landlord
+                    </h2>
+                  </div>
+                  <div className="flex items-center gap-4 mb-4">
+                    {data.landlordId.profileImage ? (
+                      <Image
+                        src={data.landlordId.profileImage}
+                        alt={data.landlordId.name}
+                        width={80}
+                        height={80}
+                        className="rounded-full border-4 border-emerald-300 shadow-lg"
+                      />
+                    ) : (
+                      <div className="w-20 h-20 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-full flex items-center justify-center border-4 border-emerald-300 shadow-lg">
+                        <span className="text-3xl font-bold text-white">
+                          {data.landlordId.name.charAt(0).toUpperCase()}
+                        </span>
+                      </div>
+                    )}
+                    <div className="flex-1 min-w-0">
+                      <Link
+                        href={`/profile/${data.landlordId._id}`}
+                        className="font-bold text-lg text-gray-900 hover:text-emerald-600 transition-colors block mb-1 truncate"
+                      >
+                        {data.landlordId.name}
+                      </Link>
+                      <p className="text-sm text-gray-600 truncate">{data.landlordId.email}</p>
+                    </div>
+                  </div>
+                  {(data.landlordId as any).bio && (
+                    <div className="mt-4 mb-4 p-4 bg-white/70 rounded-xl border border-emerald-100">
+                      <p className="text-sm text-gray-700 leading-relaxed">
+                        {(data.landlordId as any).bio}
+                      </p>
                     </div>
                   )}
-                  <div className="flex-1">
-                    <Link
-                      href={`/profile/${data.landlordId._id}`}
-                      className="font-bold text-lg text-grey-900 hover:text-primary-600 transition-colors block mb-1"
-                    >
-                      {data.landlordId.name}
-                    </Link>
-                    <p className="text-sm text-grey-600">{data.landlordId.email}</p>
-                  </div>
+                  {!isOwner && (
+                    <div className="mt-6">
+                      <ContactButton
+                        landlordId={data.landlordId._id}
+                        landlordRole={data.landlordId.role}
+                        listingId={data._id}
+                        listingTitle={data.title}
+                      />
+                    </div>
+                  )}
                 </div>
-                {(data.landlordId as any).bio && (
-                  <p className="mt-4 mb-4 text-sm text-grey-700 leading-relaxed bg-white/50 p-3 rounded-lg">
-                    {(data.landlordId as any).bio}
-                  </p>
-                )}
-                {!isOwner && (
-                  <div className="mt-3 sm:mt-4 hidden md:block">
-                    <ContactButton
-                      landlordId={data.landlordId._id}
-                      landlordRole={data.landlordId.role}
-                      listingId={data._id}
-                      listingTitle={data.title}
-                    />
-                  </div>
-                )}
               </div>
 
               {/* Quick Info - Enhanced */}
-              <div className="bg-white border-2 border-grey-200 rounded-xl p-4 sm:p-6 shadow-large">
-                <h2 className="font-heading text-lg sm:text-xl font-bold mb-3 sm:mb-4 text-grey-900 flex items-center gap-2">
-                  <span className="text-xl sm:text-2xl">ℹ️</span>
-                  Quick Details
-                </h2>
+              <div className="bg-white border-2 border-gray-200 rounded-2xl p-6 shadow-lg">
+                <div className="flex items-center gap-3 mb-5">
+                  <div className="p-2 bg-blue-100 rounded-lg">
+                    <span className="text-xl">ℹ️</span>
+                  </div>
+                  <h2 className="font-heading text-xl font-bold text-gray-900">
+                    Quick Details
+                  </h2>
+                </div>
                 <div className="space-y-4">
-                  <div className="flex justify-between items-center py-3 border-b border-grey-100">
-                    <span className="text-grey-600 font-medium flex items-center gap-2">
-                      <span>Status:</span>
+                  <div className="flex justify-between items-center py-3 border-b border-gray-100">
+                    <span className="text-gray-600 font-medium flex items-center gap-2">
+                      Status:
                     </span>
-                    <span className={`px-4 py-1.5 rounded-full text-xs font-bold ${
-                      data.status === 'active' 
-                        ? 'bg-green-100 text-green-700 border border-green-300' 
+                    <span className={`px-4 py-2 rounded-full text-xs font-bold ${
+                      data.status === 'available' 
+                        ? 'bg-emerald-100 text-emerald-700 border-2 border-emerald-300' 
                         : data.status === 'pending'
-                        ? 'bg-warning/20 text-warning border border-warning/30'
-                        : 'bg-grey-100 text-grey-700 border border-grey-300'
+                        ? 'bg-amber-100 text-amber-700 border-2 border-amber-300'
+                        : 'bg-gray-100 text-gray-700 border-2 border-gray-300'
                     }`}>
                       {data.status.charAt(0).toUpperCase() + data.status.slice(1)}
                     </span>
                   </div>
                   <div className="flex justify-between items-center py-3">
-                    <span className="text-grey-600 font-medium">Listed:</span>
-                    <span className="font-bold text-grey-900">
+                    <span className="text-gray-600 font-medium flex items-center gap-2">
+                      <Clock className="w-4 h-4" />
+                      Listed:
+                    </span>
+                    <span className="font-bold text-gray-900">
                       {data.createdAt ? format(new Date(data.createdAt), 'MMM dd, yyyy') : 'N/A'}
                     </span>
                   </div>
@@ -361,12 +432,17 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
               </div>
 
               {/* Safety & Trust Badge for Students */}
-              <div className="bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-200 rounded-xl p-4 sm:p-6 shadow-large">
-                <div className="flex items-start gap-2 sm:gap-3">
-                  <span className="text-2xl sm:text-3xl">🛡️</span>
+              <div className="bg-gradient-to-br from-emerald-50 via-green-50 to-emerald-50 border-2 border-emerald-200 rounded-2xl p-6 shadow-lg">
+                <div className="flex items-start gap-4">
+                  <div className="p-3 bg-emerald-100 rounded-xl">
+                    <Shield className="w-6 h-6 text-emerald-600" />
+                  </div>
                   <div>
-                    <h3 className="font-heading font-bold text-sm sm:text-base text-grey-900 mb-1 sm:mb-2">Verified Listing</h3>
-                    <p className="text-xs sm:text-sm text-grey-700">
+                    <h3 className="font-heading font-bold text-base text-gray-900 mb-2 flex items-center gap-2">
+                      Verified Listing
+                      <CheckCircle2 className="w-5 h-5 text-emerald-600" />
+                    </h3>
+                    <p className="text-sm text-gray-700 leading-relaxed">
                       This listing has been verified by our team for accuracy and safety.
                     </p>
                   </div>
@@ -375,37 +451,56 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
             </div>
           </div>
 
-          {/* Reviews Section */}
-          <div className="mt-8 sm:mt-12 border-t border-border pt-6 sm:pt-8">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0 mb-4 sm:mb-6">
-              <h2 className="font-heading text-xl sm:text-2xl font-semibold">Reviews</h2>
-              {isAuthenticated && !isOwner && user?.id !== data.landlordId._id && (
-                <button
-                  onClick={() => setShowReviewForm(!showReviewForm)}
-                  className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition min-h-[44px] touch-target text-sm sm:text-base"
-                >
-                  {showReviewForm ? 'Cancel' : 'Write a Review'}
-                </button>
-              )}
-            </div>
-
-            {showReviewForm && (
-              <div className="mb-6">
-                <ReviewForm
-                  revieweeId={data.landlordId._id}
-                  listingId={data._id}
-                  onSuccess={() => {
-                    setShowReviewForm(false);
-                    queryClient.invalidateQueries({ queryKey: ['reviews'] });
-                    queryClient.invalidateQueries({ queryKey: ['rating'] });
-                  }}
-                  onCancel={() => setShowReviewForm(false)}
-                />
+          {/* Reviews Section - Enhanced */}
+          <div className="mt-10 sm:mt-12 md:mt-16">
+            <div className="bg-white rounded-2xl p-6 sm:p-8 md:p-10 shadow-lg border border-gray-100">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 sm:mb-8">
+                <div className="flex items-center gap-3">
+                  <div className="p-3 bg-emerald-100 rounded-xl">
+                    <Star className="w-6 h-6 text-emerald-600" />
+                  </div>
+                  <h2 className="font-heading text-2xl sm:text-3xl font-bold text-gray-900">Reviews</h2>
+                </div>
+                {isAuthenticated && !isOwner && user?.id !== data.landlordId._id && (
+                  <button
+                    onClick={() => setShowReviewForm(!showReviewForm)}
+                    className="px-6 py-3 bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 transition-all duration-200 shadow-md hover:shadow-lg hover:scale-105 min-h-[44px] touch-target text-sm sm:text-base font-semibold"
+                  >
+                    {showReviewForm ? 'Cancel' : 'Write a Review'}
+                  </button>
+                )}
               </div>
-            )}
 
-            <ReviewList userId={data.landlordId._id} listingId={data._id} />
+              {showReviewForm && (
+                <div className="mb-6">
+                  <ReviewForm
+                    revieweeId={data.landlordId._id}
+                    listingId={data._id}
+                    onSuccess={() => {
+                      setShowReviewForm(false);
+                      queryClient.invalidateQueries({ queryKey: ['reviews'] });
+                      queryClient.invalidateQueries({ queryKey: ['rating'] });
+                    }}
+                    onCancel={() => setShowReviewForm(false)}
+                  />
+                </div>
+              )}
+
+              <ReviewList userId={data.landlordId._id} listingId={data._id} />
+            </div>
           </div>
+
+          {/* Mobile Contact Button - Sticky at bottom */}
+          {!isOwner && (
+            <div className="fixed bottom-0 left-0 right-0 md:hidden bg-white border-t-2 border-emerald-200 shadow-2xl p-4 z-50">
+              <ContactButton
+                landlordId={data.landlordId._id}
+                landlordRole={data.landlordId.role}
+                listingId={data._id}
+                listingTitle={data.title}
+              />
+            </div>
+          )}
         </div>
 
       </main>

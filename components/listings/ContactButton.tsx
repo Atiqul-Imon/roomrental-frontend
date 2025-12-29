@@ -76,7 +76,7 @@ export function ContactButton({
     <Button
       onClick={handleContact}
       disabled={contactMutation.isPending || isContacting}
-      className="w-full md:w-auto px-6 py-3 bg-primary-500 text-white rounded-lg font-semibold hover:bg-primary-600 transition-all duration-200 shadow-medium hover:shadow-large hover:scale-105 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+      className="w-full px-6 py-3.5 bg-gradient-to-r from-emerald-600 to-emerald-500 text-white rounded-xl font-semibold hover:from-emerald-700 hover:to-emerald-600 transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
       aria-label={buttonText}
     >
       {contactMutation.isPending || isContacting ? (
