@@ -215,7 +215,7 @@ export function ComparisonModal({ isOpen, onClose }: ComparisonModalProps) {
                 {listings.map((listing) => (
                   <td key={listing._id} className="p-2 sm:p-3 md:p-4">
                     {listing.petFriendly ? (
-                      <span className="text-xs sm:text-sm text-green-600 font-medium">Yes</span>
+                      <span className="text-xs sm:text-sm text-accent-600 font-medium">Yes</span>
                     ) : (
                       <span className="text-xs sm:text-sm text-grey-400">No</span>
                     )}
@@ -231,7 +231,7 @@ export function ComparisonModal({ isOpen, onClose }: ComparisonModalProps) {
                 {listings.map((listing) => (
                   <td key={listing._id} className="p-2 sm:p-3 md:p-4">
                     {listing.parkingAvailable ? (
-                      <span className="text-xs sm:text-sm text-green-600 font-medium">Available</span>
+                      <span className="text-xs sm:text-sm text-accent-600 font-medium">Available</span>
                     ) : (
                       <span className="text-xs sm:text-sm text-grey-400">Not Available</span>
                     )}
@@ -251,7 +251,7 @@ export function ComparisonModal({ isOpen, onClose }: ComparisonModalProps) {
                   {listings.map((listing) => (
                     <td key={listing._id} className="p-2 sm:p-3 md:p-4">
                       {listing.amenities?.includes(amenity) ? (
-                        <span className="text-green-600 text-sm sm:text-base">✓</span>
+                        <span className="text-accent-600 text-sm sm:text-base">✓</span>
                       ) : (
                         <span className="text-grey-300 text-sm sm:text-base">—</span>
                       )}

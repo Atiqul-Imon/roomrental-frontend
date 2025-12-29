@@ -145,7 +145,7 @@ export function Modal({
           {showCloseButton && (
             <button
               onClick={onClose}
-              className="absolute right-3 top-2.5 p-2 text-grey-700 hover:text-grey-900 hover:bg-grey-100 rounded-lg transition-colors z-30 touch-target focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 focus:outline-none bg-white shadow-medium"
+              className="absolute right-3 top-2.5 p-2 text-grey-700 hover:text-grey-900 hover:bg-accent-50 rounded-lg transition-colors z-30 touch-target focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2 focus:outline-none bg-white shadow-medium"
               aria-label="Close modal"
             >
               <X className="w-4 h-4" />
@@ -164,7 +164,7 @@ export function Modal({
             {showCloseButton && (
               <button
                 onClick={onClose}
-                className="p-1.5 text-grey-400 hover:text-grey-600 hover:bg-grey-100 rounded-lg transition-colors z-20 touch-target focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 focus:outline-none"
+                className="p-1.5 text-grey-400 hover:text-grey-600 hover:bg-accent-50 rounded-lg transition-colors z-20 touch-target focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2 focus:outline-none"
                 aria-label="Close modal"
               >
                 <X className="w-4 h-4" />

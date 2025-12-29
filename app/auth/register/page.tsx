@@ -155,12 +155,17 @@ function RegisterFormContent() {
   return (
     <>
       <Header />
-      <main className="min-h-screen flex items-center justify-center py-12 px-4 bg-grey-50">
-        <div className="w-full max-w-md">
-          <div className="border border-border rounded-lg p-8 bg-background shadow-medium">
-            <h1 className="text-2xl font-bold mb-2 text-center">Create Account</h1>
-            <p className="text-sm text-muted-foreground text-center mb-6">
-              Join our community and find your perfect room
+      <main className="min-h-screen flex items-center justify-center py-12 px-4 bg-gradient-comfort relative overflow-hidden">
+        {/* Warm decorative background */}
+        <div className="absolute inset-0 opacity-30">
+          <div className="absolute top-20 left-10 w-96 h-96 bg-accent-200 rounded-full blur-3xl" />
+          <div className="absolute bottom-20 right-10 w-80 h-80 bg-coral-200 rounded-full blur-3xl" />
+        </div>
+        <div className="w-full max-w-md relative z-10">
+          <div className="border border-accent-200 rounded-lg p-8 bg-white/95 backdrop-blur-sm shadow-large">
+            <h1 className="text-2xl font-bold mb-2 text-center text-gradient">Create Account</h1>
+            <p className="text-sm text-grey-600 text-center mb-6">
+              Join our community and find your perfect, cozy home
             </p>
 
             {error && (
@@ -181,7 +186,7 @@ function RegisterFormContent() {
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   required
-                  className="w-full px-4 py-2 border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-ring"
+                  className="w-full px-4 py-2 border border-accent-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-accent-400 transition-all"
                 />
               </div>
 
@@ -195,7 +200,7 @@ function RegisterFormContent() {
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   required
-                  className="w-full px-4 py-2 border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-ring"
+                  className="w-full px-4 py-2 border border-accent-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-accent-400 transition-all"
                 />
               </div>
 
@@ -211,7 +216,7 @@ function RegisterFormContent() {
                   required
                   minLength={8}
                   autoComplete="new-password"
-                  className="w-full px-4 py-2 border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-ring"
+                  className="w-full px-4 py-2 border border-accent-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-accent-400 transition-all"
                 />
                 <p className="text-xs text-muted-foreground mt-1">
                   Must be at least 8 characters with uppercase, lowercase, and number
@@ -244,7 +249,7 @@ function RegisterFormContent() {
                   onChange={(e) =>
                     setFormData({ ...formData, role: e.target.value as 'student' | 'landlord' })
                   }
-                  className="w-full px-4 py-2 border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-ring"
+                  className="w-full px-4 py-2 border border-accent-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-accent-400 transition-all"
                 >
                   <option value="student">Student</option>
                   <option value="landlord">Landlord</option>
@@ -254,7 +259,7 @@ function RegisterFormContent() {
               <button
                 type="submit"
                 disabled={isLoading || isRedirecting}
-                className="w-full px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                className="w-full px-4 py-2 bg-gradient-primary text-white rounded-lg hover:opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-soft hover:shadow-medium"
               >
                 {isLoading ? (
                   <>
@@ -269,7 +274,7 @@ function RegisterFormContent() {
 
             <p className="mt-6 text-center text-sm text-muted-foreground">
               Already have an account?{' '}
-              <Link href="/auth/login" className="text-primary hover:underline">
+              <Link href="/auth/login" className="text-accent-600 font-semibold hover:text-accent-700 hover:underline transition-colors">
                 Sign in
               </Link>
             </p>

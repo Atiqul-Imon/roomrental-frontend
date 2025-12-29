@@ -22,12 +22,12 @@ export function Header() {
   const isActive = (path: string) => pathname === path;
 
   return (
-    <header className="sticky top-0 z-50 border-b border-grey-200 bg-white/95 backdrop-blur-md shadow-sm transition-shadow duration-200">
+    <header className="sticky top-0 z-50 border-b border-accent-100 bg-white shadow-soft transition-shadow duration-200">
       <div className="container mx-auto px-3 sm:px-4">
         <div className="flex items-center justify-between h-14 md:h-16">
           <Link 
             href="/" 
-            className="text-xl sm:text-2xl font-bold text-gradient transition-smooth hover:opacity-90"
+            className="text-xl sm:text-2xl font-bold text-gradient transition-smooth hover:opacity-90 flex items-center gap-2"
           >
             <span className="hidden sm:inline">RoomRentalUSA</span>
             <span className="sm:hidden">RoomRental</span>
@@ -38,12 +38,12 @@ export function Header() {
               href="/listings"
               className={`px-3 py-2 rounded-lg text-sm font-medium color-transition relative ${
                 isActive('/listings')
-                  ? 'bg-primary-50 text-primary-600'
-                  : 'text-grey-700 hover:text-primary-600 hover:bg-grey-50'
+                  ? 'bg-accent-50 text-accent-600 shadow-soft'
+                  : 'text-grey-700 hover:text-accent-600 hover:bg-accent-50/50'
               }`}
             >
               {isActive('/listings') && (
-                <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary-600 rounded-full" />
+                <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-primary rounded-full" />
               )}
               <span className="flex items-center gap-1.5">
                 <Search className="w-4 h-4" />
@@ -65,8 +65,8 @@ export function Header() {
                       href="/listings/create"
                       className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
                         isActive('/listings/create')
-                          ? 'bg-primary-50 text-primary-600'
-                          : 'text-grey-700 hover:text-primary-600 hover:bg-grey-50'
+                          ? 'bg-coral-50 text-coral-600 shadow-soft'
+                          : 'text-grey-700 hover:text-coral-600 hover:bg-coral-50/50'
                       }`}
                     >
                       <span className="flex items-center gap-1.5">
@@ -78,8 +78,8 @@ export function Header() {
                       href="/landlord/dashboard"
                       className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
                         pathname?.startsWith('/landlord/dashboard')
-                          ? 'bg-primary-50 text-primary-600'
-                          : 'text-grey-700 hover:text-primary-600 hover:bg-grey-50'
+                          ? 'bg-accent-50 text-accent-600 shadow-soft'
+                          : 'text-grey-700 hover:text-accent-600 hover:bg-accent-50/50'
                       }`}
                     >
                       <span className="flex items-center gap-1.5">
@@ -93,12 +93,12 @@ export function Header() {
                   href={`/profile/${user?.id}`}
                   className={`px-3 py-2 rounded-lg text-sm font-medium color-transition relative ${
                     pathname?.startsWith('/profile')
-                      ? 'bg-primary-50 text-primary-600'
-                      : 'text-grey-700 hover:text-primary-600 hover:bg-grey-50'
+                      ? 'bg-accent-50 text-accent-600 shadow-soft'
+                      : 'text-grey-700 hover:text-accent-600 hover:bg-accent-50/50'
                   }`}
                 >
                   {pathname?.startsWith('/profile') && (
-                    <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary-600 rounded-full" />
+                    <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-primary rounded-full" />
                   )}
                   <span className="flex items-center gap-1.5">
                     <User className="w-4 h-4" />
@@ -119,13 +119,13 @@ export function Header() {
               <>
                 <Link
                   href="/auth/login"
-                  className="px-4 py-2 text-sm font-medium text-grey-700 hover:text-primary-600 transition-all duration-200 rounded-lg hover:bg-grey-50"
+                  className="px-4 py-2 text-sm font-medium text-grey-700 hover:text-accent-600 transition-all duration-200 rounded-lg hover:bg-accent-50/50"
                 >
                   Sign In
                 </Link>
                 <Link
                   href="/auth/register"
-                  className="px-4 py-2 text-sm font-medium btn-gradient text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-all duration-200 hover:scale-105"
+                  className="px-4 py-2 text-sm font-medium btn-gradient text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent-500 transition-all duration-200 hover:scale-105 shadow-soft hover:shadow-medium"
                 >
                   Sign Up
                 </Link>
@@ -148,15 +148,15 @@ export function Header() {
 
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
-          <div className="md:hidden border-t border-grey-200 bg-white">
+          <div className="md:hidden border-t border-accent-100 bg-white">
             <nav className="flex flex-col py-4 space-y-2">
               <Link
                 href="/listings"
                 onClick={() => setIsMobileMenuOpen(false)}
                 className={`px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 ${
                   isActive('/listings')
-                    ? 'bg-primary-50 text-primary-600'
-                    : 'text-grey-700 hover:text-primary-600 hover:bg-grey-50'
+                    ? 'bg-accent-50 text-accent-600 shadow-soft'
+                    : 'text-grey-700 hover:text-accent-600 hover:bg-accent-50/50'
                 }`}
               >
                 <span className="flex items-center gap-2">
@@ -174,8 +174,8 @@ export function Header() {
                         onClick={() => setIsMobileMenuOpen(false)}
                         className={`px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 ${
                           isActive('/listings/create')
-                            ? 'bg-primary-50 text-primary-600'
-                            : 'text-grey-700 hover:text-primary-600 hover:bg-grey-50'
+                            ? 'bg-coral-50 text-coral-600 shadow-soft'
+                            : 'text-grey-700 hover:text-coral-600 hover:bg-coral-50/50'
                         }`}
                       >
                         <span className="flex items-center gap-2">
@@ -188,8 +188,8 @@ export function Header() {
                         onClick={() => setIsMobileMenuOpen(false)}
                         className={`px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 ${
                           pathname?.startsWith('/landlord/dashboard')
-                            ? 'bg-primary-50 text-primary-600'
-                            : 'text-grey-700 hover:text-primary-600 hover:bg-grey-50'
+                            ? 'bg-accent-50 text-accent-600 shadow-soft'
+                            : 'text-grey-700 hover:text-accent-600 hover:bg-accent-50/50'
                         }`}
                       >
                         <span className="flex items-center gap-2">
@@ -204,8 +204,8 @@ export function Header() {
                     onClick={() => setIsMobileMenuOpen(false)}
                     className={`px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 ${
                       pathname?.startsWith('/profile')
-                        ? 'bg-primary-50 text-primary-600'
-                        : 'text-grey-700 hover:text-primary-600 hover:bg-grey-50'
+                        ? 'bg-accent-50 text-accent-600 shadow-soft'
+                        : 'text-grey-700 hover:text-accent-600 hover:bg-accent-50/50'
                     }`}
                   >
                     <span className="flex items-center gap-2">
@@ -229,14 +229,14 @@ export function Header() {
                   <Link
                     href="/auth/login"
                     onClick={() => setIsMobileMenuOpen(false)}
-                    className="px-4 py-3 text-sm font-medium text-grey-700 hover:text-primary-600 transition-all duration-200 rounded-lg hover:bg-grey-50"
+                    className="px-4 py-3 text-sm font-medium text-grey-700 hover:text-accent-600 transition-all duration-200 rounded-lg hover:bg-accent-50/50"
                   >
                     Sign In
                   </Link>
                   <Link
                     href="/auth/register"
                     onClick={() => setIsMobileMenuOpen(false)}
-                    className="px-4 py-3 text-sm font-medium bg-gradient-primary text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-all duration-200"
+                    className="px-4 py-3 text-sm font-medium bg-gradient-primary text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent-500 transition-all duration-200 shadow-soft hover:shadow-medium"
                   >
                     Sign Up
                   </Link>

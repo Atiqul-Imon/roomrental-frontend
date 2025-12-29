@@ -48,14 +48,19 @@ export default function ListingsPage() {
   return (
     <>
       <Header />
-      <main className="min-h-screen bg-grey-50">
+      <main className="min-h-screen bg-gradient-comfort">
         {/* Hero Section */}
-        <section className="bg-gradient-primary text-white py-12 sm:py-16 md:py-20">
-          <div className="container mx-auto px-3 sm:px-4">
+        <section className="bg-gradient-primary text-white py-12 sm:py-16 md:py-20 relative overflow-hidden">
+          {/* Warm decorative elements */}
+          <div className="absolute inset-0 opacity-20">
+            <div className="absolute top-10 right-10 w-64 h-64 bg-accent-200 rounded-full blur-3xl" />
+            <div className="absolute bottom-10 left-10 w-80 h-80 bg-coral-200 rounded-full blur-3xl" />
+          </div>
+          <div className="container mx-auto px-3 sm:px-4 relative z-10">
             <div className="max-w-4xl mx-auto text-center">
-              <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 sm:mb-5 md:mb-6 leading-tight tracking-tight">Find Your Perfect Room</h1>
-              <p className="text-lg sm:text-xl md:text-2xl text-white/90 mb-6 sm:mb-8 md:mb-10 leading-relaxed">
-                Search through thousands of available rooms across the United States
+              <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 sm:mb-5 md:mb-6 leading-tight tracking-tight">Find Your Perfect Home</h1>
+              <p className="text-lg sm:text-xl md:text-2xl text-white/95 mb-6 sm:mb-8 md:mb-10 leading-relaxed">
+                Discover cozy, comfortable rooms across the United States
               </p>
               
               {/* Enhanced Search Bar */}
@@ -85,7 +90,7 @@ export default function ListingsPage() {
               </Suspense>
               <button
                 onClick={() => setIsFilterOpen(!isFilterOpen)}
-                className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-white border border-grey-300 rounded-lg hover:bg-grey-50 transition-all duration-200 shadow-soft md:hidden min-h-[44px] touch-target"
+                className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-white border border-accent-200 rounded-lg hover:bg-accent-50 hover:border-accent-300 transition-all duration-200 shadow-soft md:hidden min-h-[44px] touch-target text-accent-700"
               >
                 <SlidersHorizontal className="w-4 h-4 sm:w-5 sm:h-5" />
                 <span className="font-medium text-sm sm:text-base">Filters</span>

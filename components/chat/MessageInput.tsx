@@ -247,7 +247,7 @@ export function MessageInput({
     attachments.every((att) => att.url && !att.url.startsWith('blob:'));
 
   return (
-    <div className="border-t border-emerald-200 bg-white shadow-lg">
+    <div className="border-t border-accent-200 bg-white shadow-lg">
       {/* Attachment Previews */}
       {attachments.length > 0 && (
         <div className="p-2 border-b border-gray-200">
@@ -268,7 +268,7 @@ export function MessageInput({
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center">
-                      <Loader2 className="w-5 h-5 animate-spin text-primary-500" />
+                      <Loader2 className="w-5 h-5 animate-spin text-accent-500" />
                     </div>
                   )
                 ) : (
@@ -315,7 +315,7 @@ export function MessageInput({
             <button
               type="button"
               onClick={() => imageInputRef.current?.click()}
-              className="p-2 text-gray-500 hover:text-primary-600 hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="p-2 text-gray-500 hover:text-accent-600 hover:bg-accent-50 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               title="Upload image"
               disabled={disabled || isUploading}
             >
@@ -333,7 +333,7 @@ export function MessageInput({
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
-              className="p-2 text-gray-500 hover:text-primary-600 hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="p-2 text-gray-500 hover:text-accent-600 hover:bg-accent-50 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               title="Upload file"
               disabled={disabled || isUploading}
             >
@@ -351,7 +351,7 @@ export function MessageInput({
               placeholder={placeholder}
               disabled={disabled || isUploading}
               rows={1}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent resize-none max-h-32 overflow-y-auto disabled:bg-gray-100 disabled:cursor-not-allowed"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-accent-400 resize-none max-h-32 overflow-y-auto disabled:bg-gray-100 disabled:cursor-not-allowed"
             />
           </div>
 
@@ -359,7 +359,7 @@ export function MessageInput({
           <Button
             onClick={handleSend}
             disabled={!canSend || disabled}
-            className="px-5 py-2.5 bg-gradient-to-r from-emerald-600 to-emerald-500 text-white rounded-xl hover:from-emerald-700 hover:to-emerald-600 disabled:from-gray-300 disabled:to-gray-300 disabled:cursor-not-allowed transition-all duration-200 shadow-md hover:shadow-lg hover:scale-105 disabled:hover:scale-100 flex items-center gap-2 font-semibold"
+            className="px-5 py-2.5 bg-gradient-primary text-white rounded-xl hover:opacity-90 disabled:from-gray-300 disabled:to-gray-300 disabled:cursor-not-allowed transition-all duration-200 shadow-md hover:shadow-lg hover:scale-105 disabled:hover:scale-100 flex items-center gap-2 font-semibold"
           >
             {isUploading ? (
               <Loader2 className="w-4 h-4 animate-spin" />

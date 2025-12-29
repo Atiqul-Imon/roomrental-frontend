@@ -102,7 +102,14 @@ p {
   
   /* Gradient text */
   .text-gradient {
-    background: linear-gradient(135deg, #3B82F6 0%, #EC4899 100%);
+    background: linear-gradient(135deg, #2563EB 0%, #14B8A6 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  
+  .text-gradient-warm {
+    background: linear-gradient(135deg, #14B8A6 0%, #F97316 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -120,14 +127,25 @@ p {
   
   /* Button gradient */
   .btn-gradient {
-    background: linear-gradient(135deg, #3B82F6 0%, #EC4899 100%);
+    background: linear-gradient(135deg, #2563EB 0%, #14B8A6 100%);
     transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
   }
   
   .btn-gradient:hover {
-    background: linear-gradient(135deg, #2563EB 0%, #DB2777 100%);
+    background: linear-gradient(135deg, #1D4ED8 0%, #0D9488 100%);
     transform: scale(1.02);
-    box-shadow: 0 4px 16px rgba(59, 130, 246, 0.4);
+    box-shadow: 0 4px 16px rgba(37, 99, 235, 0.4);
+  }
+  
+  .btn-gradient-warm {
+    background: linear-gradient(135deg, #14B8A6 0%, #F97316 100%);
+    transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .btn-gradient-warm:hover {
+    background: linear-gradient(135deg, #0D9488 0%, #EA580C 100%);
+    transform: scale(1.02);
+    box-shadow: 0 4px 16px rgba(249, 115, 22, 0.4);
   }
   
   .btn-gradient:active {

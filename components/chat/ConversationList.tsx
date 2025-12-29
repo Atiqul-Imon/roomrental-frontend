@@ -40,7 +40,7 @@ export function ConversationList({
   if (isLoading) {
     return (
       <div className="h-full flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-500"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-accent-500"></div>
       </div>
     );
   }
@@ -72,8 +72,8 @@ export function ConversationList({
               onClick={() => onSelectConversation(conversation)}
               className={`w-full p-3 rounded-xl transition-all duration-200 text-left shadow-sm ${
                 isSelected
-                  ? 'bg-gradient-to-r from-emerald-600 to-emerald-500 text-white shadow-md'
-                  : 'bg-white hover:bg-emerald-50 border border-emerald-100 hover:border-emerald-300'
+                  ? 'bg-gradient-primary text-white shadow-md'
+                  : 'bg-white hover:bg-accent-50 border border-accent-100 hover:border-accent-300'
               }`}
             >
               <div className="flex items-start gap-3">
@@ -90,7 +90,7 @@ export function ConversationList({
                   ) : (
                     <div
                       className={`w-12 h-12 rounded-full flex items-center justify-center text-sm font-semibold ${
-                        isSelected ? 'bg-white text-primary-500' : 'bg-primary-100 text-primary-600'
+                        isSelected ? 'bg-white text-accent-500' : 'bg-accent-100 text-accent-600'
                       }`}
                     >
                       {otherParticipant.name.charAt(0).toUpperCase()}
@@ -98,7 +98,7 @@ export function ConversationList({
                   )}
                   {/* Online Status Indicator */}
                   {isUserOnline(otherParticipant.id) && (
-                    <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></div>
+                    <div className="absolute bottom-0 right-0 w-3 h-3 bg-accent-500 border-2 border-white rounded-full"></div>
                   )}
                   {unreadCount > 0 && (
                     <div className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">

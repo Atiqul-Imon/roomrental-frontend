@@ -114,24 +114,24 @@ export default function ProfilePage({ params }: { params: Promise<{ id: string }
     return (
       <>
         <Header />
-        <main className="min-h-screen bg-grey-50">
+        <main className="min-h-screen bg-gradient-comfort">
           <div className="container mx-auto px-4 py-8">
             <div className="relative animate-pulse">
-              <div className="bg-white rounded-xl shadow-large border border-grey-200 p-6">
+              <div className="bg-white rounded-xl shadow-large border border-accent-100 p-6">
                 <div className="flex flex-col md:flex-row md:items-start gap-6">
-                  <div className="w-32 h-32 rounded-full bg-grey-200 border-2 border-grey-200" />
+                  <div className="w-32 h-32 rounded-full bg-accent-100 border-2 border-accent-200" />
                   <div className="flex-1 space-y-4">
-                    <div className="h-8 bg-grey-200 rounded w-48" />
-                    <div className="h-6 bg-grey-200 rounded w-32" />
-                    <div className="h-4 bg-grey-200 rounded w-64" />
+                    <div className="h-8 bg-accent-100 rounded w-48" />
+                    <div className="h-6 bg-accent-100 rounded w-32" />
+                    <div className="h-4 bg-accent-100 rounded w-64" />
                   </div>
                 </div>
               </div>
             </div>
             <div className="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               {[...Array(4)].map((_, i) => (
-                <div key={i} className="bg-white rounded-xl p-6 shadow-medium border border-grey-200">
-                  <div className="h-20 bg-grey-100 rounded animate-pulse" />
+                <div key={i} className="bg-white rounded-xl p-6 shadow-medium border border-accent-100">
+                  <div className="h-20 bg-accent-50 rounded animate-pulse" />
                 </div>
               ))}
             </div>
@@ -146,14 +146,14 @@ export default function ProfilePage({ params }: { params: Promise<{ id: string }
     return (
       <>
         <Header />
-        <main className="min-h-screen bg-grey-50">
+        <main className="min-h-screen bg-gradient-comfort">
           <div className="container mx-auto px-4 py-8">
             <div className="text-center py-12">
               <h1 className="text-2xl font-bold mb-4">Profile Not Found</h1>
               <p className="text-grey-600 mb-6">The profile you're looking for doesn't exist.</p>
               <Link
                 href="/listings"
-                className="inline-block px-6 py-3 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors font-semibold"
+                className="inline-block px-6 py-3 bg-gradient-primary text-white rounded-lg hover:opacity-90 transition-colors font-semibold shadow-soft hover:shadow-medium"
               >
                 Browse Listings
               </Link>

@@ -15,8 +15,8 @@ interface ProfileHeroProps {
 
 export function ProfileHero({ profile, ratingData, isOwnProfile }: ProfileHeroProps) {
   const roleColors = {
-    student: 'bg-blue-100 text-blue-700',
-    landlord: 'bg-primary-100 text-primary-700',
+    student: 'bg-accent-100 text-accent-700',
+    landlord: 'bg-coral-100 text-coral-700',
     admin: 'bg-purple-100 text-purple-700',
     staff: 'bg-amber-100 text-amber-700',
     super_admin: 'bg-red-100 text-red-700',
@@ -28,13 +28,16 @@ export function ProfileHero({ profile, ratingData, isOwnProfile }: ProfileHeroPr
     <div className="relative">
       {/* Profile Content */}
       <div className="px-4 sm:px-6 pb-4 sm:pb-6">
-        <div className="bg-white rounded-xl shadow-large border-refined border-grey-200 p-5 sm:p-6 md:p-8">
+        <div className="bg-white rounded-xl shadow-large border-refined border-accent-100 p-5 sm:p-6 md:p-8 relative overflow-hidden">
+          {/* Warm decorative background */}
+          <div className="absolute top-0 right-0 w-64 h-64 bg-accent-100/20 rounded-full blur-3xl -z-0"></div>
+          <div className="relative z-10">
           {/* Avatar and Basic Info */}
           <div className="flex flex-col md:flex-row md:items-start gap-4 sm:gap-6">
             {/* Avatar */}
             <div className="relative mx-auto md:mx-0">
               {profile.profileImage ? (
-                <div className="relative w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 rounded-full border-2 border-grey-200 shadow-medium overflow-hidden">
+                <div className="relative w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 rounded-full border-4 border-accent-200 shadow-medium overflow-hidden">
                   <Image
                     src={profile.profileImage}
                     alt={profile.name}
@@ -43,7 +46,7 @@ export function ProfileHero({ profile, ratingData, isOwnProfile }: ProfileHeroPr
                   />
                 </div>
               ) : (
-                <div className="w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 rounded-full border-2 border-grey-200 shadow-medium bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center">
+                <div className="w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 rounded-full border-4 border-accent-200 shadow-medium bg-gradient-primary flex items-center justify-center">
                   <span className="text-4xl sm:text-5xl font-bold text-white">
                     {profile.name.charAt(0).toUpperCase()}
                   </span>
@@ -51,8 +54,8 @@ export function ProfileHero({ profile, ratingData, isOwnProfile }: ProfileHeroPr
               )}
               {/* Verification Badge */}
               {profile.verification?.emailVerified && (
-                <div className="absolute -bottom-1 -right-1 sm:-bottom-2 sm:-right-2 bg-white rounded-full p-1.5 sm:p-2 shadow-medium border-2 border-green-200 hover:border-green-300 transition-colors" title="Email Verified">
-                  <CheckCircle className="w-5 h-5 sm:w-6 sm:h-6 text-green-600 fill-green-50" />
+                <div className="absolute -bottom-1 -right-1 sm:-bottom-2 sm:-right-2 bg-white rounded-full p-1.5 sm:p-2 shadow-medium border-2 border-accent-200 hover:border-accent-300 transition-colors" title="Email Verified">
+                  <CheckCircle className="w-5 h-5 sm:w-6 sm:h-6 text-accent-600 fill-accent-50" />
                 </div>
               )}
             </div>
@@ -85,7 +88,7 @@ export function ProfileHero({ profile, ratingData, isOwnProfile }: ProfileHeroPr
                 {isOwnProfile && (
                   <Link
                     href="/profile/edit"
-                    className="px-3 sm:px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors font-semibold text-xs sm:text-sm whitespace-nowrap"
+                    className="px-3 sm:px-4 py-2 bg-gradient-primary text-white rounded-lg hover:opacity-90 transition-all font-semibold text-xs sm:text-sm whitespace-nowrap shadow-soft hover:shadow-medium"
                   >
                     Edit Profile
                   </Link>
@@ -121,11 +124,12 @@ export function ProfileHero({ profile, ratingData, isOwnProfile }: ProfileHeroPr
 
           {/* Bio */}
           {profile.bio && (
-            <div className="mt-4 sm:mt-6 pt-4 sm:pt-6 border-t border-grey-200">
+            <div className="mt-4 sm:mt-6 pt-4 sm:pt-6 border-t border-accent-100">
               <h2 className="font-semibold text-grey-900 mb-2 text-sm sm:text-base">About</h2>
               <p className="text-grey-700 leading-relaxed text-sm sm:text-base">{profile.bio}</p>
             </div>
           )}
+          </div>
         </div>
       </div>
     </div>

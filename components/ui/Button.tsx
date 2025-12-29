@@ -22,13 +22,13 @@ export function Button({
 }: ButtonProps) {
   // Phase 1: Enhanced button styles with design system
   // Phase 4: Accessibility - Enhanced focus indicators
-  const baseStyles = 'inline-flex items-center justify-center font-ui font-medium rounded-xl transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed btn-hover';
+  const baseStyles = 'inline-flex items-center justify-center font-ui font-medium rounded-xl transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-accent-500 disabled:opacity-50 disabled:cursor-not-allowed btn-hover';
   
   const variants = {
-    primary: 'bg-gradient-primary text-white hover:bg-gradient-primary-hover focus:ring-primary-500 shadow-medium hover:shadow-hover-medium active:shadow-soft color-transition',
-    secondary: 'bg-primary-50 text-primary-600 border-2 border-primary-200 hover:bg-primary-100 hover:border-primary-300 focus:ring-primary-500 color-transition',
-    ghost: 'bg-transparent hover:bg-grey-100 text-grey-700 hover:text-grey-900 focus:ring-grey-300 color-transition',
-    outline: 'border-2 border-refined border-grey-300 text-grey-700 hover:bg-grey-50 hover:border-primary-400 hover:text-primary-600 focus:ring-primary-500 color-transition',
+    primary: 'bg-gradient-primary text-white hover:bg-gradient-primary-hover focus:ring-accent-500 shadow-medium hover:shadow-hover-medium active:shadow-soft color-transition',
+    secondary: 'bg-accent-50 text-accent-600 border-2 border-accent-200 hover:bg-accent-100 hover:border-accent-300 focus:ring-accent-500 color-transition',
+    ghost: 'bg-transparent hover:bg-accent-50 text-grey-700 hover:text-accent-700 focus:ring-accent-300 color-transition',
+    outline: 'border-2 border-refined border-accent-200 text-grey-700 hover:bg-accent-50 hover:border-accent-400 hover:text-accent-600 focus:ring-accent-500 color-transition',
     danger: 'bg-error-50 text-error-600 border-2 border-error-200 hover:bg-error-100 hover:border-error-300 focus:ring-error-500 color-transition',
   };
   

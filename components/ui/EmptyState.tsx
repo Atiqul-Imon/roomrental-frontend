@@ -34,7 +34,7 @@ export function EmptyState({
   return (
     <div className="flex flex-col items-center justify-center py-12 sm:py-16 md:py-20 px-4 text-center fade-in-up-delayed">
       <div className="mb-6 sm:mb-8 p-5 sm:p-6 bg-gradient-to-br from-primary-50 to-secondary-50 rounded-2xl shadow-soft">
-        <IconComponent className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 text-primary-600" />
+        <IconComponent className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 text-accent-600" />
       </div>
       <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-grey-900 mb-3 sm:mb-4 leading-tight">{title}</h3>
       <p className="text-sm sm:text-base md:text-lg text-grey-600 mb-6 sm:mb-8 max-w-md leading-relaxed">{message}</p>

@@ -23,9 +23,9 @@ export function ProfileTabs({ role, userId, isOwnProfile, tabs }: ProfileTabsPro
   const activeTabContent = tabs.find(tab => tab.id === activeTab)?.content;
 
   return (
-    <div className="bg-white rounded-xl shadow-medium border border-grey-200 overflow-hidden">
+    <div className="bg-white rounded-xl shadow-medium border border-accent-100 overflow-hidden">
       {/* Tab Navigation */}
-      <div className="border-b border-grey-200">
+      <div className="border-b border-accent-100">
         <div className="flex overflow-x-auto scrollbar-hide -mb-px snap-x snap-mandatory">
           {tabs.map((tab) => {
             const Icon = tab.icon;
@@ -36,12 +36,12 @@ export function ProfileTabs({ role, userId, isOwnProfile, tabs }: ProfileTabsPro
                 onClick={() => setActiveTab(tab.id)}
                 className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 md:px-6 py-3 sm:py-4 font-semibold text-xs sm:text-sm color-transition whitespace-nowrap border-b-2 snap-start flex-shrink-0 relative ${
                   isActive
-                    ? 'border-primary-500 text-primary-600 bg-primary-50'
-                    : 'border-transparent text-grey-600 hover:text-grey-900 hover:bg-grey-50'
+                    ? 'border-accent-500 text-accent-600 bg-accent-50'
+                    : 'border-transparent text-grey-600 hover:text-accent-600 hover:bg-accent-50/50'
                 }`}
               >
                 {isActive && (
-                  <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary-600 rounded-full" />
+                  <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-primary rounded-full" />
                 )}
                 <Icon className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
                 <span className="hidden min-[375px]:inline">{tab.label}</span>

@@ -62,12 +62,17 @@ function LoginFormContent() {
   return (
     <>
       <Header />
-      <main className="min-h-screen flex items-center justify-center py-12 px-4 bg-grey-50">
-        <div className="w-full max-w-md">
-          <div className="bg-white border border-grey-200 rounded-xl p-8 shadow-medium">
-            <h1 className="text-2xl font-bold mb-2 text-center">Welcome Back</h1>
+      <main className="min-h-screen flex items-center justify-center py-12 px-4 bg-gradient-comfort relative overflow-hidden">
+        {/* Warm decorative background */}
+        <div className="absolute inset-0 opacity-30">
+          <div className="absolute top-20 left-10 w-96 h-96 bg-accent-200 rounded-full blur-3xl" />
+          <div className="absolute bottom-20 right-10 w-80 h-80 bg-coral-200 rounded-full blur-3xl" />
+        </div>
+        <div className="w-full max-w-md relative z-10">
+          <div className="bg-white/95 backdrop-blur-sm border border-accent-200 rounded-xl p-8 shadow-large">
+            <h1 className="text-2xl font-bold mb-2 text-center text-gradient">Welcome Back</h1>
             <p className="text-sm text-grey-600 text-center mb-6">
-              Sign in to your account to continue
+              Sign in to continue your journey to finding the perfect home
             </p>
 
             {error && (
@@ -83,14 +88,14 @@ function LoginFormContent() {
                   Email
                 </label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-grey-400" />
+                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-accent-400" />
                   <input
                     id="email"
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
-                    className="w-full pl-10 pr-4 py-2 border border-grey-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                    className="w-full pl-10 pr-4 py-2 border border-accent-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-accent-400 transition-all"
                     placeholder="you@example.com"
                   />
                 </div>
@@ -101,7 +106,7 @@ function LoginFormContent() {
                   Password
                 </label>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-grey-400" />
+                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-accent-400" />
                   <input
                     id="password"
                     type="password"
@@ -109,7 +114,7 @@ function LoginFormContent() {
                     onChange={(e) => setPassword(e.target.value)}
                     required
                     autoComplete="current-password"
-                    className="w-full pl-10 pr-4 py-2 border border-grey-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                    className="w-full pl-10 pr-4 py-2 border border-accent-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-accent-400 transition-all"
                     placeholder="••••••••"
                   />
                 </div>
@@ -126,7 +131,7 @@ function LoginFormContent() {
 
             <p className="mt-6 text-center text-sm text-grey-600">
               Don&apos;t have an account?{' '}
-              <Link href="/auth/register" className="text-primary-600 font-semibold hover:text-primary-700 hover:underline transition-colors">
+              <Link href="/auth/register" className="text-accent-600 font-semibold hover:text-accent-700 hover:underline transition-colors">
                 Sign up
               </Link>
             </p>

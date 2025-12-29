@@ -152,20 +152,20 @@ export function ListingCard({ listing, onQuickView }: ListingCardProps) {
       >
         {/* Swipe indicator */}
         {swipeOffset < -30 && isAuthenticated && (
-          <div className="absolute right-0 top-0 bottom-0 w-20 bg-primary-500 flex items-center justify-center z-20 rounded-r-xl pointer-events-none">
+          <div className="absolute right-0 top-0 bottom-0 w-20 bg-gradient-warm flex items-center justify-center z-20 rounded-r-xl pointer-events-none shadow-medium">
             <Heart className={`w-6 h-6 text-white ${isFavorite ? 'fill-white' : ''}`} />
           </div>
         )}
       <article 
         ref={cardRef}
-        className="bg-white border-refined border-grey-200 rounded-xl overflow-hidden card-hover-enhanced shadow-soft h-full flex flex-col group relative"
+        className="bg-white border-refined border-accent-100 rounded-xl overflow-hidden card-hover-enhanced shadow-soft h-full flex flex-col group relative hover:border-accent-200 hover:shadow-medium transition-all duration-300"
         style={{
           transform: `translateX(${swipeOffset}px) translateZ(0)`,
           transition: isSwiping ? 'none' : 'transform 0.3s ease-out',
         }}
       >
         {/* Image Container */}
-        <div className="relative w-full h-48 sm:h-56 bg-gradient-to-br from-grey-100 to-grey-200 overflow-hidden aspect-[16/9] sm:aspect-auto">
+        <div className="relative w-full h-48 sm:h-56 bg-gradient-to-br from-accent-50 to-coral-50 overflow-hidden aspect-[16/9] sm:aspect-auto">
           {listing.images[0] && !imageError ? (
             <img
               src={imageUrl}
@@ -198,10 +198,10 @@ export function ListingCard({ listing, onQuickView }: ListingCardProps) {
                   alert(`You can compare up to 5 listings. Please remove one to add another.`);
                 }
               }}
-              className={`w-6 h-6 sm:w-6 sm:h-6 rounded-md border-2 flex items-center justify-center transition-all touch-target ${
+              className={`w-6 h-6 sm:w-6 sm:h-6 rounded-md border-2 flex items-center justify-center transition-all touch-target shadow-soft ${
                 isSelected
-                  ? 'bg-primary-500 border-primary-500 text-white'
-                  : 'bg-white/95 backdrop-blur-sm border-grey-300 text-grey-400 hover:border-primary-400'
+                  ? 'bg-gradient-primary border-accent-500 text-white shadow-medium'
+                  : 'bg-white/95 backdrop-blur-sm border-accent-200 text-accent-400 hover:border-accent-400 hover:bg-accent-50'
               }`}
               aria-label={isSelected ? 'Remove from comparison' : 'Add to comparison'}
               title={isSelected ? 'Remove from comparison' : 'Add to comparison'}
@@ -214,7 +214,7 @@ export function ListingCard({ listing, onQuickView }: ListingCardProps) {
           <div className="absolute top-2 sm:top-3 left-11 sm:left-12">
             <span className={`px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-semibold backdrop-blur-sm ${
               listing.status === 'active' 
-                ? 'bg-green-500/90 text-white' 
+                ? 'bg-accent-500/90 text-white' 
                 : listing.status === 'pending'
                 ? 'bg-warning/90 text-white'
                 : 'bg-grey-500/90 text-white'
@@ -225,11 +225,11 @@ export function ListingCard({ listing, onQuickView }: ListingCardProps) {
 
           {/* Price Badge */}
           <div className="absolute top-2 sm:top-3 right-2 sm:right-3">
-            <div className="bg-white/95 backdrop-blur-sm px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg shadow-medium">
-              <span className="text-base sm:text-lg font-bold text-primary" aria-label={`Price: $${listing.price} per month`}>
+            <div className="bg-coral-500 text-white px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg shadow-medium backdrop-blur-sm">
+              <span className="text-base sm:text-lg font-bold" aria-label={`Price: $${listing.price} per month`}>
                 ${listing.price}
               </span>
-              <span className="text-[10px] sm:text-xs text-grey-600 font-medium">/mo</span>
+              <span className="text-[10px] sm:text-xs text-white/90 font-medium">/mo</span>
             </div>
           </div>
 
@@ -240,7 +240,7 @@ export function ListingCard({ listing, onQuickView }: ListingCardProps) {
         {/* Content */}
         <div className="p-4 sm:p-5 md:p-6 flex-1 flex flex-col">
           {/* Title */}
-          <h3 className="font-semibold text-base sm:text-lg text-grey-900 line-clamp-1 mb-2 sm:mb-3 group-hover:text-primary-600 transition-colors duration-200 leading-tight">
+          <h3 className="font-semibold text-base sm:text-lg text-grey-900 line-clamp-1 mb-2 sm:mb-3 group-hover:text-accent-600 transition-colors duration-200 leading-tight">
             {searchQuery ? (
               <span>{highlightSearchTermsReact(listing.title, searchQuery)}</span>
             ) : (
@@ -264,7 +264,7 @@ export function ListingCard({ listing, onQuickView }: ListingCardProps) {
               </p>
             </div>
             {listing.distance !== undefined && (
-              <div className="flex items-center gap-1 text-[10px] sm:text-xs text-primary-600 font-medium flex-shrink-0 ml-2">
+              <div className="flex items-center gap-1 text-[10px] sm:text-xs text-accent-600 font-medium flex-shrink-0 ml-2">
                 <Navigation className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
                 <span>{listing.distance.toFixed(1)} mi</span>
               </div>
@@ -281,13 +281,13 @@ export function ListingCard({ listing, onQuickView }: ListingCardProps) {
           </p>
 
           {/* Footer Info */}
-          <div className="flex items-center justify-between pt-4 sm:pt-5 border-t border-grey-200">
-            <div className="flex items-center gap-1 sm:gap-1.5 text-[10px] sm:text-xs text-grey-500">
+          <div className="flex items-center justify-between pt-4 sm:pt-5 border-t border-accent-100">
+            <div className="flex items-center gap-1 sm:gap-1.5 text-[10px] sm:text-xs text-accent-600">
               <Calendar className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
-              <span>{formattedDate}</span>
+              <span className="font-medium">{formattedDate}</span>
             </div>
             {listing.amenities.length > 0 && (
-              <div className="flex items-center gap-1 sm:gap-1.5 text-[10px] sm:text-xs text-grey-500" aria-label={`${listing.amenities.length} amenities`}>
+              <div className="flex items-center gap-1 sm:gap-1.5 text-[10px] sm:text-xs text-coral-600" aria-label={`${listing.amenities.length} amenities`}>
                 <Sparkles className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
                 <span className="font-medium">{listing.amenities.length} amenities</span>
               </div>

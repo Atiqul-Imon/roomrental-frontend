@@ -155,10 +155,10 @@ export function FileUpload({
         className={cn(
           'relative border-2 border-dashed rounded-xl p-8 text-center transition-all duration-200',
           isDragging
-            ? 'border-primary-500 bg-primary-50'
+            ? 'border-accent-500 bg-accent-50'
             : error
             ? 'border-error-300 bg-error-50'
-            : 'border-grey-300 bg-grey-50 hover:border-primary-400 hover:bg-primary-50/50',
+            : 'border-grey-300 bg-grey-50 hover:border-accent-400 hover:bg-accent-50/50',
           uploading && 'opacity-50 pointer-events-none'
         )}
       >
@@ -173,7 +173,7 @@ export function FileUpload({
 
         {uploading ? (
           <div className="flex flex-col items-center gap-3">
-            <Loader2 className="w-8 h-8 text-primary-600 animate-spin" />
+            <Loader2 className="w-8 h-8 text-accent-600 animate-spin" />
             <BodySmall className="text-grey-600">Uploading...</BodySmall>
           </div>
         ) : (
@@ -185,7 +185,7 @@ export function FileUpload({
                 <button
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
-                  className="text-primary-600 hover:text-primary-700 underline"
+                  className="text-accent-600 hover:text-accent-700 underline"
                 >
                   browse
                 </button>

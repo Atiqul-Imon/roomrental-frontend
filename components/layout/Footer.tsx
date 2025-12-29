@@ -31,16 +31,16 @@ export function Footer() {
   };
 
   return (
-    <footer className="bg-grey-900 text-white mt-auto" role="contentinfo">
+    <footer className="bg-gradient-to-b from-primary-900 via-primary-800 to-primary-900 text-white mt-auto" role="contentinfo">
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
           {/* Brand */}
           <div>
-            <h3 className="text-xl font-bold mb-4">RoomRentalUSA</h3>
-            <BodySmall className="text-grey-300 mb-4">
+            <h3 className="text-xl font-bold mb-4 text-gradient-warm">RoomRentalUSA</h3>
+            <BodySmall className="text-accent-100 mb-4">
               Find your perfect room across the United States. Connecting students and young professionals with quality housing.
             </BodySmall>
-            <div className="flex items-center gap-2 text-grey-400">
+            <div className="flex items-center gap-2 text-accent-200">
               <Shield className="w-4 h-4" aria-hidden="true" />
               <Caption className="text-xs">Secure & Verified</Caption>
             </div>
@@ -55,7 +55,7 @@ export function Footer() {
                   <li key={link.href}>
                     <Link
                       href={link.href}
-                      className="text-grey-300 hover:text-white transition-colors text-sm"
+                      className="text-accent-100 hover:text-accent-300 transition-colors text-sm hover:translate-x-1 inline-block"
                     >
                       {link.label}
                     </Link>
@@ -74,7 +74,7 @@ export function Footer() {
                   <li key={link.href}>
                     <Link
                       href={link.href}
-                      className="text-grey-300 hover:text-white transition-colors text-sm"
+                      className="text-accent-100 hover:text-accent-300 transition-colors text-sm hover:translate-x-1 inline-block"
                     >
                       {link.label}
                     </Link>
@@ -93,7 +93,7 @@ export function Footer() {
                   <li key={link.href}>
                     <Link
                       href={link.href}
-                      className="text-grey-300 hover:text-white transition-colors text-sm"
+                      className="text-accent-100 hover:text-accent-300 transition-colors text-sm hover:translate-x-1 inline-block"
                     >
                       {link.label}
                     </Link>
@@ -105,22 +105,22 @@ export function Footer() {
         </div>
 
         {/* Bottom Bar */}
-        <div className="border-t border-grey-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-          <BodySmall className="text-grey-400">
+        <div className="border-t border-primary-700/50 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+          <BodySmall className="text-accent-200">
             © {currentYear} RoomRentalUSA. All rights reserved.
           </BodySmall>
           <div className="flex items-center gap-4">
             <Link
               href="/accessibility"
-              className="text-grey-400 hover:text-white transition-colors text-sm"
+              className="text-accent-200 hover:text-accent-300 transition-colors text-sm"
               aria-label="Accessibility statement"
             >
               Accessibility
             </Link>
-            <span className="text-grey-600" aria-hidden="true">|</span>
+            <span className="text-accent-300" aria-hidden="true">|</span>
             <Link
               href="/sitemap"
-              className="text-grey-400 hover:text-white transition-colors text-sm"
+              className="text-accent-200 hover:text-accent-300 transition-colors text-sm"
             >
               Sitemap
             </Link>

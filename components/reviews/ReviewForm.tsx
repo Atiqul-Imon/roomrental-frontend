@@ -33,6 +33,7 @@ export function ReviewForm({ revieweeId, listingId, onSuccess, onCancel }: Revie
     formState: { errors },
     setValue,
     watch,
+    reset,
   } = useForm<ReviewFormData>({
     resolver: zodResolver(reviewSchema),
     defaultValues: {
@@ -60,6 +61,7 @@ export function ReviewForm({ revieweeId, listingId, onSuccess, onCancel }: Revie
       });
 
       if (response.data.success) {
+        reset(); // Reset form after successful submission
         if (onSuccess) {
           onSuccess();
         }
@@ -82,60 +84,60 @@ export function ReviewForm({ revieweeId, listingId, onSuccess, onCancel }: Revie
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="border border-border rounded-lg p-4 space-y-4">
+    <form onSubmit={handleSubmit(onSubmit)} className="border border-accent-200 rounded-xl p-6 space-y-5 bg-white shadow-soft">
       {error && (
-        <div className="p-3 bg-red-50 border border-red-200 rounded text-red-700 text-sm">
+        <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
           {error}
         </div>
       )}
 
       <div>
-        <label className="block text-sm font-medium mb-2">Rating</label>
-        <div className="flex items-center gap-1">
+        <label className="block text-sm font-semibold mb-3 text-grey-900">Rating</label>
+        <div className="flex items-center gap-2">
           {[1, 2, 3, 4, 5].map((star) => (
             <button
               key={star}
               type="button"
               onClick={() => setValue('rating', star)}
-              className="focus:outline-none"
+              className="focus:outline-none transition-transform hover:scale-110"
             >
               <Star
-                className={`w-6 h-6 ${
+                className={`w-7 h-7 ${
                   star <= rating
-                    ? 'fill-yellow-400 text-yellow-400'
-                    : 'text-gray-300'
-                } hover:fill-yellow-300 transition`}
+                    ? 'fill-amber-400 text-amber-400'
+                    : 'text-grey-300'
+                } hover:fill-amber-300 transition`}
               />
             </button>
           ))}
-          {rating > 0 && <span className="ml-2 text-sm text-muted-foreground">{rating}/5</span>}
+          {rating > 0 && <span className="ml-3 text-sm font-medium text-grey-700">{rating}/5</span>}
         </div>
         {errors.rating && (
-          <p className="text-sm text-red-600 mt-1">{errors.rating.message}</p>
+          <p className="text-sm text-red-600 mt-2">{errors.rating.message}</p>
         )}
       </div>
 
       <div>
-        <label className="block text-sm font-medium mb-2">
+        <label className="block text-sm font-semibold mb-2 text-grey-900">
           Review <span className="text-red-500">*</span>
         </label>
         <textarea
           {...register('comment')}
           rows={4}
-          className="w-full px-4 py-2 border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-ring"
-          placeholder="Share your experience..."
+          className="w-full px-4 py-3 border border-accent-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-accent-400 transition-all resize-none"
+          placeholder="Share your experience with this landlord..."
         />
         {errors.comment && (
-          <p className="text-sm text-red-600 mt-1">{errors.comment.message}</p>
+          <p className="text-sm text-red-600 mt-2">{errors.comment.message}</p>
         )}
       </div>
 
-      <div className="flex gap-2">
+      <div className="flex gap-3 pt-2">
         {onCancel && (
           <button
             type="button"
             onClick={onCancel}
-            className="px-4 py-2 border border-border rounded-lg hover:bg-secondary transition"
+            className="px-5 py-2.5 border border-accent-200 rounded-lg hover:bg-accent-50 text-grey-700 font-medium transition-colors"
           >
             Cancel
           </button>
@@ -143,7 +145,7 @@ export function ReviewForm({ revieweeId, listingId, onSuccess, onCancel }: Revie
         <button
           type="submit"
           disabled={isSubmitting || rating === 0}
-          className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition disabled:opacity-50"
+          className="px-5 py-2.5 bg-gradient-primary text-white rounded-lg hover:opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed font-semibold shadow-soft hover:shadow-medium flex-1"
         >
           {isSubmitting ? 'Submitting...' : 'Submit Review'}
         </button>

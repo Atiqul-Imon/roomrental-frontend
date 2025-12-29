@@ -72,7 +72,7 @@ const spacingClasses = {
 const backgroundClasses = {
   default: 'bg-white',
   muted: 'bg-grey-50',
-  primary: 'bg-primary-50',
+  primary: 'bg-accent-50',
   secondary: 'bg-secondary-50',
 };
 

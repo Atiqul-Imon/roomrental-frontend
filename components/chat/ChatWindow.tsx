@@ -197,10 +197,10 @@ export function ChatWindow({ initialConversationId }: ChatWindowProps) {
   const conversations = conversationsData?.conversations || [];
 
   return (
-    <div className="flex h-[calc(100vh-4rem)] bg-gradient-to-br from-gray-50 to-emerald-50/30">
+    <div className="flex h-[calc(100vh-4rem)] bg-gradient-to-br from-accent-50/30 to-coral-50/20">
       {/* Conversations Sidebar */}
-      <div className="w-full md:w-80 border-r border-emerald-200 bg-white shadow-lg flex flex-col">
-        <div className="p-4 border-b border-emerald-200 bg-gradient-to-r from-emerald-50 to-white">
+      <div className="w-full md:w-80 border-r border-accent-200 bg-white shadow-lg flex flex-col">
+        <div className="p-4 border-b border-accent-200 bg-gradient-to-r from-accent-50 to-white">
           <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
             <span className="text-2xl">💬</span>
             Messages
@@ -220,7 +220,7 @@ export function ChatWindow({ initialConversationId }: ChatWindowProps) {
         {selectedConversation ? (
           <>
             {/* Chat Header */}
-            <div className="p-4 border-b border-emerald-200 bg-gradient-to-r from-white to-emerald-50/50 shadow-sm">
+            <div className="p-4 border-b border-accent-200 bg-gradient-to-r from-white to-accent-50/50 shadow-sm">
               <div className="flex items-center gap-3">
                 <button
                   onClick={() => setSelectedConversation(null)}
@@ -242,7 +242,7 @@ export function ChatWindow({ initialConversationId }: ChatWindowProps) {
                           className="rounded-full object-cover"
                         />
                       ) : (
-                        <div className="w-10 h-10 rounded-full bg-primary-100 text-primary-600 flex items-center justify-center font-semibold">
+                        <div className="w-10 h-10 rounded-full bg-accent-100 text-accent-600 flex items-center justify-center font-semibold">
                           {otherParticipant.name.charAt(0).toUpperCase()}
                         </div>
                       )}
@@ -251,15 +251,15 @@ export function ChatWindow({ initialConversationId }: ChatWindowProps) {
                           <h3 className="font-semibold text-gray-900">{otherParticipant.name}</h3>
                           {isUserOnline(otherParticipant.id) && (
                             <span className="relative flex h-2 w-2">
-                              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                              <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent-400 opacity-75"></span>
+                              <span className="relative inline-flex rounded-full h-2 w-2 bg-accent-500"></span>
                             </span>
                           )}
                         </div>
                         {selectedConversation.listing && (
                           <Link
                             href={`/listings/${selectedConversation.listing.id}`}
-                            className="text-sm text-gray-500 hover:text-primary-600"
+                            className="text-sm text-gray-500 hover:text-accent-600"
                           >
                             {selectedConversation.listing.title}
                           </Link>
@@ -297,10 +297,10 @@ export function ChatWindow({ initialConversationId }: ChatWindowProps) {
             />
           </>
         ) : (
-          <div className="flex-1 flex items-center justify-center bg-gradient-to-br from-white to-emerald-50/30">
+          <div className="flex-1 flex items-center justify-center bg-gradient-to-br from-white to-accent-50/30">
             <div className="text-center p-8">
-              <div className="w-24 h-24 bg-gradient-to-br from-emerald-100 to-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                <User className="w-12 h-12 text-emerald-600" />
+              <div className="w-24 h-24 bg-gradient-to-br from-accent-100 to-primary-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <User className="w-12 h-12 text-accent-600" />
               </div>
               <p className="text-gray-700 text-xl font-bold mb-2">Select a conversation</p>
               <p className="text-gray-500 text-sm">

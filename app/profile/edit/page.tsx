@@ -220,7 +220,7 @@ export default function EditProfilePage() {
       <>
         <Header />
         <main className="min-h-screen flex items-center justify-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-500"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-accent-500"></div>
         </main>
       </>
     );
@@ -265,7 +265,7 @@ export default function EditProfilePage() {
                       </button>
                     </div>
                   ) : (
-                    <div className="w-32 h-32 bg-gradient-to-br from-primary-400 to-primary-600 rounded-full flex items-center justify-center border-4 border-white shadow-medium">
+                    <div className="w-32 h-32 bg-gradient-primary rounded-full flex items-center justify-center border-4 border-white shadow-medium">
                       <span className="text-5xl font-bold text-white">
                         {formData.name.charAt(0).toUpperCase() || 'U'}
                       </span>
@@ -285,7 +285,7 @@ export default function EditProfilePage() {
                       className={`inline-flex items-center gap-2 px-4 py-2 border-2 rounded-lg transition-all cursor-pointer ${
                         isUploading
                           ? 'border-grey-300 bg-grey-100 cursor-not-allowed'
-                          : 'border-primary-500 bg-white text-primary-600 hover:bg-primary-50 hover:border-primary-600'
+                          : 'border-accent-500 bg-white text-accent-600 hover:bg-accent-50 hover:border-accent-600'
                       }`}
                     >
                       {isUploading ? (
@@ -327,9 +327,9 @@ export default function EditProfilePage() {
 
                 {/* Upload Success */}
                 {uploadSuccess && (
-                  <div className="mt-3 p-3 bg-green-50 border border-green-200 rounded-lg flex items-center gap-2">
-                    <CheckCircle className="w-5 h-5 text-green-600" />
-                    <p className="text-sm text-green-700 font-medium">Image uploaded successfully!</p>
+                  <div className="mt-3 p-3 bg-accent-50 border border-accent-200 rounded-lg flex items-center gap-2">
+                    <CheckCircle className="w-5 h-5 text-accent-600" />
+                    <p className="text-sm text-accent-700 font-medium">Image uploaded successfully!</p>
                   </div>
                 )}
               </div>
@@ -344,7 +344,7 @@ export default function EditProfilePage() {
                   value={formData.name}
                   onChange={(e) => setFormData((prev) => ({ ...prev, name: e.target.value }))}
                   required
-                  className="w-full px-3 sm:px-4 py-3 sm:py-2.5 border border-grey-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors text-base sm:text-sm min-h-[44px] input-focus"
+                  className="w-full px-3 sm:px-4 py-3 sm:py-2.5 border border-grey-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition-colors text-base sm:text-sm min-h-[44px] input-focus"
                 />
               </div>
 
@@ -390,7 +390,7 @@ export default function EditProfilePage() {
                           emailNotifications: e.target.checked,
                         }))
                       }
-                      className="w-5 h-5 sm:w-4 sm:h-4 text-primary-600 border-grey-300 rounded focus:ring-primary-500 touch-target"
+                      className="w-5 h-5 sm:w-4 sm:h-4 text-accent-600 border-grey-300 rounded focus:ring-accent-500 touch-target"
                     />
                     <span className="text-sm text-grey-700">Email Notifications</span>
                   </label>
@@ -404,7 +404,7 @@ export default function EditProfilePage() {
                           pushNotifications: e.target.checked,
                         }))
                       }
-                      className="w-4 h-4 text-primary-600 border-grey-300 rounded focus:ring-primary-500"
+                      className="w-4 h-4 text-accent-600 border-grey-300 rounded focus:ring-accent-500"
                     />
                     <span className="text-sm text-grey-700">Push Notifications</span>
                   </label>
@@ -418,7 +418,7 @@ export default function EditProfilePage() {
                           smsNotifications: e.target.checked,
                         }))
                       }
-                      className="w-4 h-4 text-primary-600 border-grey-300 rounded focus:ring-primary-500"
+                      className="w-4 h-4 text-accent-600 border-grey-300 rounded focus:ring-accent-500"
                     />
                     <span className="text-sm text-grey-700">SMS Notifications</span>
                   </label>
@@ -437,7 +437,7 @@ export default function EditProfilePage() {
                 <button
                   type="submit"
                   disabled={updateMutation.isPending || isUploading}
-                  className="px-6 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                  className="px-6 py-2 bg-gradient-primary text-white rounded-lg hover:opacity-90 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 shadow-soft hover:shadow-medium"
                 >
                   {updateMutation.isPending ? (
                     <>

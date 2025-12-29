@@ -61,7 +61,7 @@ export function EnhancedEmptyState({
         <div className="mb-8">{illustration}</div>
       ) : (
         <div className="mb-6 p-6 bg-gradient-to-br from-primary-50 to-secondary-50 rounded-full">
-          <IconComponent className="w-16 h-16 text-primary-600" />
+          <IconComponent className="w-16 h-16 text-accent-600" />
         </div>
       )}
 
@@ -85,7 +85,7 @@ export function EnhancedEmptyState({
                 key={index}
                 className="flex items-start gap-2 text-sm text-grey-600"
               >
-                <span className="text-primary-500 mt-1">•</span>
+                <span className="text-accent-500 mt-1">•</span>
                 <span>{suggestion}</span>
               </li>
             ))}

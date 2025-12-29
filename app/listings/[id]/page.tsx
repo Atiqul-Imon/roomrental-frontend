@@ -135,7 +135,7 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
     return (
       <>
         <Header />
-        <main className="min-h-screen bg-grey-50">
+        <main className="min-h-screen bg-gradient-comfort">
           <div className="container mx-auto px-4 py-8">
             <PageSkeleton />
           </div>
@@ -148,7 +148,7 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
     return (
       <>
         <Header />
-        <main className="min-h-screen bg-grey-50">
+        <main className="min-h-screen bg-gradient-comfort">
           <div className="container mx-auto px-4 py-8">
             <ErrorState
               title="Listing Not Found"
@@ -165,7 +165,7 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
   return (
     <>
       <Header />
-      <main className="min-h-screen bg-gradient-to-br from-gray-50 via-emerald-50/20 to-gray-50 pb-20 md:pb-8">
+      <main className="min-h-screen bg-gradient-comfort pb-20 md:pb-8">
         <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-6 md:py-8 fade-in">
           {/* Image Gallery - Enhanced with better shadow */}
           <div className="mb-6 sm:mb-8 md:mb-10 bg-white rounded-2xl overflow-hidden shadow-xl border border-gray-100">
@@ -178,7 +178,7 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
               {/* Title and Header Section - Enhanced */}
               <div className="bg-white rounded-2xl p-6 sm:p-8 md:p-10 shadow-lg border border-gray-100 overflow-hidden relative">
                 {/* Decorative gradient background */}
-                <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-emerald-100/30 to-transparent rounded-full blur-3xl -z-0"></div>
+                <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-accent-100/30 to-transparent rounded-full blur-3xl -z-0"></div>
                 
                 <div className="relative z-10">
                   <div className="flex items-start justify-between mb-6">
@@ -187,8 +187,8 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
                         {data.title}
                       </h1>
                       <div className="flex items-center gap-3 text-gray-600 mb-6">
-                        <div className="flex items-center gap-2 min-w-0 bg-emerald-50 px-3 py-1.5 rounded-lg">
-                          <MapPin className="w-5 h-5 text-emerald-600 flex-shrink-0" />
+                        <div className="flex items-center gap-2 min-w-0 bg-accent-50 px-3 py-1.5 rounded-lg">
+                          <MapPin className="w-5 h-5 text-accent-600 flex-shrink-0" />
                           <span className="font-semibold text-base sm:text-lg text-gray-800 truncate">
                             {data.location.city}, {data.location.state}
                             {data.location.zip && ` ${data.location.zip}`}
@@ -206,7 +206,7 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
                             e.currentTarget.classList.remove('share-bounce');
                           }, 300);
                         }}
-                        className="p-3 border-2 border-gray-200 rounded-xl hover:bg-emerald-50 hover:border-emerald-300 transition-all duration-200 text-gray-600 hover:text-emerald-600 touch-target shadow-sm hover:shadow-md"
+                        className="p-3 border-2 border-gray-200 rounded-xl hover:bg-accent-50 hover:border-accent-300 transition-all duration-200 text-gray-600 hover:text-accent-600 touch-target shadow-sm hover:shadow-md"
                         title="Share listing"
                       >
                         <Share2 className="w-5 h-5" />
@@ -233,7 +233,7 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
                   </div>
 
                   {/* Price Badge - Enhanced */}
-                  <div className="inline-flex items-center gap-3 px-6 py-4 bg-gradient-to-r from-emerald-600 to-emerald-500 text-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
+                  <div className="inline-flex items-center gap-3 px-6 py-4 bg-coral-500 text-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
                     <div className="bg-white/20 p-2 rounded-lg">
                       <DollarSign className="w-6 h-6" />
                     </div>
@@ -246,8 +246,8 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
                   {/* Quick Stats - New Section */}
                   <div className="mt-6 grid grid-cols-3 gap-4 pt-6 border-t border-gray-100">
                     <div className="flex items-center gap-3">
-                      <div className="p-2 bg-emerald-100 rounded-lg">
-                        <Bed className="w-5 h-5 text-emerald-600" />
+                      <div className="p-2 bg-accent-100 rounded-lg">
+                        <Bed className="w-5 h-5 text-accent-600" />
                       </div>
                       <div>
                         <p className="text-xs text-gray-500 font-medium">Bedrooms</p>
@@ -281,9 +281,6 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
               {/* Description - Enhanced */}
               <div className="bg-white rounded-2xl p-6 sm:p-8 md:p-10 shadow-lg border border-gray-100">
                 <div className="flex items-center gap-3 mb-6">
-                  <div className="p-3 bg-emerald-100 rounded-xl">
-                    <span className="text-2xl">📝</span>
-                  </div>
                   <h2 className="font-heading text-2xl sm:text-3xl font-bold text-gray-900">
                     About This Room
                   </h2>
@@ -297,33 +294,41 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
               {data.amenities.length > 0 && (
                 <div className="bg-white rounded-2xl p-6 sm:p-8 md:p-10 shadow-lg border border-gray-100">
                   <div className="flex items-center gap-3 mb-6 sm:mb-8">
-                    <div className="p-3 bg-gradient-to-br from-emerald-100 to-blue-100 rounded-xl">
-                      <span className="text-2xl">✨</span>
-                    </div>
                     <h2 className="font-heading text-2xl sm:text-3xl font-bold text-gray-900">
                       What's Included
                     </h2>
                   </div>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4">
-                    {data.amenities.map((amenity, index) => (
-                      <div
-                        key={index}
-                        className="group px-4 py-3 bg-gradient-to-br from-emerald-50 to-blue-50 text-emerald-800 rounded-xl text-sm font-semibold border-2 border-emerald-200 hover:border-emerald-400 hover:shadow-md transition-all duration-200 hover:scale-105 cursor-default flex items-center gap-2"
-                      >
-                        <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />
-                        <span>{amenity}</span>
-                      </div>
-                    ))}
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 sm:gap-5">
+                    {data.amenities.map((amenity, index) => {
+                      // Cycle through different color combinations for variety
+                      const colorVariants = [
+                        { bg: 'bg-accent-50', border: 'border-accent-200', text: 'text-accent-800', icon: 'text-accent-600', iconBg: 'bg-accent-100' },
+                        { bg: 'bg-coral-50', border: 'border-coral-200', text: 'text-coral-800', icon: 'text-coral-600', iconBg: 'bg-coral-100' },
+                        { bg: 'bg-primary-50', border: 'border-primary-200', text: 'text-primary-800', icon: 'text-primary-600', iconBg: 'bg-primary-100' },
+                        { bg: 'bg-amber-50', border: 'border-amber-200', text: 'text-amber-800', icon: 'text-amber-600', iconBg: 'bg-amber-100' },
+                        { bg: 'bg-purple-50', border: 'border-purple-200', text: 'text-purple-800', icon: 'text-purple-600', iconBg: 'bg-purple-100' },
+                        { bg: 'bg-pink-50', border: 'border-pink-200', text: 'text-pink-800', icon: 'text-pink-600', iconBg: 'bg-pink-100' },
+                      ];
+                      const colors = colorVariants[index % colorVariants.length];
+                      return (
+                        <div
+                          key={index}
+                          className={`group relative px-5 py-4 ${colors.bg} ${colors.text} rounded-2xl text-sm sm:text-base font-semibold border-2 ${colors.border} hover:border-opacity-80 hover:shadow-xl transition-all duration-300 hover:scale-105 hover:-translate-y-1 cursor-default flex flex-col items-center gap-3 text-center`}
+                        >
+                          <div className={`${colors.iconBg} p-2.5 rounded-xl group-hover:scale-110 transition-transform duration-300`}>
+                            <CheckCircle2 className={`w-5 h-5 sm:w-6 sm:h-6 ${colors.icon} flex-shrink-0`} />
+                          </div>
+                          <span className="leading-tight">{amenity}</span>
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
               )}
 
               {/* Availability - Enhanced */}
-              <div className="bg-gradient-to-br from-white to-emerald-50/50 rounded-2xl p-6 sm:p-8 shadow-lg border-2 border-emerald-100">
+              <div className="bg-gradient-to-br from-white to-accent-50/50 rounded-2xl p-6 sm:p-8 shadow-lg border-2 border-accent-100">
                 <div className="flex items-center gap-4">
-                  <div className="p-4 bg-emerald-100 rounded-xl shadow-sm">
-                    <Calendar className="w-6 h-6 text-emerald-600" />
-                  </div>
                   <div>
                     <span className="text-sm text-gray-600 block mb-1 font-medium">Available from</span>
                     <span className="font-bold text-xl text-gray-900">{formattedDate}</span>
@@ -335,13 +340,13 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
             {/* Sticky Sidebar - Enhanced for Students */}
             <div className="lg:sticky lg:top-20 space-y-6 h-fit">
               {/* Contact Card - Student-Friendly */}
-              <div className="bg-gradient-to-br from-white via-emerald-50/40 to-white border-2 border-emerald-200 rounded-2xl p-6 sm:p-8 shadow-xl overflow-hidden relative">
+              <div className="bg-gradient-to-br from-white via-accent-50/40 to-white border-2 border-accent-200 rounded-2xl p-6 sm:p-8 shadow-xl overflow-hidden relative">
                 {/* Decorative element */}
-                <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-200/20 rounded-full blur-2xl"></div>
+                <div className="absolute top-0 right-0 w-32 h-32 bg-accent-200/20 rounded-full blur-2xl"></div>
                 
                 <div className="relative z-10">
                   <div className="flex items-center gap-3 mb-6">
-                    <div className="p-3 bg-emerald-100 rounded-xl">
+                    <div className="p-3 bg-accent-100 rounded-xl">
                       <span className="text-2xl">👤</span>
                     </div>
                     <h2 className="font-heading text-xl sm:text-2xl font-bold text-gray-900">
@@ -355,10 +360,10 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
                         alt={data.landlordId.name}
                         width={80}
                         height={80}
-                        className="rounded-full border-4 border-emerald-300 shadow-lg"
+                        className="rounded-full border-4 border-accent-300 shadow-lg"
                       />
                     ) : (
-                      <div className="w-20 h-20 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-full flex items-center justify-center border-4 border-emerald-300 shadow-lg">
+                      <div className="w-20 h-20 bg-gradient-primary rounded-full flex items-center justify-center border-4 border-accent-300 shadow-lg">
                         <span className="text-3xl font-bold text-white">
                           {data.landlordId.name.charAt(0).toUpperCase()}
                         </span>
@@ -367,7 +372,7 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
                     <div className="flex-1 min-w-0">
                       <Link
                         href={`/profile/${data.landlordId._id}`}
-                        className="font-bold text-lg text-gray-900 hover:text-emerald-600 transition-colors block mb-1 truncate"
+                        className="font-bold text-lg text-gray-900 hover:text-accent-600 transition-colors block mb-1 truncate"
                       >
                         {data.landlordId.name}
                       </Link>
@@ -375,7 +380,7 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
                     </div>
                   </div>
                   {(data.landlordId as any).bio && (
-                    <div className="mt-4 mb-4 p-4 bg-white/70 rounded-xl border border-emerald-100">
+                    <div className="mt-4 mb-4 p-4 bg-white/70 rounded-xl border border-accent-100">
                       <p className="text-sm text-gray-700 leading-relaxed">
                         {(data.landlordId as any).bio}
                       </p>
@@ -411,7 +416,7 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
                     </span>
                     <span className={`px-4 py-2 rounded-full text-xs font-bold ${
                       data.status === 'available' 
-                        ? 'bg-emerald-100 text-emerald-700 border-2 border-emerald-300' 
+                        ? 'bg-accent-100 text-accent-700 border-2 border-accent-300' 
                         : data.status === 'pending'
                         ? 'bg-amber-100 text-amber-700 border-2 border-amber-300'
                         : 'bg-gray-100 text-gray-700 border-2 border-gray-300'
@@ -432,15 +437,15 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
               </div>
 
               {/* Safety & Trust Badge for Students */}
-              <div className="bg-gradient-to-br from-emerald-50 via-green-50 to-emerald-50 border-2 border-emerald-200 rounded-2xl p-6 shadow-lg">
+              <div className="bg-gradient-to-br from-accent-50 via-accent-50/50 to-accent-50 border-2 border-accent-200 rounded-2xl p-6 shadow-lg">
                 <div className="flex items-start gap-4">
-                  <div className="p-3 bg-emerald-100 rounded-xl">
-                    <Shield className="w-6 h-6 text-emerald-600" />
+                  <div className="p-3 bg-accent-100 rounded-xl">
+                    <Shield className="w-6 h-6 text-accent-600" />
                   </div>
                   <div>
                     <h3 className="font-heading font-bold text-base text-gray-900 mb-2 flex items-center gap-2">
                       Verified Listing
-                      <CheckCircle2 className="w-5 h-5 text-emerald-600" />
+                      <CheckCircle2 className="w-5 h-5 text-accent-600" />
                     </h3>
                     <p className="text-sm text-gray-700 leading-relaxed">
                       This listing has been verified by our team for accuracy and safety.
@@ -456,15 +461,12 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
             <div className="bg-white rounded-2xl p-6 sm:p-8 md:p-10 shadow-lg border border-gray-100">
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 sm:mb-8">
                 <div className="flex items-center gap-3">
-                  <div className="p-3 bg-emerald-100 rounded-xl">
-                    <Star className="w-6 h-6 text-emerald-600" />
-                  </div>
                   <h2 className="font-heading text-2xl sm:text-3xl font-bold text-gray-900">Reviews</h2>
                 </div>
                 {isAuthenticated && !isOwner && user?.id !== data.landlordId._id && (
                   <button
                     onClick={() => setShowReviewForm(!showReviewForm)}
-                    className="px-6 py-3 bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 transition-all duration-200 shadow-md hover:shadow-lg hover:scale-105 min-h-[44px] touch-target text-sm sm:text-base font-semibold"
+                    className="px-6 py-3 bg-gradient-primary text-white rounded-xl hover:opacity-90 transition-all duration-200 shadow-md hover:shadow-lg hover:scale-105 min-h-[44px] touch-target text-sm sm:text-base font-semibold"
                   >
                     {showReviewForm ? 'Cancel' : 'Write a Review'}
                   </button>
@@ -478,8 +480,13 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
                     listingId={data._id}
                     onSuccess={() => {
                       setShowReviewForm(false);
-                      queryClient.invalidateQueries({ queryKey: ['reviews'] });
-                      queryClient.invalidateQueries({ queryKey: ['rating'] });
+                      // Invalidate all reviews queries for this user and listing
+                      queryClient.invalidateQueries({ queryKey: ['reviews', data.landlordId._id, data._id] });
+                      queryClient.invalidateQueries({ queryKey: ['reviews', data.landlordId._id] });
+                      // Invalidate rating query
+                      queryClient.invalidateQueries({ queryKey: ['rating', data.landlordId._id] });
+                      // Invalidate listing detail to refresh rating display
+                      queryClient.invalidateQueries({ queryKey: ['listing', listingId] });
                     }}
                     onCancel={() => setShowReviewForm(false)}
                   />
@@ -492,7 +499,7 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
 
           {/* Mobile Contact Button - Sticky at bottom */}
           {!isOwner && (
-            <div className="fixed bottom-0 left-0 right-0 md:hidden bg-white border-t-2 border-emerald-200 shadow-2xl p-4 z-50">
+            <div className="fixed bottom-0 left-0 right-0 md:hidden bg-white border-t-2 border-accent-200 shadow-2xl p-4 z-50">
               <ContactButton
                 landlordId={data.landlordId._id}
                 landlordRole={data.landlordId.role}

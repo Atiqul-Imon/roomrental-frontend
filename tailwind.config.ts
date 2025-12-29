@@ -18,7 +18,7 @@ const config: Config = {
         background: 'var(--background)',
         foreground: 'var(--foreground)',
         primary: {
-          DEFAULT: '#3B82F6', // Vibrant friendly blue
+          DEFAULT: '#2563EB', // Blue 600 - Trust & Reliability
           foreground: '#FFFFFF',
           50: '#EFF6FF',
           100: '#DBEAFE',
@@ -26,28 +26,52 @@ const config: Config = {
           300: '#93C5FD',
           400: '#60A5FA',
           500: '#3B82F6',
-          600: '#2563EB',
+          600: '#2563EB', // Main primary
           700: '#1D4ED8',
           800: '#1E40AF',
           900: '#1E3A8A',
         },
-        secondary: {
-          DEFAULT: '#EC4899', // Warm playful pink
-          foreground: '#FFFFFF',
-          50: '#FDF2F8',
-          100: '#FCE7F3',
-          200: '#FBCFE8',
-          300: '#F9A8D4',
-          400: '#F472B6',
-          500: '#EC4899',
-          600: '#DB2777',
-          700: '#BE185D',
-          800: '#9F1239',
-          900: '#831843',
-        },
         accent: {
-          DEFAULT: '#EC4899',
+          DEFAULT: '#14B8A6', // Teal 500 - Fresh & Modern
           foreground: '#FFFFFF',
+          50: '#F0FDFA',
+          100: '#CCFBF1',
+          200: '#99F6E4',
+          300: '#5EEAD4',
+          400: '#2DD4BF',
+          500: '#14B8A6', // Main accent
+          600: '#0D9488',
+          700: '#0F766E',
+          800: '#115E59',
+          900: '#134E4A',
+        },
+        coral: {
+          DEFAULT: '#F97316', // Orange 500 - Energy & Action
+          foreground: '#FFFFFF',
+          50: '#FFF7ED',
+          100: '#FFEDD5',
+          200: '#FED7AA',
+          300: '#FDBA74',
+          400: '#FB923C',
+          500: '#F97316', // Main coral
+          600: '#EA580C',
+          700: '#C2410C',
+          800: '#9A3412',
+          900: '#7C2D12',
+        },
+        secondary: {
+          DEFAULT: '#14B8A6', // Alias to accent for backward compatibility
+          foreground: '#FFFFFF',
+          50: '#F0FDFA',
+          100: '#CCFBF1',
+          200: '#99F6E4',
+          300: '#5EEAD4',
+          400: '#2DD4BF',
+          500: '#14B8A6',
+          600: '#0D9488',
+          700: '#0F766E',
+          800: '#115E59',
+          900: '#134E4A',
         },
         muted: {
           DEFAULT: '#F3F4F6', // Light grey
@@ -124,8 +148,11 @@ const config: Config = {
         '3': '3px',
       },
       backgroundImage: {
-        'gradient-primary': 'linear-gradient(135deg, #3B82F6 0%, #EC4899 100%)',
-        'gradient-primary-hover': 'linear-gradient(135deg, #2563EB 0%, #DB2777 100%)',
+        'gradient-primary': 'linear-gradient(135deg, #2563EB 0%, #14B8A6 100%)',
+        'gradient-primary-hover': 'linear-gradient(135deg, #1D4ED8 0%, #0D9488 100%)',
+        'gradient-accent': 'linear-gradient(135deg, #2563EB 0%, #F97316 100%)',
+        'gradient-warm': 'linear-gradient(135deg, #14B8A6 0%, #F97316 100%)',
+        'gradient-comfort': 'linear-gradient(135deg, #F0FDFA 0%, #FFF7ED 100%)',
       },
       transitionDuration: {
         '200': '200ms',

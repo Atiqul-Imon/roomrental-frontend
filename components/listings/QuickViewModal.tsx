@@ -170,7 +170,7 @@ export function QuickViewModal({ listing, isOpen, onClose }: QuickViewModalProps
           )}
 
           {/* Price Badge */}
-          <div className="absolute top-3 left-3 sm:top-4 sm:left-4 bg-primary-500 text-white px-3 py-1.5 rounded-lg font-bold text-sm sm:text-base shadow-lg z-10">
+          <div className="absolute top-3 left-3 sm:top-4 sm:left-4 bg-gradient-warm text-white px-3 py-1.5 rounded-lg font-bold text-sm sm:text-base shadow-lg z-10">
             ${listing.price.toLocaleString()}/mo
           </div>
         </div>
@@ -238,7 +238,7 @@ export function QuickViewModal({ listing, isOpen, onClose }: QuickViewModalProps
             {/* Amenities Preview */}
             {listing.amenities && listing.amenities.length > 0 && (
               <div className="flex items-center gap-1.5 flex-wrap">
-                <Sparkles className="w-3.5 h-3.5 text-primary-500 flex-shrink-0" />
+                <Sparkles className="w-3.5 h-3.5 text-accent-500 flex-shrink-0" />
                 <div className="flex gap-1.5 flex-wrap">
                   {listing.amenities.slice(0, 4).map((amenity) => (
                     <span
