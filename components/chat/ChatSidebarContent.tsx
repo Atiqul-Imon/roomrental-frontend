@@ -81,6 +81,7 @@ export function ChatSidebarContent({ initialConversationId }: ChatSidebarContent
     },
     enabled: !!selectedConversation?.id,
     initialPageParam: 1,
+    staleTime: 0, // Always consider messages stale to ensure fresh data on reload
   });
 
   const messages = messagesData?.pages.flat() || [];
@@ -95,7 +96,9 @@ export function ChatSidebarContent({ initialConversationId }: ChatSidebarContent
         data.attachments || []
       ),
     onSuccess: () => {
-      // Don't refetch - let the socket event handle the update
+      // Invalidate messages query so it refetches on next access, but don't refetch now
+      // The socket event will handle immediate UI update
+      queryClient.invalidateQueries({ queryKey: ['messages', selectedConversation?.id] });
       queryClient.invalidateQueries({ queryKey: ['conversations'] });
     },
   });
