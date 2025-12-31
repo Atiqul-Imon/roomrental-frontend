@@ -54,7 +54,13 @@ export function NotificationList() {
             createdAt={notification.createdAt || new Date().toISOString()}
             onClick={() => {
               if (notification.type === 'message' && notification.conversationId) {
-                router.push(`/messages?conversationId=${notification.conversationId}&tab=chat`);
+                // Mobile: Navigate to conversation page
+                if (typeof window !== 'undefined' && window.innerWidth < 768) {
+                  router.push(`/messages/${notification.conversationId}`);
+                } else {
+                  // Desktop: Navigate to messages page and select conversation
+                  router.push(`/messages?conversationId=${notification.conversationId}&tab=chat`);
+                }
               }
             }}
           />

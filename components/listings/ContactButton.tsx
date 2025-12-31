@@ -55,8 +55,8 @@ export function ContactButton({
           // Desktop: Open chat sidebar (Facebook-style)
           openChat(conversation.id);
         } else {
-          // Mobile: Navigate to messages page
-          router.push(`/messages?conversationId=${conversation.id}&tab=chat`);
+          // Mobile: Navigate to conversation page
+          router.push(`/messages/${conversation.id}`);
         }
         setIsContacting(false);
       }

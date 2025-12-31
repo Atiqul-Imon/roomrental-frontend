@@ -7,9 +7,42 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { Header } from '@/components/layout/Header';
 import { ChatWindow } from '@/components/chat/ChatWindow';
+import { ConversationList } from '@/components/chat/ConversationList';
 import { NotificationList } from '@/components/notifications/NotificationList';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { MessageCircle, Bell } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
+import { chatApi } from '@/lib/chat-api';
+
+function ConversationListMobile({ conversationId }: { conversationId?: string }) {
+  const { user } = useAuth();
+  const router = useRouter();
+  
+  const { data: conversationsData, isLoading: conversationsLoading } = useQuery({
+    queryKey: ['conversations'],
+    queryFn: () => chatApi.getConversations(1, 50),
+    enabled: !!user,
+  });
+
+  const handleSelectConversation = (conversation: any) => {
+    router.push(`/messages/${conversation.id}`);
+  };
+
+  return (
+    <div className="md:hidden h-full bg-white flex flex-col">
+      <div className="p-4 border-b border-grey-200 bg-white flex-shrink-0">
+        <h2 className="text-xl font-bold text-grey-900">Messages</h2>
+      </div>
+      <ConversationList
+        conversations={conversationsData?.conversations || []}
+        selectedConversationId={conversationId}
+        onSelectConversation={handleSelectConversation}
+        currentUserId={user?.id || ''}
+        isLoading={conversationsLoading}
+      />
+    </div>
+  );
+}
 
 function MessagesContent() {
   const { isLoading: authLoading, isAuthenticated } = useAuth();
@@ -39,13 +72,8 @@ function MessagesContent() {
   }
 
   const handleTabChange = (newTab: 'chat' | 'notifications') => {
-    const params = new URLSearchParams(searchParams.toString());
+    const params = new URLSearchParams();
     params.set('tab', newTab);
-    if (newTab === 'chat' && conversationId) {
-      params.set('conversationId', conversationId);
-    } else if (newTab === 'notifications') {
-      params.delete('conversationId');
-    }
     router.push(`/messages?${params.toString()}`);
   };
 
@@ -84,7 +112,14 @@ function MessagesContent() {
       {/* Content */}
       <div className="h-[calc(100vh-8rem)] md:h-[calc(100vh-4rem)] overflow-hidden">
         {tab === 'chat' ? (
-          <ChatWindow initialConversationId={conversationId || undefined} />
+          <>
+            {/* Desktop: Show ChatWindow with side-by-side layout */}
+            <div className="hidden md:block h-full">
+              <ChatWindow initialConversationId={conversationId || undefined} />
+            </div>
+            {/* Mobile: Show only conversation list, navigate to separate page for chat */}
+            <ConversationListMobile conversationId={conversationId || undefined} />
+          </>
         ) : (
           <NotificationList />
         )}

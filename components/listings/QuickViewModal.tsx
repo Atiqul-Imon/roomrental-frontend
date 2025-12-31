@@ -103,8 +103,8 @@ export function QuickViewModal({ listing, isOpen, onClose }: QuickViewModalProps
           // Desktop: Open chat sidebar (Facebook-style)
           openChat(conversation.id);
         } else {
-          // Mobile: Navigate to messages page
-          router.push(`/messages?conversationId=${conversation.id}&tab=chat`);
+          // Mobile: Navigate to conversation page
+          router.push(`/messages/${conversation.id}`);
         }
         onClose();
         setIsContacting(false);

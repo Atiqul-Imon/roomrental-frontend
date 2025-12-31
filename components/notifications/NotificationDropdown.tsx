@@ -98,7 +98,12 @@ export function NotificationDropdown() {
                       setIsOpen(false);
                       // Handle notification click
                       if (notification.type === 'message' && notification.conversationId) {
-                        router.push(`/messages?conversationId=${notification.conversationId}`);
+                        // Mobile: Navigate to conversation page, Desktop: open sidebar
+                        if (typeof window !== 'undefined' && window.innerWidth < 768) {
+                          router.push(`/messages/${notification.conversationId}`);
+                        } else {
+                          router.push(`/messages?conversationId=${notification.conversationId}&tab=chat`);
+                        }
                       } else {
                         router.push('/messages?tab=notifications');
                       }
