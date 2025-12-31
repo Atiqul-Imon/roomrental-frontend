@@ -95,10 +95,37 @@ export function ChatSidebarContent({ initialConversationId }: ChatSidebarContent
         data.messageType || 'text',
         data.attachments || []
       ),
-    onSuccess: () => {
-      // Invalidate messages query so it refetches on next access, but don't refetch now
-      // The socket event will handle immediate UI update
-      queryClient.invalidateQueries({ queryKey: ['messages', selectedConversation?.id] });
+    onSuccess: (message) => {
+      // Optimistically add the message to cache immediately
+      if (selectedConversation?.id) {
+        queryClient.setQueryData(
+          ['messages', selectedConversation.id],
+          (old: any) => {
+            if (!old) {
+              // If no cache exists, create initial structure
+              return {
+                pages: [[message]],
+                pageParams: [1],
+              };
+            }
+            // Check if message already exists (from socket event)
+            const allMessages = old.pages.flat();
+            if (allMessages.some((m: Message) => m.id === message.id)) {
+              return old;
+            }
+            // Add message to the last page
+            const lastPage = old.pages[old.pages.length - 1];
+            return {
+              ...old,
+              pages: [
+                ...old.pages.slice(0, -1),
+                [...lastPage, message],
+              ],
+            };
+          }
+        );
+      }
+      // Invalidate conversations to update the last message preview
       queryClient.invalidateQueries({ queryKey: ['conversations'] });
     },
   });
