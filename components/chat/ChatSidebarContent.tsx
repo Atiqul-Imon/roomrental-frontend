@@ -100,11 +100,14 @@ export function ChatSidebarContent({ initialConversationId }: ChatSidebarContent
     enabled: !!selectedConversation?.id,
     initialPageParam: 1,
     // Standard enterprise chat cache settings:
-    // - Cache messages for performance (default gcTime: 5 minutes)
-    // - Refetch on mount to ensure fresh data
+    // - Cache messages for 2 minutes (messages are relatively static once saved)
+    // - Keep in cache for 10 minutes (gcTime) for better performance
+    // - Always refetch on mount to ensure we have latest from backend
     // - Socket events handle real-time updates
-    refetchOnMount: true,
-    refetchOnWindowFocus: false,
+    staleTime: 2 * 60 * 1000, // 2 minutes - messages don't change often once saved
+    gcTime: 10 * 60 * 1000, // 10 minutes - keep in cache longer
+    refetchOnMount: true, // Always refetch on mount to ensure we have latest data
+    refetchOnWindowFocus: false, // Don't refetch on window focus (socket handles updates)
   });
 
   const messages = messagesData?.pages.flat() || [];
@@ -238,6 +241,14 @@ export function ChatSidebarContent({ initialConversationId }: ChatSidebarContent
 
       // Invalidate conversations to refresh unread counts, etc.
       queryClient.invalidateQueries({ queryKey: ['conversations'] });
+
+      // Background refetch after a short delay to ensure backend has saved the message
+      // This ensures persistence after reload without causing UI flashing
+      setTimeout(() => {
+        refetchMessages().catch(() => {
+          // Silently fail - message is already in cache from optimistic update
+        });
+      }, 500);
     },
     onError: (err, variables, context) => {
       // Rollback optimistic update on error
