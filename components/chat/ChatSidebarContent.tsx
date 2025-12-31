@@ -95,9 +95,8 @@ export function ChatSidebarContent({ initialConversationId }: ChatSidebarContent
         data.attachments || []
       ),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['messages', selectedConversation?.id] });
+      // Don't refetch - let the socket event handle the update
       queryClient.invalidateQueries({ queryKey: ['conversations'] });
-      refetchMessages();
     },
   });
 
@@ -146,9 +145,11 @@ export function ChatSidebarContent({ initialConversationId }: ChatSidebarContent
             };
           }
         );
-        refetchMessages();
+        // Refetch conversations to update last message
+        queryClient.invalidateQueries({ queryKey: ['conversations'] });
         markAsReadMutation.mutate();
       } else {
+        // Message in another conversation - show notification
         if (message.senderId !== user?.id) {
           showChatNotification(
             message.sender.name,
@@ -156,6 +157,7 @@ export function ChatSidebarContent({ initialConversationId }: ChatSidebarContent
             message.conversationId
           );
         }
+        queryClient.invalidateQueries({ queryKey: ['conversations'] });
       }
     };
 
@@ -164,7 +166,7 @@ export function ChatSidebarContent({ initialConversationId }: ChatSidebarContent
     return () => {
       offMessage(handleNewMessage);
     };
-  }, [socket, selectedConversation, onMessage, offMessage, user, showChatNotification]);
+  }, [socket, selectedConversation, onMessage, offMessage, user, showChatNotification, queryClient, markAsReadMutation]);
 
   const handleSendMessage = (content: string, messageType?: string, attachments?: string[]) => {
     if (selectedConversation && (content.trim() || (attachments && attachments.length > 0))) {
