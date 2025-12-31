@@ -35,7 +35,7 @@ export function QuickViewModal({ listing, isOpen, onClose }: QuickViewModalProps
   // Check if listing is favorited
   useEffect(() => {
     if (listing && isAuthenticated) {
-      api.get(`/favorites/check/${listing._id}`)
+      api.get(`/favorites/${listing._id}`)
         .then((res) => {
           if (res.data.success) {
             setIsFavorite(res.data.data.isFavorite);

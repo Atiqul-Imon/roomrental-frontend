@@ -37,7 +37,7 @@ export function ListingCard({ listing, onQuickView }: ListingCardProps) {
   // Check favorite status
   useEffect(() => {
     if (isAuthenticated) {
-      api.get(`/favorites/check/${listing._id}`)
+      api.get(`/favorites/${listing._id}`)
         .then((res) => {
           if (res.data.success) {
             setIsFavorite(res.data.data.isFavorite || false);

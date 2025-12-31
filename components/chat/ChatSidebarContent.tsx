@@ -109,7 +109,7 @@ export function ChatSidebarContent({ initialConversationId }: ChatSidebarContent
 
   const messages = messagesData?.pages.flat() || [];
 
-  // Send message mutation
+  // Send message mutation with optimistic updates
   const sendMessageMutation = useMutation({
     mutationFn: (data: { content: string; messageType?: string; attachments?: string[] }) =>
       chatApi.sendMessage(
@@ -118,12 +118,132 @@ export function ChatSidebarContent({ initialConversationId }: ChatSidebarContent
         data.messageType || 'text',
         data.attachments || []
       ),
-    onSuccess: () => {
-      // Standard enterprise approach: invalidate and refetch to ensure sync
-      // Socket event will also update cache for immediate UI feedback
-      queryClient.invalidateQueries({ queryKey: ['messages', selectedConversation?.id] });
+    onMutate: async (variables) => {
+      if (!selectedConversation || !user) return;
+
+      // Cancel outgoing refetches to avoid overwriting optimistic update
+      await queryClient.cancelQueries({ queryKey: ['messages', selectedConversation.id] });
+
+      // Snapshot previous value
+      const previousMessages = queryClient.getQueryData(['messages', selectedConversation.id]);
+
+      // Optimistically update cache with temporary message
+      const optimisticMessage: Message = {
+        id: `temp-${Date.now()}`,
+        conversationId: selectedConversation.id,
+        senderId: user.id,
+        content: variables.content,
+        messageType: (variables.messageType || 'text') as 'text' | 'image' | 'file' | 'system',
+        attachments: variables.attachments || [],
+        createdAt: new Date().toISOString(),
+        sender: {
+          id: user.id,
+          name: user.name,
+          profileImage: user.profileImage,
+        },
+      };
+
+      queryClient.setQueryData(['messages', selectedConversation.id], (old: any) => {
+        if (!old) return old;
+        const lastPage = old.pages[old.pages.length - 1];
+        return {
+          ...old,
+          pages: [
+            ...old.pages.slice(0, -1),
+            [...lastPage, optimisticMessage],
+          ],
+        };
+      });
+
+      // Update conversations list optimistically
+      queryClient.setQueryData(['conversations'], (old: any) => {
+        if (!old?.conversations) return old;
+        return {
+          ...old,
+          conversations: old.conversations.map((conv: Conversation) =>
+            conv.id === selectedConversation.id
+              ? {
+                  ...conv,
+                  lastMessage: optimisticMessage.content,
+                  lastMessageAt: optimisticMessage.createdAt,
+                }
+              : conv
+          ),
+        };
+      });
+
+      return { previousMessages };
+    },
+    onSuccess: (data: Message) => {
+      if (!selectedConversation) return;
+
+      // Replace optimistic message with real message from server
+      queryClient.setQueryData(['messages', selectedConversation.id], (old: any) => {
+        if (!old) return old;
+        const allMessages = old.pages.flat();
+        
+        // Check if message already exists (socket event might have already added it)
+        if (allMessages.some((m: Message) => m.id === data.id)) {
+          return old; // Message already in cache
+        }
+        
+        // Find and replace temp message with real one
+        let foundTemp = false;
+        const newPages = old.pages.map((page: Message[]) => {
+          const tempIndex = page.findIndex((m: Message) => m.id.startsWith('temp-'));
+          if (tempIndex !== -1 && !foundTemp) {
+            foundTemp = true;
+            return page.map((m: Message, idx: number) => 
+              idx === tempIndex ? data : m
+            );
+          }
+          return page;
+        });
+        
+        if (foundTemp) {
+          return { ...old, pages: newPages };
+        }
+        
+        // If temp message not found, add real message to last page (fallback)
+        const lastPage = old.pages[old.pages.length - 1];
+        if (!lastPage.some((m: Message) => m.id === data.id)) {
+          return {
+            ...old,
+            pages: [
+              ...old.pages.slice(0, -1),
+              [...lastPage, data],
+            ],
+          };
+        }
+        
+        return old;
+      });
+
+      // Update conversations list with real message
+      queryClient.setQueryData(['conversations'], (old: any) => {
+        if (!old?.conversations) return old;
+        return {
+          ...old,
+          conversations: old.conversations.map((conv: Conversation) =>
+            conv.id === selectedConversation.id
+              ? {
+                  ...conv,
+                  lastMessage: data.content,
+                  lastMessageAt: data.createdAt,
+                }
+              : conv
+          ),
+        };
+      });
+
+      // Invalidate conversations to refresh unread counts, etc.
       queryClient.invalidateQueries({ queryKey: ['conversations'] });
-      refetchMessages();
+    },
+    onError: (err, variables, context) => {
+      // Rollback optimistic update on error
+      if (context?.previousMessages && selectedConversation) {
+        queryClient.setQueryData(['messages', selectedConversation.id], context.previousMessages);
+      }
     },
   });
 
@@ -154,14 +274,27 @@ export function ChatSidebarContent({ initialConversationId }: ChatSidebarContent
 
     const handleNewMessage = (message: Message) => {
       if (message.conversationId === selectedConversation.id) {
+        // Update cache with new message (socket event for real-time updates)
         queryClient.setQueryData(
           ['messages', selectedConversation.id],
           (old: any) => {
             if (!old) return old;
             const allMessages = old.pages.flat();
-            if (allMessages.some((m: Message) => m.id === message.id)) {
+            // Check if message already exists (avoid duplicates)
+            if (allMessages.some((m: Message) => m.id === message.id || (m.id.startsWith('temp-') && m.content === message.content && m.senderId === message.senderId))) {
+              // Replace temp message with real one if it exists
+              const hasTemp = allMessages.some((m: Message) => m.id.startsWith('temp-') && m.content === message.content && m.senderId === message.senderId);
+              if (hasTemp) {
+                const newPages = old.pages.map((page: Message[]) => 
+                  page.map((m: Message) => 
+                    m.id.startsWith('temp-') && m.content === message.content && m.senderId === message.senderId ? message : m
+                  )
+                );
+                return { ...old, pages: newPages };
+              }
               return old;
             }
+            // Add new message to the last page
             const lastPage = old.pages[old.pages.length - 1];
             return {
               ...old,
@@ -172,9 +305,22 @@ export function ChatSidebarContent({ initialConversationId }: ChatSidebarContent
             };
           }
         );
-        // Refetch to ensure sync with backend (standard enterprise approach)
-        refetchMessages();
-        queryClient.invalidateQueries({ queryKey: ['conversations'] });
+        // Update conversations list
+        queryClient.setQueryData(['conversations'], (old: any) => {
+          if (!old?.conversations) return old;
+          return {
+            ...old,
+            conversations: old.conversations.map((conv: Conversation) =>
+              conv.id === selectedConversation.id
+                ? {
+                    ...conv,
+                    lastMessage: message.content,
+                    lastMessageAt: message.createdAt,
+                  }
+                : conv
+            ),
+          };
+        });
         markAsReadMutation.mutate();
       } else {
         // Message in another conversation - show notification
