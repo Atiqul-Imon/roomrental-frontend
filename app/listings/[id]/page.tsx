@@ -165,7 +165,7 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
   return (
     <>
       <Header />
-      <main className="min-h-screen bg-gradient-comfort pb-20 md:pb-8">
+      <main className="min-h-screen bg-gradient-comfort pb-32 md:pb-8">
         <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-6 md:py-8 fade-in">
           {/* Image Gallery - Enhanced with better shadow */}
           <div className="mb-6 sm:mb-8 md:mb-10 bg-white rounded-2xl overflow-hidden shadow-xl border border-gray-100">
@@ -497,9 +497,9 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
             </div>
           </div>
 
-          {/* Mobile Contact Button - Sticky at bottom */}
+          {/* Mobile Contact Button - Sticky at bottom, above BottomNav */}
           {!isOwner && (
-            <div className="fixed bottom-0 left-0 right-0 md:hidden bg-white border-t-2 border-accent-200 shadow-2xl p-4 z-50">
+            <div className="fixed bottom-16 left-0 right-0 md:hidden bg-white border-t-2 border-accent-200 shadow-2xl p-4 z-40">
               <ContactButton
                 landlordId={data.landlordId._id}
                 landlordRole={data.landlordId.role}
