@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useMutation } from '@tanstack/react-query';
 import { useAuth } from '@/lib/auth-context';
+import { useChat } from '@/lib/chat-context';
 import { chatApi } from '@/lib/chat-api';
 import { MessageSquare, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
@@ -23,6 +24,7 @@ export function ContactButton({
 }: ContactButtonProps) {
   const router = useRouter();
   const { user, isAuthenticated } = useAuth();
+  const { openChat } = useChat();
   const [isContacting, setIsContacting] = useState(false);
 
   // Determine who to contact - if landlord role is admin/staff/super_admin, contact them as admin
@@ -48,7 +50,15 @@ export function ContactButton({
     },
     onSuccess: (conversation) => {
       if (conversation) {
-        router.push(`/chat?conversationId=${conversation.id}`);
+        // Check if desktop or mobile
+        if (typeof window !== 'undefined' && window.innerWidth >= 768) {
+          // Desktop: Open chat sidebar (Facebook-style)
+          openChat(conversation.id);
+        } else {
+          // Mobile: Navigate to messages page
+          router.push(`/messages?conversationId=${conversation.id}&tab=chat`);
+        }
+        setIsContacting(false);
       }
     },
     onError: (error: any) => {
@@ -76,7 +86,7 @@ export function ContactButton({
     <Button
       onClick={handleContact}
       disabled={contactMutation.isPending || isContacting}
-      className="w-full px-6 py-3.5 bg-gradient-to-r from-emerald-600 to-emerald-500 text-white rounded-xl font-semibold hover:from-emerald-700 hover:to-emerald-600 transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+      className="w-full px-6 py-3.5 bg-gradient-primary text-white rounded-xl font-semibold hover:opacity-90 transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
       aria-label={buttonText}
     >
       {contactMutation.isPending || isContacting ? (

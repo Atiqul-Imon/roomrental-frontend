@@ -121,7 +121,7 @@ export function MessageList({
   if (isLoading) {
     return (
       <div className="flex-1 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-500"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-accent-500"></div>
       </div>
     );
   }
@@ -130,8 +130,8 @@ export function MessageList({
     return (
       <div className="flex-1 flex items-center justify-center p-4">
         <div className="text-center">
-          <p className="text-gray-500 text-sm">No messages yet</p>
-          <p className="text-gray-400 text-xs mt-2">Start the conversation!</p>
+          <p className="text-grey-700 text-sm font-medium">No messages yet</p>
+          <p className="text-grey-500 text-xs mt-2">Start the conversation!</p>
         </div>
       </div>
     );
@@ -140,12 +140,12 @@ export function MessageList({
   const messageGroups = groupMessagesByDate(messages);
 
   return (
-    <div ref={messagesContainerRef} className="flex-1 overflow-y-auto p-4 space-y-4">
+    <div ref={messagesContainerRef} className="flex-1 overflow-y-auto p-4 space-y-4 bg-grey-50">
       {messageGroups.map((group, groupIndex) => (
         <div key={group.date}>
           {/* Date Separator */}
           <div className="flex items-center justify-center my-6">
-            <div className="bg-emerald-100 text-emerald-700 text-xs font-semibold px-4 py-1.5 rounded-full border border-emerald-200">
+            <div className="bg-white text-grey-700 text-xs font-medium px-4 py-1.5 rounded-full border border-grey-200 shadow-sm">
               {formatGroupDate(group.date)}
             </div>
           </div>
@@ -179,7 +179,7 @@ export function MessageList({
                             className="rounded-full object-cover"
                           />
                         ) : (
-                          <div className="w-8 h-8 rounded-full bg-primary-100 text-primary-600 flex items-center justify-center text-xs font-semibold">
+                          <div className="w-8 h-8 rounded-full bg-gradient-primary text-white flex items-center justify-center text-xs font-semibold">
                             {message.sender.name.charAt(0).toUpperCase()}
                           </div>
                         )
@@ -193,7 +193,7 @@ export function MessageList({
                     className={`flex flex-col max-w-[70%] ${isOwnMessage ? 'items-end' : 'items-start'}`}
                   >
                     {showAvatar && !isOwnMessage && (
-                      <span className="text-xs text-gray-600 mb-1 px-2">
+                      <span className="text-xs text-grey-700 font-medium mb-1 px-2">
                         {message.sender.name}
                       </span>
                     )}
@@ -201,8 +201,8 @@ export function MessageList({
                     <div
                       className={`rounded-2xl px-4 py-2.5 shadow-sm ${
                         isOwnMessage
-                          ? 'bg-gradient-to-r from-emerald-600 to-emerald-500 text-white'
-                          : 'bg-white border border-gray-200 text-gray-900'
+                          ? 'bg-gradient-primary text-white'
+                          : 'bg-white border border-grey-200 text-grey-900'
                       }`}
                     >
                       {/* Message Content */}
@@ -274,10 +274,10 @@ export function MessageList({
                         </p>
                       )}
 
-                      <div className="flex items-center justify-end gap-1 mt-1">
+                      <div className="flex items-center justify-end gap-1 mt-1.5">
                         <span
                           className={`text-xs ${
-                            isOwnMessage ? 'text-white/80' : 'text-gray-500'
+                            isOwnMessage ? 'text-white/90' : 'text-grey-500'
                           }`}
                         >
                           {formatMessageTime(message.createdAt)}
@@ -322,7 +322,7 @@ export function MessageList({
       {/* Loading more messages indicator */}
       {isFetchingMore && (
         <div className="flex justify-center py-4">
-          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary-500"></div>
+          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-accent-500"></div>
         </div>
       )}
 
@@ -331,7 +331,7 @@ export function MessageList({
         <div className="flex justify-center py-4">
           <button
             onClick={onLoadMore}
-            className="px-4 py-2 text-sm text-primary-600 hover:text-primary-700 hover:bg-primary-50 rounded-lg transition-colors"
+            className="px-4 py-2 text-sm text-accent-600 hover:text-accent-700 hover:bg-accent-50 rounded-lg transition-colors font-medium"
           >
             Load older messages
           </button>

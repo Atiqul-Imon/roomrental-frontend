@@ -5,14 +5,37 @@ import Link from 'next/link';
 import { useAuth } from '@/lib/auth-context';
 import { useRouter, usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/Button';
-import { Home, Search, Plus, LayoutDashboard, User, LogOut, Menu, X } from 'lucide-react';
+import { Home, Search, Plus, LayoutDashboard, User, LogOut, Menu, X, MessageCircle } from 'lucide-react';
 import { SavedSearchesDropdown } from '@/components/search/SavedSearchesDropdown';
+import { useChat } from '@/lib/chat-context';
+import { NotificationDropdown } from '@/components/notifications/NotificationDropdown';
+import { useQuery } from '@tanstack/react-query';
+import { chatApi } from '@/lib/chat-api';
 
 export function Header() {
   const { user, isAuthenticated, logout } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { openChat } = useChat();
+
+  // Fetch unread count for chat
+  const { data: unreadCount = 0 } = useQuery({
+    queryKey: ['chat-unread-count'],
+    queryFn: () => chatApi.getUnreadCount(),
+    enabled: isAuthenticated,
+    refetchInterval: 30000, // Refetch every 30 seconds
+  });
+
+  const handleChatClick = () => {
+    if (typeof window !== 'undefined' && window.innerWidth < 768) {
+      // Mobile: navigate to messages page
+      router.push('/messages');
+    } else {
+      // Desktop: open chat sidebar
+      openChat();
+    }
+  };
 
   const handleLogout = () => {
     logout();
@@ -54,6 +77,23 @@ export function Header() {
             {isAuthenticated && (
               <>
                 <SavedSearchesDropdown />
+                <NotificationDropdown />
+                <button
+                  onClick={handleChatClick}
+                  className={`relative px-3 py-2 rounded-lg text-sm font-medium color-transition ${
+                    pathname === '/messages' || pathname === '/chat'
+                      ? 'bg-accent-50 text-accent-600 shadow-soft'
+                      : 'text-grey-700 hover:text-accent-600 hover:bg-accent-50/50'
+                  }`}
+                  aria-label="Open messages"
+                >
+                  <MessageCircle className="w-4 h-4" />
+                  {unreadCount > 0 && (
+                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">
+                      {unreadCount > 9 ? '9+' : unreadCount}
+                    </span>
+                  )}
+                </button>
               </>
             )}
 
@@ -199,6 +239,27 @@ export function Header() {
                       </Link>
                     </>
                   )}
+                  <button
+                    onClick={() => {
+                      router.push('/messages');
+                      setIsMobileMenuOpen(false);
+                    }}
+                    className={`relative px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 text-left w-full ${
+                      pathname === '/messages' || pathname === '/chat'
+                        ? 'bg-accent-50 text-accent-600 shadow-soft'
+                        : 'text-grey-700 hover:text-accent-600 hover:bg-accent-50/50'
+                    }`}
+                  >
+                    <span className="flex items-center gap-2">
+                      <MessageCircle className="w-4 h-4" />
+                      Messages
+                      {unreadCount > 0 && (
+                        <span className="ml-auto bg-red-500 text-white text-xs rounded-full px-2 py-0.5 font-bold">
+                          {unreadCount > 9 ? '9+' : unreadCount}
+                        </span>
+                      )}
+                    </span>
+                  </button>
                   <Link
                     href={`/profile/${user?.id}`}
                     onClick={() => setIsMobileMenuOpen(false)}

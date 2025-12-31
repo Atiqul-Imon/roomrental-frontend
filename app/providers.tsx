@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { AuthProvider } from '@/lib/auth-context';
 import { SocketProvider } from '@/lib/socket-context';
 import { ToastProvider } from '@/components/ui/ToastProvider';
+import { ChatProvider } from '@/lib/chat-context';
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(
@@ -28,7 +29,9 @@ export function Providers({ children }: { children: React.ReactNode }) {
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <SocketProvider>
-          <ToastProvider>{children}</ToastProvider>
+          <ChatProvider>
+            <ToastProvider>{children}</ToastProvider>
+          </ChatProvider>
         </SocketProvider>
       </AuthProvider>
     </QueryClientProvider>

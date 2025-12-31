@@ -7,8 +7,10 @@ import { Modal } from '@/components/ui/Modal';
 import { Button } from '@/components/ui/Button';
 import { Listing } from '@/types';
 import { useAuth } from '@/lib/auth-context';
+import { useChat } from '@/lib/chat-context';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/lib/api';
+import { chatApi } from '@/lib/chat-api';
 import { imageKitPresets } from '@/lib/imagekit';
 import { highlightSearchTermsReact } from '@/lib/search-highlight';
 
@@ -22,11 +24,13 @@ export function QuickViewModal({ listing, isOpen, onClose }: QuickViewModalProps
   const router = useRouter();
   const searchParams = useSearchParams();
   const searchQuery = searchParams.get('search') || '';
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
+  const { openChat } = useChat();
   const queryClient = useQueryClient();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isFavorite, setIsFavorite] = useState(false);
   const [isNavigating, setIsNavigating] = useState(false);
+  const [isContacting, setIsContacting] = useState(false);
 
   // Check if listing is favorited
   useEffect(() => {
@@ -70,6 +74,48 @@ export function QuickViewModal({ listing, isOpen, onClose }: QuickViewModalProps
     },
   });
 
+  const contactMutation = useMutation({
+    mutationFn: async () => {
+      if (!listing) {
+        throw new Error('Listing not available');
+      }
+
+      if (!isAuthenticated || !user) {
+        router.push(`/auth/login?redirect=/listings/${listing._id}`);
+        return null;
+      }
+
+      const landlordId = listing.landlordId._id;
+
+      // Don't allow contacting yourself
+      if (user.id === landlordId) {
+        throw new Error("You can't contact yourself");
+      }
+
+      // Create or get conversation
+      const conversation = await chatApi.createOrGetConversation(landlordId, listing._id);
+      return conversation;
+    },
+    onSuccess: (conversation) => {
+      if (conversation) {
+        // Check if desktop or mobile
+        if (typeof window !== 'undefined' && window.innerWidth >= 768) {
+          // Desktop: Open chat sidebar (Facebook-style)
+          openChat(conversation.id);
+        } else {
+          // Mobile: Navigate to messages page
+          router.push(`/messages?conversationId=${conversation.id}&tab=chat`);
+        }
+        onClose();
+        setIsContacting(false);
+      }
+    },
+    onError: (error: any) => {
+      alert(error.response?.data?.error || error.message || 'Failed to start conversation');
+      setIsContacting(false);
+    },
+  });
+
   if (!listing) return null;
 
   const currentImage = listing.images?.[currentImageIndex] || listing.images?.[0] || '/placeholder-listing.jpg';
@@ -92,8 +138,13 @@ export function QuickViewModal({ listing, isOpen, onClose }: QuickViewModalProps
   };
 
   const handleContactLandlord = () => {
-    router.push(`/chat?listingId=${listing._id}`);
-    onClose();
+    if (!isAuthenticated) {
+      router.push(`/auth/login?redirect=/listings/${listing._id}`);
+      return;
+    }
+
+    setIsContacting(true);
+    contactMutation.mutate();
   };
 
   const nextImage = () => {
@@ -337,8 +388,13 @@ export function QuickViewModal({ listing, isOpen, onClose }: QuickViewModalProps
                   variant="outline"
                   className="px-3 sm:px-4 flex-shrink-0 min-h-[44px]"
                   aria-label="Contact landlord"
+                  disabled={contactMutation.isPending || isContacting}
                 >
-                  <MessageSquare className="w-4 h-4 sm:w-5 sm:h-5" />
+                  {contactMutation.isPending || isContacting ? (
+                    <Loader2 className="w-4 h-4 sm:w-5 sm:h-5 animate-spin" />
+                  ) : (
+                    <MessageSquare className="w-4 h-4 sm:w-5 sm:h-5" />
+                  )}
                 </Button>
               </div>
             )}

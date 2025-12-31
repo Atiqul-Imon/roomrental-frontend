@@ -247,15 +247,15 @@ export function MessageInput({
     attachments.every((att) => att.url && !att.url.startsWith('blob:'));
 
   return (
-    <div className="border-t border-accent-200 bg-white shadow-lg">
+    <div className="border-t border-grey-200 bg-white">
       {/* Attachment Previews */}
       {attachments.length > 0 && (
-        <div className="p-2 border-b border-gray-200">
+        <div className="p-3 border-b border-grey-200 bg-grey-50">
           <div className="flex gap-2 overflow-x-auto">
             {attachments.map((attachment, index) => (
               <div
                 key={index}
-                className="relative flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border border-gray-300 bg-gray-100"
+                className="relative flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border border-grey-300 bg-white shadow-sm"
               >
                 {attachment.type === 'image' ? (
                   attachment.url ? (
@@ -267,14 +267,14 @@ export function MessageInput({
                       className="object-cover w-full h-full"
                     />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center">
+                    <div className="w-full h-full flex items-center justify-center bg-grey-100">
                       <Loader2 className="w-5 h-5 animate-spin text-accent-500" />
                     </div>
                   )
                 ) : (
-                  <div className="w-full h-full flex flex-col items-center justify-center p-2">
-                    <Paperclip className="w-6 h-6 text-gray-600" />
-                    <span className="text-xs text-gray-600 truncate w-full text-center">
+                  <div className="w-full h-full flex flex-col items-center justify-center p-2 bg-grey-50">
+                    <Paperclip className="w-6 h-6 text-grey-600" />
+                    <span className="text-xs text-grey-700 truncate w-full text-center font-medium">
                       {attachment.name}
                     </span>
                   </div>
@@ -315,7 +315,7 @@ export function MessageInput({
             <button
               type="button"
               onClick={() => imageInputRef.current?.click()}
-              className="p-2 text-gray-500 hover:text-accent-600 hover:bg-accent-50 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="p-2 text-grey-600 hover:text-accent-600 hover:bg-accent-50 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               title="Upload image"
               disabled={disabled || isUploading}
             >
@@ -333,7 +333,7 @@ export function MessageInput({
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
-              className="p-2 text-gray-500 hover:text-accent-600 hover:bg-accent-50 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="p-2 text-grey-600 hover:text-accent-600 hover:bg-accent-50 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               title="Upload file"
               disabled={disabled || isUploading}
             >
@@ -351,7 +351,7 @@ export function MessageInput({
               placeholder={placeholder}
               disabled={disabled || isUploading}
               rows={1}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-accent-400 resize-none max-h-32 overflow-y-auto disabled:bg-gray-100 disabled:cursor-not-allowed"
+              className="w-full px-4 py-2.5 border border-grey-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-accent-400 resize-none max-h-32 overflow-y-auto disabled:bg-grey-100 disabled:cursor-not-allowed bg-white text-grey-900 placeholder:text-grey-500"
             />
           </div>
 
@@ -359,14 +359,14 @@ export function MessageInput({
           <Button
             onClick={handleSend}
             disabled={!canSend || disabled}
-            className="px-5 py-2.5 bg-gradient-primary text-white rounded-xl hover:opacity-90 disabled:from-gray-300 disabled:to-gray-300 disabled:cursor-not-allowed transition-all duration-200 shadow-md hover:shadow-lg hover:scale-105 disabled:hover:scale-100 flex items-center gap-2 font-semibold"
+            className="px-5 py-2.5 bg-gradient-primary text-white rounded-lg hover:opacity-90 disabled:from-grey-300 disabled:to-grey-300 disabled:cursor-not-allowed transition-all duration-200 shadow-md hover:shadow-lg hover:scale-105 disabled:hover:scale-100 flex items-center gap-2 font-semibold"
           >
             {isUploading ? (
               <Loader2 className="w-4 h-4 animate-spin" />
             ) : (
               <Send className="w-4 h-4" />
             )}
-            Send
+            <span className="hidden sm:inline">Send</span>
           </Button>
         </div>
       </div>

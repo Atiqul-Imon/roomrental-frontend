@@ -91,13 +91,31 @@ export function ChatWindow({ initialConversationId }: ChatWindowProps) {
 
   // Set initial conversation
   useEffect(() => {
-    if (initialConversationId && conversationsData?.conversations) {
+    if (initialConversationId) {
+      if (conversationsData?.conversations) {
+        const conv = conversationsData.conversations.find((c) => c.id === initialConversationId);
+        if (conv) {
+          setSelectedConversation(conv);
+        } else {
+          // Conversation not found in list, refetch conversations
+          refetchConversations();
+        }
+      } else if (!conversationsLoading) {
+        // If conversations are not loading and data is not available, refetch
+        refetchConversations();
+      }
+    }
+  }, [initialConversationId, conversationsData, conversationsLoading, refetchConversations]);
+
+  // Try to set conversation again after refetch
+  useEffect(() => {
+    if (initialConversationId && conversationsData?.conversations && !selectedConversation) {
       const conv = conversationsData.conversations.find((c) => c.id === initialConversationId);
       if (conv) {
         setSelectedConversation(conv);
       }
     }
-  }, [initialConversationId, conversationsData]);
+  }, [initialConversationId, conversationsData, selectedConversation]);
 
   // Join conversation room when selected
   useEffect(() => {
@@ -197,14 +215,11 @@ export function ChatWindow({ initialConversationId }: ChatWindowProps) {
   const conversations = conversationsData?.conversations || [];
 
   return (
-    <div className="flex h-[calc(100vh-4rem)] bg-gradient-to-br from-accent-50/30 to-coral-50/20">
+    <div className="flex h-full bg-white overflow-hidden">
       {/* Conversations Sidebar */}
-      <div className="w-full md:w-80 border-r border-accent-200 bg-white shadow-lg flex flex-col">
-        <div className="p-4 border-b border-accent-200 bg-gradient-to-r from-accent-50 to-white">
-          <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
-            <span className="text-2xl">💬</span>
-            Messages
-          </h2>
+      <div className="w-full md:w-80 border-r border-grey-200 bg-white flex flex-col">
+        <div className="p-4 border-b border-grey-200 bg-white">
+          <h2 className="text-xl font-bold text-grey-900">Messages</h2>
         </div>
         <ConversationList
           conversations={conversations}
@@ -216,50 +231,50 @@ export function ChatWindow({ initialConversationId }: ChatWindowProps) {
       </div>
 
       {/* Chat Area */}
-      <div className="flex-1 flex flex-col bg-white shadow-inner">
+      <div className="flex-1 flex flex-col bg-grey-50">
         {selectedConversation ? (
           <>
             {/* Chat Header */}
-            <div className="p-4 border-b border-accent-200 bg-gradient-to-r from-white to-accent-50/50 shadow-sm">
+            <div className="p-4 border-b border-grey-200 bg-white">
               <div className="flex items-center gap-3">
                 <button
                   onClick={() => setSelectedConversation(null)}
-                  className="md:hidden p-2 hover:bg-gray-100 rounded-lg"
+                  className="md:hidden p-2 hover:bg-grey-100 rounded-lg transition-colors"
+                  aria-label="Back to conversations"
                 >
-                  <ArrowLeft className="w-5 h-5" />
+                  <ArrowLeft className="w-5 h-5 text-grey-700" />
                 </button>
                 {(() => {
                   const otherParticipant = getOtherParticipant(selectedConversation);
                   if (!otherParticipant) return null;
                   return (
                     <>
-                      {otherParticipant.profileImage ? (
-                        <Image
-                          src={otherParticipant.profileImage}
-                          alt={otherParticipant.name}
-                          width={40}
-                          height={40}
-                          className="rounded-full object-cover"
-                        />
-                      ) : (
-                        <div className="w-10 h-10 rounded-full bg-accent-100 text-accent-600 flex items-center justify-center font-semibold">
-                          {otherParticipant.name.charAt(0).toUpperCase()}
-                        </div>
-                      )}
-                      <div className="flex-1">
+                      <div className="relative">
+                        {otherParticipant.profileImage ? (
+                          <Image
+                            src={otherParticipant.profileImage}
+                            alt={otherParticipant.name}
+                            width={40}
+                            height={40}
+                            className="rounded-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-10 h-10 rounded-full bg-gradient-primary text-white flex items-center justify-center font-semibold text-sm">
+                            {otherParticipant.name.charAt(0).toUpperCase()}
+                          </div>
+                        )}
+                        {isUserOnline(otherParticipant.id) && (
+                          <span className="absolute bottom-0 right-0 w-3 h-3 bg-accent-500 border-2 border-white rounded-full"></span>
+                        )}
+                      </div>
+                      <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2">
-                          <h3 className="font-semibold text-gray-900">{otherParticipant.name}</h3>
-                          {isUserOnline(otherParticipant.id) && (
-                            <span className="relative flex h-2 w-2">
-                              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent-400 opacity-75"></span>
-                              <span className="relative inline-flex rounded-full h-2 w-2 bg-accent-500"></span>
-                            </span>
-                          )}
+                          <h3 className="font-semibold text-grey-900 truncate">{otherParticipant.name}</h3>
                         </div>
                         {selectedConversation.listing && (
                           <Link
                             href={`/listings/${selectedConversation.listing.id}`}
-                            className="text-sm text-gray-500 hover:text-accent-600"
+                            className="text-sm text-grey-600 hover:text-accent-600 truncate block"
                           >
                             {selectedConversation.listing.title}
                           </Link>
@@ -283,8 +298,10 @@ export function ChatWindow({ initialConversationId }: ChatWindowProps) {
 
             {/* Typing Indicator */}
             {typingUsers.size > 0 && (
-              <div className="px-4 py-2 text-sm text-gray-500 italic">
-                {Array.from(typingUsers).join(', ')} typing...
+              <div className="px-4 py-2 bg-white border-t border-grey-200">
+                <p className="text-sm text-grey-600 italic">
+                  {Array.from(typingUsers).join(', ')} typing...
+                </p>
               </div>
             )}
 
@@ -297,13 +314,13 @@ export function ChatWindow({ initialConversationId }: ChatWindowProps) {
             />
           </>
         ) : (
-          <div className="flex-1 flex items-center justify-center bg-gradient-to-br from-white to-accent-50/30">
-            <div className="text-center p-8">
-              <div className="w-24 h-24 bg-gradient-to-br from-accent-100 to-primary-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                <User className="w-12 h-12 text-accent-600" />
+          <div className="flex-1 flex items-center justify-center bg-grey-50">
+            <div className="text-center p-8 max-w-md">
+              <div className="w-20 h-20 bg-gradient-primary rounded-full flex items-center justify-center mx-auto mb-4">
+                <User className="w-10 h-10 text-white" />
               </div>
-              <p className="text-gray-700 text-xl font-bold mb-2">Select a conversation</p>
-              <p className="text-gray-500 text-sm">
+              <p className="text-grey-900 text-lg font-semibold mb-2">Select a conversation</p>
+              <p className="text-grey-600 text-sm">
                 Choose a conversation from the list to start messaging
               </p>
             </div>

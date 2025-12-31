@@ -4,6 +4,7 @@ import './globals.css';
 import { Providers } from './providers';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { BottomNav } from '@/components/layout/BottomNav';
+import { ChatWidgetWrapper } from '@/components/chat/ChatWidgetWrapper';
 
 // Body font - Inter (for body text, UI elements)
 const inter = Inter({ 
@@ -93,6 +94,7 @@ export default function RootLayout({
             <div className="fade-in">
               {children}
             </div>
+            <ChatWidgetWrapper />
             <BottomNav />
           </Providers>
         </ErrorBoundary>
