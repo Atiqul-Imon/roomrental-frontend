@@ -32,7 +32,7 @@ export function ChatSidebarContent({ initialConversationId }: ChatSidebarContent
   const [typingUsers, setTypingUsers] = useState<Set<string>>(new Set());
 
   // Fetch conversations
-  const { data: conversationsData, isLoading: conversationsLoading } = useQuery({
+  const { data: conversationsData, isLoading: conversationsLoading, refetch: refetchConversations } = useQuery({
     queryKey: ['conversations'],
     queryFn: () => chatApi.getConversations(1, 50),
     enabled: !!user,
@@ -40,16 +40,34 @@ export function ChatSidebarContent({ initialConversationId }: ChatSidebarContent
 
   // Set conversation when data is loaded
   useEffect(() => {
-    if (initialConversationId && conversationsData?.conversations) {
-      const conv = conversationsData.conversations.find((c) => c.id === initialConversationId);
-      if (conv) {
-        setSelectedConversation(conv);
+    if (initialConversationId) {
+      if (conversationsData?.conversations) {
+        const conv = conversationsData.conversations.find((c) => c.id === initialConversationId);
+        if (conv) {
+          setSelectedConversation(conv);
+        } else {
+          // Conversation not found in list, refetch conversations
+          refetchConversations();
+        }
+      } else if (!conversationsLoading) {
+        // If conversations are not loading and data is not available, refetch
+        refetchConversations();
       }
     } else if (!initialConversationId) {
       // If no conversation ID provided, clear selection
       setSelectedConversation(null);
     }
-  }, [initialConversationId, conversationsData]);
+  }, [initialConversationId, conversationsData, conversationsLoading, refetchConversations]);
+
+  // Try to set conversation again after refetch
+  useEffect(() => {
+    if (initialConversationId && conversationsData?.conversations && !selectedConversation) {
+      const conv = conversationsData.conversations.find((c) => c.id === initialConversationId);
+      if (conv) {
+        setSelectedConversation(conv);
+      }
+    }
+  }, [initialConversationId, conversationsData, selectedConversation]);
 
   const handleSelectConversation = (conversation: Conversation) => {
     setSelectedConversation(conversation);
@@ -81,7 +99,12 @@ export function ChatSidebarContent({ initialConversationId }: ChatSidebarContent
     },
     enabled: !!selectedConversation?.id,
     initialPageParam: 1,
-    staleTime: 0, // Always consider messages stale to ensure fresh data on reload
+    // Standard enterprise chat cache settings:
+    // - Cache messages for performance (default gcTime: 5 minutes)
+    // - Refetch on mount to ensure fresh data
+    // - Socket events handle real-time updates
+    refetchOnMount: true,
+    refetchOnWindowFocus: false,
   });
 
   const messages = messagesData?.pages.flat() || [];
@@ -95,38 +118,12 @@ export function ChatSidebarContent({ initialConversationId }: ChatSidebarContent
         data.messageType || 'text',
         data.attachments || []
       ),
-    onSuccess: (message) => {
-      // Optimistically add the message to cache immediately
-      if (selectedConversation?.id) {
-        queryClient.setQueryData(
-          ['messages', selectedConversation.id],
-          (old: any) => {
-            if (!old) {
-              // If no cache exists, create initial structure
-              return {
-                pages: [[message]],
-                pageParams: [1],
-              };
-            }
-            // Check if message already exists (from socket event)
-            const allMessages = old.pages.flat();
-            if (allMessages.some((m: Message) => m.id === message.id)) {
-              return old;
-            }
-            // Add message to the last page
-            const lastPage = old.pages[old.pages.length - 1];
-            return {
-              ...old,
-              pages: [
-                ...old.pages.slice(0, -1),
-                [...lastPage, message],
-              ],
-            };
-          }
-        );
-      }
-      // Invalidate conversations to update the last message preview
+    onSuccess: () => {
+      // Standard enterprise approach: invalidate and refetch to ensure sync
+      // Socket event will also update cache for immediate UI feedback
+      queryClient.invalidateQueries({ queryKey: ['messages', selectedConversation?.id] });
       queryClient.invalidateQueries({ queryKey: ['conversations'] });
+      refetchMessages();
     },
   });
 
@@ -175,7 +172,8 @@ export function ChatSidebarContent({ initialConversationId }: ChatSidebarContent
             };
           }
         );
-        // Refetch conversations to update last message
+        // Refetch to ensure sync with backend (standard enterprise approach)
+        refetchMessages();
         queryClient.invalidateQueries({ queryKey: ['conversations'] });
         markAsReadMutation.mutate();
       } else {
