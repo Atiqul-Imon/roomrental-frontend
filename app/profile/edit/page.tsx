@@ -110,13 +110,7 @@ export default function EditProfilePage() {
       const formDataToSend = new FormData();
       formDataToSend.append('image', file);
 
-      // Log file details for debugging
-      console.log('Uploading file:', {
-        name: file.name,
-        size: file.size,
-        type: file.type,
-        sizeKB: (file.size / 1024).toFixed(2) + 'KB',
-      });
+      // File upload logging removed for production optimization
 
       // Don't set Content-Type header - let browser set it with boundary
       const response = await api.post('/upload/image', formDataToSend, {

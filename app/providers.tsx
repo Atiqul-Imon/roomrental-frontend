@@ -13,10 +13,12 @@ export function Providers({ children }: { children: React.ReactNode }) {
       new QueryClient({
         defaultOptions: {
           queries: {
-            staleTime: 60 * 1000, // 1 minute
+            staleTime: 2 * 60 * 1000, // 2 minutes (increased from 1 minute)
+            gcTime: 10 * 60 * 1000, // 10 minutes (garbage collection)
             refetchOnWindowFocus: false,
+            refetchOnMount: false, // Only refetch if stale (changed from true)
             retry: 1,
-            refetchOnMount: true,
+            structuralSharing: true, // Enable request deduplication
           },
           mutations: {
             retry: 0,
