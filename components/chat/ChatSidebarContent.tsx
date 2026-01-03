@@ -80,6 +80,7 @@ export function ChatSidebarContent({ initialConversationId }: ChatSidebarContent
   };
 
   // Fetch messages for selected conversation with infinite scroll
+  // NO CACHING for messages - always fetch fresh from server
   const {
     data: messagesData,
     isLoading: messagesLoading,
@@ -99,20 +100,16 @@ export function ChatSidebarContent({ initialConversationId }: ChatSidebarContent
     },
     enabled: !!selectedConversation?.id,
     initialPageParam: 1,
-    // Standard enterprise chat cache settings:
-    // - Cache messages for 2 minutes (messages are relatively static once saved)
-    // - Keep in cache for 10 minutes (gcTime) for better performance
-    // - Always refetch on mount to ensure we have latest from backend
-    // - Socket events handle real-time updates
-    staleTime: 2 * 60 * 1000, // 2 minutes - messages don't change often once saved
-    gcTime: 10 * 60 * 1000, // 10 minutes - keep in cache longer
-    refetchOnMount: true, // Always refetch on mount to ensure we have latest data
-    refetchOnWindowFocus: false, // Don't refetch on window focus (socket handles updates)
+    // No caching for messages - always fetch fresh
+    staleTime: 0, // Always consider data stale
+    gcTime: 0, // Don't cache messages (metadata is cached separately)
+    refetchOnMount: true, // Always refetch on mount
+    refetchOnWindowFocus: false, // Socket handles real-time updates
   });
 
   const messages = messagesData?.pages.flat() || [];
 
-  // Send message mutation with optimistic updates
+  // Send message mutation - NO optimistic updates, just refetch messages
   const sendMessageMutation = useMutation({
     mutationFn: (data: { content: string; messageType?: string; attachments?: string[] }) =>
       chatApi.sendMessage(
@@ -121,108 +118,13 @@ export function ChatSidebarContent({ initialConversationId }: ChatSidebarContent
         data.messageType || 'text',
         data.attachments || []
       ),
-    onMutate: async (variables) => {
-      if (!selectedConversation || !user) return;
-
-      // Cancel outgoing refetches to avoid overwriting optimistic update
-      await queryClient.cancelQueries({ queryKey: ['messages', selectedConversation.id] });
-
-      // Snapshot previous value
-      const previousMessages = queryClient.getQueryData(['messages', selectedConversation.id]);
-
-      // Optimistically update cache with temporary message
-      const optimisticMessage: Message = {
-        id: `temp-${Date.now()}`,
-        conversationId: selectedConversation.id,
-        senderId: user.id,
-        content: variables.content,
-        messageType: (variables.messageType || 'text') as 'text' | 'image' | 'file' | 'system',
-        attachments: variables.attachments || [],
-        createdAt: new Date().toISOString(),
-        sender: {
-          id: user.id,
-          name: user.name,
-          profileImage: user.profileImage,
-        },
-      };
-
-      queryClient.setQueryData(['messages', selectedConversation.id], (old: any) => {
-        if (!old) return old;
-        const lastPage = old.pages[old.pages.length - 1];
-        return {
-          ...old,
-          pages: [
-            ...old.pages.slice(0, -1),
-            [...lastPage, optimisticMessage],
-          ],
-        };
-      });
-
-      // Update conversations list optimistically
-      queryClient.setQueryData(['conversations'], (old: any) => {
-        if (!old?.conversations) return old;
-        return {
-          ...old,
-          conversations: old.conversations.map((conv: Conversation) =>
-            conv.id === selectedConversation.id
-              ? {
-                  ...conv,
-                  lastMessage: optimisticMessage.content,
-                  lastMessageAt: optimisticMessage.createdAt,
-                }
-              : conv
-          ),
-        };
-      });
-
-      return { previousMessages };
-    },
     onSuccess: (data: Message) => {
       if (!selectedConversation) return;
 
-      // Replace optimistic message with real message from server
-      queryClient.setQueryData(['messages', selectedConversation.id], (old: any) => {
-        if (!old) return old;
-        const allMessages = old.pages.flat();
-        
-        // Check if message already exists (socket event might have already added it)
-        if (allMessages.some((m: Message) => m.id === data.id)) {
-          return old; // Message already in cache
-        }
-        
-        // Find and replace temp message with real one
-        let foundTemp = false;
-        const newPages = old.pages.map((page: Message[]) => {
-          const tempIndex = page.findIndex((m: Message) => m.id.startsWith('temp-'));
-          if (tempIndex !== -1 && !foundTemp) {
-            foundTemp = true;
-            return page.map((m: Message, idx: number) => 
-              idx === tempIndex ? data : m
-            );
-          }
-          return page;
-        });
-        
-        if (foundTemp) {
-          return { ...old, pages: newPages };
-        }
-        
-        // If temp message not found, add real message to last page (fallback)
-        const lastPage = old.pages[old.pages.length - 1];
-        if (!lastPage.some((m: Message) => m.id === data.id)) {
-          return {
-            ...old,
-            pages: [
-              ...old.pages.slice(0, -1),
-              [...lastPage, data],
-            ],
-          };
-        }
-        
-        return old;
-      });
+      // Refetch messages to get fresh data (no caching)
+      refetchMessages();
 
-      // Update conversations list with real message
+      // Update conversations metadata (cached) with last message info
       queryClient.setQueryData(['conversations'], (old: any) => {
         if (!old?.conversations) return old;
         return {
@@ -239,22 +141,8 @@ export function ChatSidebarContent({ initialConversationId }: ChatSidebarContent
         };
       });
 
-      // Invalidate conversations to refresh unread counts, etc.
-      queryClient.invalidateQueries({ queryKey: ['conversations'] });
-
-      // Background refetch after a short delay to ensure backend has saved the message
-      // This ensures persistence after reload without causing UI flashing
-      setTimeout(() => {
-        refetchMessages().catch(() => {
-          // Silently fail - message is already in cache from optimistic update
-        });
-      }, 500);
-    },
-    onError: (err, variables, context) => {
-      // Rollback optimistic update on error
-      if (context?.previousMessages && selectedConversation) {
-        queryClient.setQueryData(['messages', selectedConversation.id], context.previousMessages);
-      }
+      // Invalidate unread count
+      queryClient.invalidateQueries({ queryKey: ['chat-unread-count'] });
     },
   });
 
@@ -285,38 +173,10 @@ export function ChatSidebarContent({ initialConversationId }: ChatSidebarContent
 
     const handleNewMessage = (message: Message) => {
       if (message.conversationId === selectedConversation.id) {
-        // Update cache with new message (socket event for real-time updates)
-        queryClient.setQueryData(
-          ['messages', selectedConversation.id],
-          (old: any) => {
-            if (!old) return old;
-            const allMessages = old.pages.flat();
-            // Check if message already exists (avoid duplicates)
-            if (allMessages.some((m: Message) => m.id === message.id || (m.id.startsWith('temp-') && m.content === message.content && m.senderId === message.senderId))) {
-              // Replace temp message with real one if it exists
-              const hasTemp = allMessages.some((m: Message) => m.id.startsWith('temp-') && m.content === message.content && m.senderId === message.senderId);
-              if (hasTemp) {
-                const newPages = old.pages.map((page: Message[]) => 
-                  page.map((m: Message) => 
-                    m.id.startsWith('temp-') && m.content === message.content && m.senderId === message.senderId ? message : m
-                  )
-                );
-                return { ...old, pages: newPages };
-              }
-              return old;
-            }
-            // Add new message to the last page
-            const lastPage = old.pages[old.pages.length - 1];
-            return {
-              ...old,
-              pages: [
-                ...old.pages.slice(0, -1),
-                [...lastPage, message],
-              ],
-            };
-          }
-        );
-        // Update conversations list
+        // Refetch messages to get fresh data (no caching)
+        refetchMessages();
+        
+        // Update conversations metadata (cached) with last message info
         queryClient.setQueryData(['conversations'], (old: any) => {
           if (!old?.conversations) return old;
           return {
@@ -332,6 +192,7 @@ export function ChatSidebarContent({ initialConversationId }: ChatSidebarContent
             ),
           };
         });
+        
         markAsReadMutation.mutate();
       } else {
         // Message in another conversation - show notification
@@ -342,7 +203,25 @@ export function ChatSidebarContent({ initialConversationId }: ChatSidebarContent
             message.conversationId
           );
         }
-        queryClient.invalidateQueries({ queryKey: ['conversations'] });
+        // Update conversations metadata (cached) for other conversations
+        queryClient.setQueryData(['conversations'], (old: any) => {
+          if (!old?.conversations) return old;
+          return {
+            ...old,
+            conversations: old.conversations.map((conv: Conversation) =>
+              conv.id === message.conversationId
+                ? {
+                    ...conv,
+                    lastMessage: message.content,
+                    lastMessageAt: message.createdAt,
+                  }
+                : conv
+            ),
+          };
+        });
+        
+        // Invalidate unread count for notifications
+        queryClient.invalidateQueries({ queryKey: ['chat-unread-count'] });
       }
     };
 
@@ -351,7 +230,7 @@ export function ChatSidebarContent({ initialConversationId }: ChatSidebarContent
     return () => {
       offMessage(handleNewMessage);
     };
-  }, [socket, selectedConversation, onMessage, offMessage, user, showChatNotification, queryClient, markAsReadMutation]);
+  }, [socket, selectedConversation, onMessage, offMessage, user, showChatNotification, queryClient, markAsReadMutation, refetchMessages]);
 
   const handleSendMessage = (content: string, messageType?: string, attachments?: string[]) => {
     if (selectedConversation && (content.trim() || (attachments && attachments.length > 0))) {

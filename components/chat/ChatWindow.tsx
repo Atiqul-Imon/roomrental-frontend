@@ -39,6 +39,7 @@ export function ChatWindow({ initialConversationId }: ChatWindowProps) {
   });
 
   // Fetch messages for selected conversation with infinite scroll
+  // NO CACHING for messages - always fetch fresh from server
   const {
     data: messagesData,
     isLoading: messagesLoading,
@@ -59,11 +60,16 @@ export function ChatWindow({ initialConversationId }: ChatWindowProps) {
     },
     enabled: !!selectedConversation?.id,
     initialPageParam: 1,
+    // No caching for messages - always fetch fresh
+    staleTime: 0, // Always consider data stale
+    gcTime: 0, // Don't cache messages (metadata is cached separately)
+    refetchOnMount: true, // Always refetch on mount
+    refetchOnWindowFocus: false, // Socket handles real-time updates
   });
 
   const messages = messagesData?.pages.flat() || [];
 
-  // Send message mutation
+  // Send message mutation - refetch messages (no caching)
   const sendMessageMutation = useMutation({
     mutationFn: (data: { content: string; messageType?: string; attachments?: string[] }) =>
       chatApi.sendMessage(
@@ -72,11 +78,26 @@ export function ChatWindow({ initialConversationId }: ChatWindowProps) {
         data.messageType || 'text',
         data.attachments || []
       ),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['messages', selectedConversation?.id] });
-      queryClient.invalidateQueries({ queryKey: ['conversations'] });
+    onSuccess: (data: Message) => {
+      // Refetch messages to get fresh data (no caching)
       refetchMessages();
-      refetchConversations();
+      
+      // Update conversations metadata (cached) with last message info
+      queryClient.setQueryData(['conversations'], (old: any) => {
+        if (!old?.conversations) return old;
+        return {
+          ...old,
+          conversations: old.conversations.map((conv: Conversation) =>
+            conv.id === selectedConversation?.id
+              ? {
+                  ...conv,
+                  lastMessage: data.content,
+                  lastMessageAt: data.createdAt,
+                }
+              : conv
+          ),
+        };
+      });
     },
   });
 
@@ -135,32 +156,29 @@ export function ChatWindow({ initialConversationId }: ChatWindowProps) {
 
     const handleNewMessage = (message: Message) => {
       if (message.conversationId === selectedConversation.id) {
-        // Update infinite query cache
-        queryClient.setQueryData(
-          ['messages', selectedConversation.id],
-          (old: any) => {
-            if (!old) return old;
-            // Check if message already exists
-            const allMessages = old.pages.flat();
-            if (allMessages.some((m: Message) => m.id === message.id)) {
-              return old;
-            }
-            // Add new message to the last page
-            const lastPage = old.pages[old.pages.length - 1];
-            return {
-              ...old,
-              pages: [
-                ...old.pages.slice(0, -1),
-                [...lastPage, message],
-              ],
-            };
-          }
-        );
+        // Refetch messages to get fresh data (no caching)
         refetchMessages();
-        refetchConversations();
+        
+        // Update conversations metadata (cached) with last message info
+        queryClient.setQueryData(['conversations'], (old: any) => {
+          if (!old?.conversations) return old;
+          return {
+            ...old,
+            conversations: old.conversations.map((conv: Conversation) =>
+              conv.id === selectedConversation.id
+                ? {
+                    ...conv,
+                    lastMessage: message.content,
+                    lastMessageAt: message.createdAt,
+                  }
+                : conv
+            ),
+          };
+        });
+        
         markAsReadMutation.mutate();
       } else {
-        // Message in another conversation - show notification and refresh
+        // Message in another conversation - show notification
         if (message.senderId !== user?.id) {
           showChatNotification(
             message.sender.name,
@@ -168,7 +186,22 @@ export function ChatWindow({ initialConversationId }: ChatWindowProps) {
             message.conversationId
           );
         }
-        refetchConversations();
+        // Update conversations metadata (cached) for other conversations
+        queryClient.setQueryData(['conversations'], (old: any) => {
+          if (!old?.conversations) return old;
+          return {
+            ...old,
+            conversations: old.conversations.map((conv: Conversation) =>
+              conv.id === message.conversationId
+                ? {
+                    ...conv,
+                    lastMessage: message.content,
+                    lastMessageAt: message.createdAt,
+                  }
+                : conv
+            ),
+          };
+        });
       }
     };
 
