@@ -1,8 +1,19 @@
 import type { NextConfig } from 'next';
 
+// Bundle analyzer (only enabled when ANALYZE=true)
+const withBundleAnalyzer = require('@next/bundle-analyzer')({
+  enabled: process.env.ANALYZE === 'true',
+});
+
 const nextConfig: NextConfig = {
   images: {
-    // Disable Next.js image optimization - using ImageKit transformations instead
+    // ImageKit handles all image optimization and transformations
+    // Keeping unoptimized: true is intentional - ImageKit provides:
+    // - On-the-fly resizing and cropping
+    // - Format conversion (WebP/AVIF)
+    // - Quality optimization
+    // - CDN delivery
+    // Next.js image optimization would be redundant
     unoptimized: true,
     remotePatterns: [
       {
@@ -65,5 +76,5 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+export default withBundleAnalyzer(nextConfig);
 

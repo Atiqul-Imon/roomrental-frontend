@@ -2,7 +2,7 @@
 
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useSearchParams } from 'next/navigation';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useCallback, memo } from 'react';
 import { api } from '@/lib/api';
 import { Listing } from '@/types';
 import { ListingCard } from './ListingCard';
@@ -15,7 +15,7 @@ import { queryConfig } from '@/lib/query-config';
 import { Loader2 } from 'lucide-react';
 import { QuickViewModal } from './QuickViewModal';
 
-export function ListingList() {
+function ListingListComponent() {
   const searchParams = useSearchParams();
   const queryClient = useQueryClient();
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -23,6 +23,11 @@ export function ListingList() {
   const touchStartY = useRef<number | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [selectedListing, setSelectedListing] = useState<Listing | null>(null);
+  
+  // Memoize onQuickView callback to prevent ListingCard re-renders
+  const handleQuickView = useCallback((listing: Listing) => {
+    setSelectedListing(listing);
+  }, []);
   
   // Build query params from URL
   const queryParams: Record<string, string> = {};
@@ -216,7 +221,7 @@ export function ListingList() {
               <div key={listing._id} className="stagger-item fade-in-up-delayed" style={{ animationDelay: `${index * 0.05}s` }}>
                 <ListingCard 
                   listing={listing} 
-                  onQuickView={(listing) => setSelectedListing(listing)}
+                  onQuickView={handleQuickView}
                 />
               </div>
             ))}
@@ -238,4 +243,7 @@ export function ListingList() {
     </div>
   );
 }
+
+// Memoize ListingList to prevent unnecessary re-renders
+export const ListingList = memo(ListingListComponent);
 

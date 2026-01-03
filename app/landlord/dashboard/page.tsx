@@ -15,8 +15,14 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { format } from 'date-fns';
-import { LandlordAnalytics } from '@/components/dashboard/LandlordAnalytics';
+import dynamicImport from 'next/dynamic';
 import { PerformanceChart } from '@/components/dashboard/PerformanceChart';
+
+// Lazy load LandlordAnalytics - heavy component with charts
+const LandlordAnalytics = dynamicImport(() => import('@/components/dashboard/LandlordAnalytics').then((mod) => ({ default: mod.LandlordAnalytics })), {
+  loading: () => <div className="h-96 bg-grey-100 animate-pulse rounded-xl" />,
+  ssr: false, // Charts don't need SSR
+});
 
 export default function LandlordDashboardPage() {
   const { data: listingsData, isLoading: listingsLoading } = useQuery({

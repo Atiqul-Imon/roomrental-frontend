@@ -12,6 +12,7 @@ import { AlertCircle, RefreshCw, Home } from 'lucide-react';
 import { Button } from './Button';
 import { H3, Body } from './Typography';
 import Link from 'next/link';
+import { ErrorHandler } from '@/lib/error-handler';
 
 interface Props {
   children: ReactNode;
@@ -48,6 +49,8 @@ export class ErrorBoundaryWithRetry extends Component<Props, State> {
       error,
       errorInfo,
     });
+    // Use centralized error handler for consistent logging
+    ErrorHandler.logError(error, 'ErrorBoundaryWithRetry');
     this.props.onError?.(error, errorInfo);
   }
 
@@ -74,7 +77,7 @@ export class ErrorBoundaryWithRetry extends Component<Props, State> {
 
             <H3 className="mb-3">Something went wrong</H3>
             <Body className="text-grey-600 mb-6">
-              {this.state.error?.message || 'An unexpected error occurred. Please try again.'}
+              {this.state.error ? ErrorHandler.getUserMessage(this.state.error) : 'An unexpected error occurred. Please try again.'}
             </Body>
 
             <div className="flex flex-col sm:flex-row gap-3 justify-center">

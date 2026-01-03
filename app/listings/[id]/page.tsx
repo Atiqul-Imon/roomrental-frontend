@@ -13,7 +13,13 @@ import { Listing } from '@/types';
 import { queryConfig } from '@/lib/query-config';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
-import { ImageGallery } from '@/components/listings/ImageGallery';
+import dynamic from 'next/dynamic';
+
+// Lazy load ImageGallery - only load when viewing listing details
+const ImageGallery = dynamic(() => import('@/components/listings/ImageGallery').then((mod) => ({ default: mod.ImageGallery })), {
+  loading: () => <div className="h-96 bg-grey-100 animate-pulse rounded-xl" />,
+  ssr: true, // Image gallery can be SSR'd
+});
 import { FavoriteButton } from '@/components/listings/FavoriteButton';
 import { ContactButton } from '@/components/listings/ContactButton';
 import { ReviewList } from '@/components/reviews/ReviewList';

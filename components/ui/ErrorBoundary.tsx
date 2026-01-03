@@ -4,6 +4,7 @@ import { Component, ReactNode } from 'react';
 import { AlertCircle, RefreshCw } from 'lucide-react';
 import { Button } from './Button';
 import { Card, CardBody } from './Card';
+import { ErrorHandler } from '@/lib/error-handler';
 
 interface Props {
   children: ReactNode;
@@ -26,7 +27,12 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    console.error('ErrorBoundary caught an error:', error, errorInfo);
+    // Use centralized error handler for consistent logging
+    ErrorHandler.logError(error, 'ErrorBoundary');
+    // Log to console in development for debugging
+    if (process.env.NODE_ENV === 'development') {
+      console.error('ErrorBoundary caught an error:', error, errorInfo);
+    }
   }
 
   handleReset = () => {
@@ -50,7 +56,7 @@ export class ErrorBoundary extends Component<Props, State> {
                 Something went wrong
               </h2>
               <p className="text-dark-text-secondary mb-6 max-w-md">
-                {this.state.error?.message || 'An unexpected error occurred. Please try refreshing the page.'}
+                {this.state.error ? ErrorHandler.getUserMessage(this.state.error) : 'An unexpected error occurred. Please try refreshing the page.'}
               </p>
               <div className="flex gap-3">
                 <Button

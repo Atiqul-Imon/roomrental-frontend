@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { Listing } from '@/types';
 import { format } from 'date-fns';
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, memo } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { MapPin, Calendar, Sparkles, Navigation, Check, Heart } from 'lucide-react';
 import { imageKitPresets } from '@/lib/imagekit';
@@ -15,7 +15,7 @@ interface ListingCardProps {
   onQuickView?: (listing: Listing) => void;
 }
 
-export function ListingCard({ listing, onQuickView }: ListingCardProps) {
+function ListingCardComponent({ listing, onQuickView }: ListingCardProps) {
   const searchParams = useSearchParams();
   const router = useRouter();
   const { isAuthenticated } = useAuth();
@@ -299,4 +299,28 @@ export function ListingCard({ listing, onQuickView }: ListingCardProps) {
     </>
   );
 }
+
+// Memoize ListingCard to prevent unnecessary re-renders
+// Only re-render if listing ID or updatedAt changes
+export const ListingCard = memo(ListingCardComponent, (prevProps, nextProps) => {
+  // Re-render if listing ID changed
+  if (prevProps.listing._id !== nextProps.listing._id) {
+    return false;
+  }
+  
+  // Re-render if listing data changed (using updatedAt if available, or createdAt)
+  const prevUpdated = prevProps.listing.updatedAt || prevProps.listing.createdAt;
+  const nextUpdated = nextProps.listing.updatedAt || nextProps.listing.createdAt;
+  if (prevUpdated !== nextUpdated) {
+    return false;
+  }
+  
+  // Re-render if onQuickView callback changed (reference equality)
+  if (prevProps.onQuickView !== nextProps.onQuickView) {
+    return false;
+  }
+  
+  // Don't re-render if nothing changed
+  return true;
+});
 
