@@ -27,7 +27,7 @@ export default function Home() {
       <Header />
       <main id="main-content" className="min-h-screen bg-gradient-comfort" role="main">
         {/* Enterprise Hero Section */}
-        <section className="relative min-h-[60vh] sm:min-h-[65vh] md:min-h-[70vh] flex items-center justify-center overflow-hidden bg-gradient-to-br from-primary-600 via-primary-500 to-accent-500">
+        <section className="relative min-h-[45vh] sm:min-h-[50vh] md:min-h-[55vh] flex items-center justify-center overflow-hidden bg-gradient-to-br from-primary-600 via-primary-500 to-accent-500">
           {/* Background Elements */}
           <div className="absolute inset-0 overflow-hidden">
             {/* Large gradient orbs */}
@@ -40,11 +40,11 @@ export default function Home() {
           </div>
 
           {/* Content Container */}
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10 py-10 sm:py-12 md:py-16">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10 py-6 sm:py-8 md:py-10">
             <div className="max-w-5xl mx-auto">
               {/* Main Heading */}
-              <div className="text-center mb-6 sm:mb-8">
-                <h1 className="font-heading text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight tracking-tight">
+              <div className="text-center mb-4 sm:mb-6">
+                <h1 className="font-heading text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-4 sm:mb-5 leading-tight tracking-tight">
                   <span className="text-white drop-shadow-[0_4px_12px_rgba(0,0,0,0.3)]">
                     Find Your Perfect
                   </span>
@@ -54,7 +54,7 @@ export default function Home() {
                   </span>
                 </h1>
                 
-                <p className="text-lg sm:text-xl md:text-2xl text-white/90 max-w-3xl mx-auto leading-relaxed font-normal mb-8 sm:mb-10 drop-shadow-[0_2px_8px_rgba(0,0,0,0.2)]">
+                <p className="text-lg sm:text-xl md:text-2xl text-white/90 max-w-3xl mx-auto leading-relaxed font-normal mb-6 sm:mb-8 drop-shadow-[0_2px_8px_rgba(0,0,0,0.2)]">
                   Discover premium rooms for rent across the United States. 
                   <span className="block mt-2 text-white/80">
                     Safe, verified, and perfect for students and professionals.
