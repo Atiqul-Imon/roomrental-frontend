@@ -28,6 +28,11 @@ export default function Home() {
       <main id="main-content" className="min-h-screen bg-gradient-comfort" role="main">
         {/* Enterprise Hero Section */}
         <section className="relative z-40 min-h-[45vh] sm:min-h-[50vh] md:min-h-[55vh] flex items-center justify-center overflow-visible bg-gradient-to-br from-primary-600 via-primary-500 to-accent-500">
+          {/* Deploy Trigger Indicator */}
+          <div className="absolute top-0 left-0 right-0 bg-red-600 text-white text-center py-2 px-4 z-50">
+            <p className="font-semibold">🚀 Deploy Triggered - If you see this text, the deployment worked!</p>
+          </div>
+          
           {/* Background Elements */}
           <div className="absolute inset-0 overflow-hidden pointer-events-none">
             {/* Large gradient orbs */}
