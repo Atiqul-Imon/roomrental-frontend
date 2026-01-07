@@ -27,9 +27,9 @@ export default function Home() {
       <Header />
       <main id="main-content" className="min-h-screen bg-gradient-comfort" role="main">
         {/* Enterprise Hero Section */}
-        <section className="relative min-h-[45vh] sm:min-h-[50vh] md:min-h-[55vh] flex items-center justify-center overflow-hidden bg-gradient-to-br from-primary-600 via-primary-500 to-accent-500">
+        <section className="relative z-40 min-h-[45vh] sm:min-h-[50vh] md:min-h-[55vh] flex items-center justify-center overflow-visible bg-gradient-to-br from-primary-600 via-primary-500 to-accent-500">
           {/* Background Elements */}
-          <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute inset-0 overflow-hidden pointer-events-none">
             {/* Large gradient orbs */}
             <div className="absolute -top-40 -left-40 w-96 h-96 bg-primary-400 rounded-full mix-blend-multiply blur-3xl opacity-30" />
             <div className="absolute -top-40 -right-40 w-96 h-96 bg-accent-400 rounded-full mix-blend-multiply blur-3xl opacity-30" />
@@ -63,7 +63,7 @@ export default function Home() {
               </div>
 
               {/* Integrated Search Bar */}
-              <div>
+              <div className="relative z-[100]">
                 <div className="max-w-4xl mx-auto">
                   <div className="bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl p-2 sm:p-3 border border-white/20">
                     <Suspense fallback={
@@ -81,7 +81,7 @@ export default function Home() {
         </section>
 
         {/* Listings Section */}
-        <section className="container mx-auto px-3 sm:px-4 py-10 sm:py-12 md:py-16 section-spacing">
+        <section className="relative z-10 container mx-auto px-3 sm:px-4 py-10 sm:py-12 md:py-16 section-spacing">
           <ListingListContent />
         </section>
       </main>
