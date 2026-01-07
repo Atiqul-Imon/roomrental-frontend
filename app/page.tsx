@@ -1,11 +1,10 @@
 'use client';
 
-import Link from 'next/link';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { ListingList } from '@/components/listings/ListingList';
 import { ComparisonButton } from '@/components/listings/ComparisonButton';
-import { Search } from 'lucide-react';
+import { SearchBar } from '@/components/search/SearchBar';
 import { Suspense } from 'react';
 
 export const dynamic = 'force-dynamic';
@@ -18,39 +17,67 @@ function ListingListContent() {
   );
 }
 
+function SearchBarContent() {
+  return <SearchBar />;
+}
+
 export default function Home() {
   return (
     <>
       <Header />
       <main id="main-content" className="min-h-screen bg-gradient-comfort" role="main">
-        {/* Hero Section */}
-        <section className="relative bg-gradient-to-r from-blue-500 to-teal-500 text-white py-8 sm:py-10 md:py-12 overflow-hidden">
-          {/* Decorative Background Elements */}
-          <div className="absolute inset-0 opacity-20">
-            <div className="absolute top-20 left-10 w-72 h-72 bg-blue-300 rounded-full blur-3xl animate-pulse" />
-            <div className="absolute bottom-20 right-10 w-96 h-96 bg-teal-300 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
-            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-cyan-300 rounded-full blur-3xl opacity-30 animate-pulse" style={{ animationDelay: '2s' }} />
+        {/* Enterprise Hero Section */}
+        <section className="relative min-h-[60vh] sm:min-h-[65vh] md:min-h-[70vh] flex items-center justify-center overflow-hidden bg-gradient-to-br from-primary-600 via-primary-500 to-accent-500">
+          {/* Background Elements */}
+          <div className="absolute inset-0 overflow-hidden">
+            {/* Large gradient orbs */}
+            <div className="absolute -top-40 -left-40 w-96 h-96 bg-primary-400 rounded-full mix-blend-multiply blur-3xl opacity-30" />
+            <div className="absolute -top-40 -right-40 w-96 h-96 bg-accent-400 rounded-full mix-blend-multiply blur-3xl opacity-30" />
+            <div className="absolute -bottom-40 left-1/2 w-96 h-96 bg-cyan-400 rounded-full mix-blend-multiply blur-3xl opacity-30" />
+            
+            {/* Grid pattern overlay */}
+            <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff08_1px,transparent_1px),linear-gradient(to_bottom,#ffffff08_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_0%,#000_70%,transparent_110%)]" />
           </div>
-          
-          <div className="container mx-auto px-3 sm:px-4 relative z-10">
-            <div className="text-center max-w-3xl mx-auto">
-              <h1 className="font-heading text-3xl sm:text-4xl md:text-5xl lg:text-5xl font-bold mb-4 sm:mb-5 md:mb-6 leading-[1.2] tracking-tight text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.2)]">
-                Find Your Perfect Home
-              </h1>
-              <p className="font-body text-base sm:text-lg md:text-xl lg:text-xl text-white/90 mb-6 sm:mb-8 md:mb-10 font-normal px-2 leading-relaxed tracking-normal drop-shadow-[0_1px_4px_rgba(0,0,0,0.15)]">
-                Discover cozy, comfortable rooms for rent across the United States.
-              </p>
-              <div className="flex justify-center items-center">
-                <Link
-                  href="/listings"
-                  className="w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 bg-white text-blue-600 rounded-xl font-semibold text-base sm:text-lg hover:scale-105 transition-all duration-200 shadow-xl hover:shadow-2xl hover:bg-blue-50 hover:text-blue-700 flex items-center justify-center gap-2 min-h-[44px] touch-target"
-                >
-                  <Search className="w-5 h-5" />
-                  Browse Listings
-                </Link>
+
+          {/* Content Container */}
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10 py-10 sm:py-12 md:py-16">
+            <div className="max-w-5xl mx-auto">
+              {/* Main Heading */}
+              <div className="text-center mb-6 sm:mb-8">
+                <h1 className="font-heading text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight tracking-tight">
+                  <span className="text-white drop-shadow-[0_4px_12px_rgba(0,0,0,0.3)]">
+                    Find Your Perfect
+                  </span>
+                  <br />
+                  <span className="bg-gradient-to-r from-white via-accent-100 to-cyan-100 bg-clip-text text-transparent drop-shadow-[0_4px_12px_rgba(0,0,0,0.2)]">
+                    Room Rental
+                  </span>
+                </h1>
+                
+                <p className="text-lg sm:text-xl md:text-2xl text-white/90 max-w-3xl mx-auto leading-relaxed font-normal mb-8 sm:mb-10 drop-shadow-[0_2px_8px_rgba(0,0,0,0.2)]">
+                  Discover premium rooms for rent across the United States. 
+                  <span className="block mt-2 text-white/80">
+                    Safe, verified, and perfect for students and professionals.
+                  </span>
+                </p>
               </div>
+
+              {/* Integrated Search Bar */}
+              <div>
+                <div className="max-w-4xl mx-auto">
+                  <div className="bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl p-2 sm:p-3 border border-white/20">
+                    <Suspense fallback={
+                      <div className="h-14 sm:h-16 bg-grey-100 rounded-xl animate-pulse" />
+                    }>
+                      <SearchBarContent />
+                    </Suspense>
+                  </div>
+                </div>
+              </div>
+
             </div>
           </div>
+
         </section>
 
         {/* Listings Section */}
