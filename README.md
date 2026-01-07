@@ -247,3 +247,6 @@ This is a private project. For contributions, please contact the project maintai
 ## 📞 Support
 
 For support, email support@roomrentalusa.com
+
+---
+*Last updated: January 2026*
