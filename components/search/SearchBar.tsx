@@ -141,7 +141,7 @@ export function SearchBar() {
   ].slice(0, 8);
 
   return (
-    <div ref={searchRef} className="relative w-full max-w-3xl mx-auto">
+    <div ref={searchRef} className="relative w-full max-w-3xl mx-auto z-50">
       <div className="relative">
         <div className="absolute left-3 sm:left-4 top-1/2 transform -translate-y-1/2 z-10">
           <Search className="w-4 h-4 sm:w-5 sm:h-5 text-grey-400" />
@@ -187,7 +187,7 @@ export function SearchBar() {
       {showSuggestions && (isLoading || allSuggestions.length > 0 || (searchTerm.length === 0 && (recentSearches.length > 0 || popularSearches.length > 0))) && (
         <div 
           id="search-suggestions"
-          className="absolute z-[100] w-full mt-2 sm:mt-3 bg-white border border-grey-200 rounded-xl shadow-large max-h-[60vh] sm:max-h-96 overflow-y-auto"
+          className="absolute z-[9999] w-full mt-2 sm:mt-3 bg-white border border-grey-200 rounded-xl shadow-large max-h-[60vh] sm:max-h-96 overflow-y-auto"
           role="listbox"
           aria-label="Search suggestions"
         >
