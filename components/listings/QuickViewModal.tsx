@@ -244,9 +244,11 @@ export function QuickViewModal({ listing, isOpen, onClose }: QuickViewModalProps
           )}
 
           {/* Price Badge */}
-          <div className="absolute top-3 left-3 sm:top-4 sm:left-4 bg-gradient-warm text-white px-3 py-1.5 rounded-lg font-bold text-sm sm:text-base shadow-lg z-10">
-            ${listing.price.toLocaleString()}/mo
-          </div>
+          {listing.price != null && (
+            <div className="absolute top-3 left-3 sm:top-4 sm:left-4 bg-gradient-warm text-white px-3 py-1.5 rounded-lg font-bold text-sm sm:text-base shadow-lg z-10">
+              ${listing.price.toLocaleString()}/mo
+            </div>
+          )}
         </div>
 
         {/* Content */}
@@ -278,19 +280,19 @@ export function QuickViewModal({ listing, isOpen, onClose }: QuickViewModalProps
 
           {/* Property Details */}
           <div className="flex items-center gap-3 sm:gap-4 text-xs sm:text-sm text-grey-600 flex-wrap">
-            {listing.bedrooms !== undefined && (
+            {listing.bedrooms != null && listing.bedrooms !== undefined && (
               <div className="flex items-center gap-1.5">
                 <BedDouble className="w-3.5 h-3.5" />
                 <span>{listing.bedrooms} {listing.bedrooms === 1 ? 'bedroom' : 'bedrooms'}</span>
               </div>
             )}
-            {listing.bathrooms !== undefined && (
+            {listing.bathrooms != null && listing.bathrooms !== undefined && (
               <div className="flex items-center gap-1.5">
                 <Bath className="w-3.5 h-3.5" />
                 <span>{listing.bathrooms} {listing.bathrooms === 1 ? 'bathroom' : 'bathrooms'}</span>
               </div>
             )}
-            {listing.squareFeet !== undefined && (
+            {listing.squareFeet != null && listing.squareFeet !== undefined && (
               <div className="flex items-center gap-1.5">
                 <Ruler className="w-3.5 h-3.5" />
                 <span>{listing.squareFeet.toLocaleString()} sq ft</span>

@@ -63,30 +63,61 @@ export function CreateListingForm({
     resolver: zodResolver(listingSchema),
     defaultValues: {
       amenities: [],
+      bedrooms: 1,
+      bathrooms: 1,
     },
   });
 
   const watchedAmenities = watch('amenities') || [];
 
   const handleImageUpload = async (file: File) => {
+    console.log('Starting image upload for file:', file.name, 'Size:', file.size, 'Type:', file.type);
     setIsUploading(true);
+    setError(''); // Clear any previous errors
+    
     try {
+      // Validate file
+      if (!file.type.startsWith('image/')) {
+        throw new Error('Please select a valid image file');
+      }
+      
+      const maxSize = 10 * 1024 * 1024; // 10MB
+      if (file.size > maxSize) {
+        throw new Error('Image size must be less than 10MB');
+      }
+
       const formData = new FormData();
       formData.append('image', file);
+      console.log('FormData created, sending request to /upload/image');
 
-      const response = await api.post('/upload/image', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
+      // Don't set Content-Type header - let the browser set it with boundary
+      // The API client already handles FormData correctly
+      const response = await api.post('/upload/image', formData);
+      console.log('Upload response:', response);
 
-      if (response.data.success) {
-        setImages((prev) => [...prev, response.data.data.url]);
+      if (response.data && response.data.success) {
+        const imageUrl = response.data.data?.url;
+        if (imageUrl) {
+          console.log('Image uploaded successfully:', imageUrl);
+          setImages((prev) => [...prev, imageUrl]);
+        } else {
+          throw new Error('Upload succeeded but no URL returned');
+        }
       } else {
-        throw new Error('Upload failed');
+        throw new Error(response.data?.error || 'Upload failed - invalid response');
       }
-    } catch (error) {
-      alert('Failed to upload image');
+    } catch (error: any) {
+      console.error('Image upload error:', error);
+      console.error('Error response data:', error.response?.data);
+      console.error('Error response status:', error.response?.status);
+      console.error('Error response headers:', error.response?.headers);
+      
+      const errorMessage = error.response?.data?.message || 
+                          error.response?.data?.error || 
+                          error.message || 
+                          'Failed to upload image. Please try again.';
+      setError(errorMessage);
+      alert(`Image Upload Failed: ${errorMessage}`);
     } finally {
       setIsUploading(false);
     }
@@ -106,6 +137,9 @@ export function CreateListingForm({
   };
 
   const onSubmit = async (data: ListingFormData) => {
+    console.log('Form submitted with data:', data);
+    console.log('Form errors:', errors);
+    
     if (images.length === 0) {
       setError('Please upload at least one image');
       return;
@@ -115,6 +149,7 @@ export function CreateListingForm({
     setError('');
 
     try {
+      console.log('Submitting listing data...');
       const listingData: any = {
         title: data.title,
         description: data.description,
@@ -139,18 +174,24 @@ export function CreateListingForm({
         listingData.landlordId = selectedLandlordId;
       }
 
+      console.log('Sending API request with data:', listingData);
       const response = await api.post('/listings', listingData);
+      console.log('API response:', response);
 
       if (response.data.success) {
+        console.log('Listing created successfully');
         if (onSuccess) {
           onSuccess();
         } else {
           router.push(`/listings/${response.data.data.id}`);
         }
       } else {
+        console.error('API returned error:', response.data.error);
         setError(response.data.error || 'Failed to create listing');
       }
     } catch (error: any) {
+      console.error('Error creating listing:', error);
+      console.error('Error response:', error.response);
       setError(error.response?.data?.error || 'Failed to create listing');
     } finally {
       setIsSubmitting(false);
@@ -172,14 +213,32 @@ export function CreateListingForm({
     'Dishwasher',
   ];
 
+  const onFormError = (errors: any) => {
+    console.error('Form validation errors:', errors);
+    setError('Please fix the form errors before submitting');
+  };
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 sm:space-y-6">
+    <form onSubmit={handleSubmit(onSubmit, onFormError)} className="space-y-4 sm:space-y-6">
       {error && (
         <div className="p-3 sm:p-4 bg-red-50 border-2 border-red-200 rounded-xl text-red-700 flex items-start gap-2 sm:gap-3">
           <div className="flex-1">
             <p className="font-semibold text-sm sm:text-base">Error</p>
             <p className="text-xs sm:text-sm mt-1">{error}</p>
           </div>
+        </div>
+      )}
+      
+      {Object.keys(errors).length > 0 && (
+        <div className="p-3 sm:p-4 bg-yellow-50 border-2 border-yellow-200 rounded-xl text-yellow-700">
+          <p className="font-semibold text-sm sm:text-base mb-2">Form Validation Errors:</p>
+          <ul className="list-disc list-inside text-xs sm:text-sm space-y-1">
+            {Object.entries(errors).map(([field, error]: [string, any]) => (
+              <li key={field}>
+                <strong>{field}:</strong> {error?.message || 'Invalid value'}
+              </li>
+            ))}
+          </ul>
         </div>
       )}
 
@@ -382,17 +441,25 @@ export function CreateListingForm({
                 accept="image/*"
                 onChange={(e) => {
                   const file = e.target.files?.[0];
-                  if (file) handleImageUpload(file);
+                  console.log('File selected:', file);
+                  if (file) {
+                    handleImageUpload(file);
+                  } else {
+                    console.warn('No file selected');
+                  }
+                  // Reset input to allow selecting the same file again
+                  e.target.value = '';
                 }}
                 disabled={isUploading}
                 className="hidden"
                 id="image-upload"
+                multiple={false}
               />
               <label
                 htmlFor="image-upload"
-                className="cursor-pointer flex flex-col items-center gap-3"
+                className={`cursor-pointer flex flex-col items-center gap-3 ${isUploading ? 'opacity-50 cursor-not-allowed' : ''}`}
               >
-                <div className={`p-4 rounded-full ${isUploading ? 'bg-grey-200' : 'bg-primary-100'}`}>
+                <div className={`p-4 rounded-full ${isUploading ? 'bg-grey-200 animate-pulse' : 'bg-primary-100'}`}>
                   <Upload className={`w-8 h-8 ${isUploading ? 'text-grey-400' : 'text-primary-600'}`} />
                 </div>
                 <span className="text-sm font-medium text-grey-700">
@@ -475,6 +542,12 @@ export function CreateListingForm({
             <button
               type="submit"
               disabled={isSubmitting || images.length === 0}
+              onClick={() => {
+                console.log('Create Listing button clicked');
+                console.log('isSubmitting:', isSubmitting);
+                console.log('images.length:', images.length);
+                console.log('Form errors:', errors);
+              }}
               className="px-6 py-3 btn-gradient text-white rounded-lg font-semibold hover:scale-105 transition-all duration-200 shadow-medium disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
             >
               {isSubmitting ? 'Creating...' : 'Create Listing'}

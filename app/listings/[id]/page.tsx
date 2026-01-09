@@ -46,47 +46,87 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
     queryKey: ['listing', listingId],
     ...queryConfig.listingDetail,
     queryFn: async () => {
-      const response = await api.get(`/listings/${listingId}`);
-      if (!response.data.success) {
-        throw new Error(response.data.error || 'Failed to fetch listing');
+      try {
+        const response = await api.get(`/listings/${listingId}`);
+        console.log('Listing API response:', response.data);
+        
+        if (!response.data.success) {
+          throw new Error(response.data.error || 'Failed to fetch listing');
+        }
+        
+        const listing = response.data.data;
+        console.log('Listing data:', listing);
+        
+        // Handle both flat structure (city, state) and nested structure (location.city)
+        const city = listing.city || listing.location?.city || '';
+        const state = listing.state || listing.location?.state || '';
+        const zip = listing.zip || listing.location?.zip || '';
+        const address = listing.address || listing.location?.address || '';
+        const latitude = listing.latitude || listing.location?.latitude || listing.location?.coordinates?.lat;
+        const longitude = listing.longitude || listing.location?.longitude || listing.location?.coordinates?.lng;
+        
+        // Handle landlord data - can be nested or flat
+        const landlordId = listing.landlord?.id || listing.landlordId || '';
+        const landlordName = listing.landlord?.name || '';
+        const landlordEmail = listing.landlord?.email || '';
+        const landlordProfileImage = listing.landlord?.profileImage || null;
+        const landlordRole = listing.landlord?.role || 'landlord';
+        const landlordBio = listing.landlord?.bio || null;
+        
+        const transformedListing = {
+          _id: listing.id || listing._id,
+          landlordId: {
+            _id: landlordId,
+            name: landlordName,
+            email: landlordEmail,
+            profileImage: landlordProfileImage,
+            role: landlordRole,
+            ...(landlordBio && { bio: landlordBio }),
+          },
+          title: listing.title || '',
+          description: listing.description || '',
+          price: listing.price || 0,
+          bedrooms: listing.bedrooms || 1,
+          bathrooms: listing.bathrooms || 1,
+          squareFeet: listing.squareFeet || null,
+          location: {
+            city: city,
+            state: state,
+            zip: zip || undefined,
+            address: address || undefined,
+            coordinates: latitude && longitude
+              ? { lat: Number(latitude), lng: Number(longitude) }
+              : undefined,
+          },
+          images: Array.isArray(listing.images) ? listing.images : [],
+          amenities: Array.isArray(listing.amenities) ? listing.amenities : [],
+          availabilityDate: listing.availabilityDate || new Date().toISOString(),
+          status: listing.status || 'available',
+          createdAt: listing.createdAt || new Date().toISOString(),
+          updatedAt: listing.updatedAt || new Date().toISOString(),
+        } as Listing;
+        
+        console.log('Transformed listing:', transformedListing);
+        return transformedListing;
+      } catch (error: any) {
+        console.error('Error fetching listing:', error);
+        console.error('Error response:', error.response?.data);
+        throw error;
       }
-      const listing = response.data.data;
-      return {
-        _id: listing.id,
-        landlordId: {
-          _id: listing.landlord?.id || listing.landlordId,
-          name: listing.landlord?.name || '',
-          email: listing.landlord?.email || '',
-          profileImage: listing.landlord?.profileImage,
-          role: listing.landlord?.role || 'landlord', // Include role to determine if admin
-        },
-        title: listing.title,
-        description: listing.description,
-        price: listing.price,
-        bedrooms: listing.bedrooms,
-        bathrooms: listing.bathrooms,
-        squareFeet: listing.squareFeet,
-        location: {
-          city: listing.city,
-          state: listing.state,
-          zip: listing.zip,
-          address: listing.address,
-          coordinates: listing.latitude && listing.longitude
-            ? { lat: listing.latitude, lng: listing.longitude }
-            : undefined,
-        },
-        images: listing.images || [],
-        amenities: listing.amenities || [],
-        availabilityDate: listing.availabilityDate,
-        status: listing.status,
-        createdAt: listing.createdAt,
-        updatedAt: listing.updatedAt,
-      } as Listing;
     },
   });
 
-  const isOwner = isAuthenticated && user?.id === data?.landlordId._id;
-  const formattedDate = data ? format(new Date(data.availabilityDate), 'MMMM dd, yyyy') : '';
+  const isOwner = isAuthenticated && user?.id === data?.landlordId?._id;
+  const formattedDate = data && data.availabilityDate 
+    ? (() => {
+        try {
+          return format(new Date(data.availabilityDate), 'MMMM dd, yyyy');
+        } catch (error) {
+          console.error('Error formatting date:', error, data.availabilityDate);
+          return 'Date not available';
+        }
+      })()
+    : '';
 
   const { success, error: showError } = useToast();
 
