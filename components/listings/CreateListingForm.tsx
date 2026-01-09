@@ -156,15 +156,17 @@ export function CreateListingForm({
         price: data.price,
         bedrooms: data.bedrooms || 1,
         bathrooms: data.bathrooms || 1,
-        squareFeet: data.squareFeet,
+        // Only include squareFeet if it has a value (not undefined or null)
+        ...(data.squareFeet != null && data.squareFeet !== undefined && { squareFeet: data.squareFeet }),
         location: {
           city: data.city,
           state: data.state,
-          zip: data.zip,
-          address: data.address,
+          // Only include optional fields if they have values
+          ...(data.zip && { zip: data.zip }),
+          ...(data.address && { address: data.address }),
         },
         amenities: data.amenities || [],
-        images,
+        images: images || [],
         availabilityDate: new Date(data.availabilityDate).toISOString(),
         status: 'available',
       };
