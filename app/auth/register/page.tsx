@@ -7,20 +7,25 @@ import { getDefaultRedirectPath } from '@/lib/navigation';
 import { Header } from '@/components/layout/Header';
 import Link from 'next/link';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
+import { api } from '@/lib/api';
 
 export const dynamic = 'force-dynamic';
 
 function RegisterFormContent() {
+  const [step, setStep] = useState<'form' | 'otp'>('form');
   const [formData, setFormData] = useState({
     email: '',
     password: '',
     name: '',
     role: 'student' as 'student' | 'landlord',
   });
+  const [otpCode, setOtpCode] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [isSendingOtp, setIsSendingOtp] = useState(false);
+  const [isVerifyingOtp, setIsVerifyingOtp] = useState(false);
   const [isRedirecting, setIsRedirecting] = useState(false);
-  const { register, user, isLoading: authLoading } = useAuth();
+  const { user, isLoading: authLoading } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirectParam = searchParams.get('redirect');
@@ -33,7 +38,7 @@ function RegisterFormContent() {
     }
   }, [user, authLoading, redirectParam, router, isLoading, isRedirecting]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     
@@ -73,60 +78,126 @@ function RegisterFormContent() {
       return;
     }
 
-    setIsLoading(true);
+    setIsSendingOtp(true);
+    setError('');
 
     try {
-      const userData = await register(
-        formData.email,
-        formData.password,
-        formData.name,
-        formData.role
-      );
+      // Send OTP to email
+      const response = await api.post('/auth/send-otp', {
+        email: formData.email.trim().toLowerCase(),
+        purpose: 'registration',
+      });
 
-      // Validate user data before redirect
-      if (!userData || !userData.id) {
-        throw new Error('Registration succeeded but user data is incomplete. Please try logging in.');
+      if (response.data.success) {
+        setStep('otp');
+      } else {
+        setError(response.data.message || 'Failed to send OTP. Please try again.');
       }
+    } catch (err: any) {
+      console.error('Send OTP error:', err);
+      setError(err.response?.data?.message || err.message || 'Failed to send OTP. Please try again.');
+    } finally {
+      setIsSendingOtp(false);
+    }
+  };
 
-      // Determine redirect path based on role
-      const redirectPath = getDefaultRedirectPath(userData, redirectParam);
-      
-      // Validate redirect path before navigating
-      if (!redirectPath || !redirectPath.startsWith('/')) {
-        console.error('Invalid redirect path:', redirectPath);
-        setIsLoading(false);
-        router.replace('/dashboard');
-        return;
-      }
-      
-      // Set redirecting state
-      setIsRedirecting(true);
-      
-      // Wait a moment for auth context to update, then navigate
-      // This ensures the user state is properly set before redirecting
-      setTimeout(() => {
-        try {
-          // Use window.location as fallback if router.replace doesn't work
-          if (typeof window !== 'undefined') {
-            window.location.href = redirectPath;
-          } else {
-            router.replace(redirectPath);
-          }
-        } catch (navError) {
-          console.error('Navigation error:', navError);
-          // Fallback to dashboard if navigation fails
-          if (typeof window !== 'undefined') {
-            window.location.href = '/dashboard';
-          } else {
-            router.replace('/dashboard');
-          }
+  const handleOtpSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+
+    if (!otpCode || otpCode.length !== 6) {
+      setError('Please enter a valid 6-digit OTP code');
+      return;
+    }
+
+    setIsVerifyingOtp(true);
+
+    try {
+      // Register with OTP verification
+      const response = await api.post('/auth/register-with-otp', {
+        email: formData.email.trim().toLowerCase(),
+        password: formData.password,
+        name: formData.name.trim(),
+        role: formData.role,
+        otpCode: otpCode.trim(),
+      });
+
+      if (response.data.success) {
+        const { user: userData, tokens } = response.data.data;
+        
+        // Store tokens and user data
+        localStorage.setItem('accessToken', tokens.accessToken);
+        localStorage.setItem('refreshToken', tokens.refreshToken);
+        localStorage.setItem('user', JSON.stringify(userData));
+
+        // Validate user data before redirect
+        if (!userData || !userData.id) {
+          throw new Error('Registration succeeded but user data is incomplete. Please try logging in.');
         }
-      }, 500);
+
+        // Determine redirect path based on role
+        const redirectPath = getDefaultRedirectPath(userData, redirectParam);
+        
+        // Validate redirect path before navigating
+        if (!redirectPath || !redirectPath.startsWith('/')) {
+          console.error('Invalid redirect path:', redirectPath);
+          setIsVerifyingOtp(false);
+          router.replace('/dashboard');
+          return;
+        }
+        
+        // Set redirecting state
+        setIsRedirecting(true);
+        
+        // Wait a moment for auth context to update, then navigate
+        setTimeout(() => {
+          try {
+            if (typeof window !== 'undefined') {
+              window.location.href = redirectPath;
+            } else {
+              router.replace(redirectPath);
+            }
+          } catch (navError) {
+            console.error('Navigation error:', navError);
+            if (typeof window !== 'undefined') {
+              window.location.href = '/dashboard';
+            } else {
+              router.replace('/dashboard');
+            }
+          }
+        }, 500);
+      } else {
+        setError(response.data.message || 'Registration failed. Please try again.');
+      }
     } catch (err: any) {
       console.error('Registration error:', err);
-      setError(err.message || 'Registration failed. Please try again.');
-      setIsLoading(false);
-      setIsRedirecting(false);
+      setError(err.response?.data?.message || err.message || 'Invalid OTP code. Please try again.');
+    } finally {
+      setIsVerifyingOtp(false);
+    }
+  };
+
+  const handleResendOtp = async () => {
+    setError('');
+    setIsSendingOtp(true);
+
+    try {
+      const response = await api.post('/auth/send-otp', {
+        email: formData.email.trim().toLowerCase(),
+        purpose: 'registration',
+      });
+
+      if (response.data.success) {
+        setError('');
+        alert('New OTP code sent! Please check your email.');
+      } else {
+        setError(response.data.message || 'Failed to resend OTP. Please try again.');
+      }
+    } catch (err: any) {
+      console.error('Resend OTP error:', err);
+      setError(err.response?.data?.message || err.message || 'Failed to resend OTP. Please try again.');
+    } finally {
+      setIsSendingOtp(false);
     }
   };
 
@@ -175,7 +246,8 @@ function RegisterFormContent() {
               </div>
             )}
 
-            <form onSubmit={handleSubmit} className="space-y-4">
+            {step === 'form' ? (
+              <form onSubmit={handleFormSubmit} className="space-y-4">
               <div>
                 <label htmlFor="name" className="block text-sm font-medium mb-2">
                   Full Name
@@ -258,19 +330,90 @@ function RegisterFormContent() {
 
               <button
                 type="submit"
-                disabled={isLoading || isRedirecting}
+                disabled={isSendingOtp || isRedirecting}
                 className="w-full px-4 py-2 bg-gradient-primary text-white rounded-lg hover:opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-soft hover:shadow-medium"
               >
-                {isLoading ? (
+                {isSendingOtp ? (
                   <>
                     <LoadingSpinner size="sm" />
-                    <span>Creating account...</span>
+                    <span>Sending verification code...</span>
                   </>
                 ) : (
-                  'Sign Up'
+                  'Send Verification Code'
                 )}
               </button>
             </form>
+            ) : (
+              <form onSubmit={handleOtpSubmit} className="space-y-4">
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+                  <p className="text-sm text-blue-800">
+                    We've sent a 6-digit verification code to <strong>{formData.email}</strong>
+                  </p>
+                </div>
+
+                <div>
+                  <label htmlFor="otp" className="block text-sm font-medium mb-2">
+                    Verification Code
+                  </label>
+                  <input
+                    id="otp"
+                    type="text"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    maxLength={6}
+                    value={otpCode}
+                    onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, ''))}
+                    required
+                    autoFocus
+                    className="w-full px-4 py-2 border border-accent-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-accent-400 transition-all text-center text-2xl tracking-widest font-mono"
+                    placeholder="000000"
+                  />
+                  <p className="text-xs text-muted-foreground mt-1 text-center">
+                    Enter the 6-digit code from your email
+                  </p>
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={isVerifyingOtp || isRedirecting}
+                  className="w-full px-4 py-2 bg-gradient-primary text-white rounded-lg hover:opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-soft hover:shadow-medium"
+                >
+                  {isVerifyingOtp ? (
+                    <>
+                      <LoadingSpinner size="sm" />
+                      <span>Verifying...</span>
+                    </>
+                  ) : (
+                    'Verify & Create Account'
+                  )}
+                </button>
+
+                <div className="text-center">
+                  <button
+                    type="button"
+                    onClick={handleResendOtp}
+                    disabled={isSendingOtp}
+                    className="text-sm text-accent-600 hover:text-accent-700 hover:underline transition-colors disabled:opacity-50"
+                  >
+                    {isSendingOtp ? 'Sending...' : "Didn't receive code? Resend"}
+                  </button>
+                </div>
+
+                <div className="text-center">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setStep('form');
+                      setOtpCode('');
+                      setError('');
+                    }}
+                    className="text-sm text-gray-600 hover:text-gray-700 hover:underline transition-colors"
+                  >
+                    ← Back to form
+                  </button>
+                </div>
+              </form>
+            )}
 
             <p className="mt-6 text-center text-sm text-muted-foreground">
               Already have an account?{' '}
