@@ -48,16 +48,19 @@ export function Header() {
     <header className="sticky top-0 z-50 border-b border-accent-100 bg-white shadow-soft transition-shadow duration-200">
       <div className="container mx-auto px-3 sm:px-4">
         <div className="flex items-center justify-between h-14 md:h-16">
-          <Link 
-            href="/" 
+          <button
+            onClick={() => {
+              window.location.href = '/';
+            }}
             className="flex items-center gap-2 transition-smooth hover:opacity-90"
+            aria-label="Go to homepage"
           >
             <img 
               src="/logo/rrlogo-optimized.png" 
               alt="RoomRentalUSA" 
               className="h-10 w-auto sm:h-12 md:h-14"
             />
-          </Link>
+          </button>
 
           <nav className="hidden md:flex items-center gap-2">
             <Link
