@@ -50,10 +50,13 @@ export function Header() {
         <div className="flex items-center justify-between h-14 md:h-16">
           <Link 
             href="/" 
-            className="text-xl sm:text-2xl font-bold text-gradient transition-smooth hover:opacity-90 flex items-center gap-2"
+            className="flex items-center gap-2 transition-smooth hover:opacity-90"
           >
-            <span className="hidden sm:inline">RoomRentalUSA</span>
-            <span className="sm:hidden">RoomRental</span>
+            <img 
+              src="/logo/rrlogo-optimized.png" 
+              alt="RoomRentalUSA" 
+              className="h-10 w-auto sm:h-12 md:h-14"
+            />
           </Link>
 
           <nav className="hidden md:flex items-center gap-2">

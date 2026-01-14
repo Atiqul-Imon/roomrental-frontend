@@ -36,7 +36,13 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
           {/* Brand */}
           <div>
-            <h3 className="text-xl font-bold mb-4 text-gradient-warm">RoomRentalUSA</h3>
+            <Link href="/" className="inline-block mb-4">
+              <img 
+                src="/logo/rrlogo-optimized.png" 
+                alt="RoomRentalUSA" 
+                className="h-10 w-auto"
+              />
+            </Link>
             <BodySmall className="text-accent-100 mb-4">
               Find your perfect room across the United States. Connecting students and young professionals with quality housing.
             </BodySmall>
