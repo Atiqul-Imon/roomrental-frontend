@@ -129,7 +129,7 @@ export default function RootLayout({
   const organizationSchema = generateOrganizationSchema({
     name: 'RoomRentalUSA',
     url: siteUrl,
-    logo: `${siteUrl}/logo.png`,
+    logo: `${siteUrl}/logo/rrlogo.svg`,
     description: 'Find single rooms for rent across the United States. Perfect for university students and young professionals.',
     contactPoint: {
       contactType: 'Customer Service',
