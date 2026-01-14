@@ -102,9 +102,17 @@ function LoginFormContent() {
               </div>
 
               <div>
-                <label htmlFor="password" className="block text-sm font-medium mb-2 text-grey-700">
-                  Password
-                </label>
+                <div className="flex items-center justify-between mb-2">
+                  <label htmlFor="password" className="block text-sm font-medium text-grey-700">
+                    Password
+                  </label>
+                  <Link
+                    href="/auth/forgot-password"
+                    className="text-sm text-accent-600 hover:text-accent-700 hover:underline transition-colors"
+                  >
+                    Forgot password?
+                  </Link>
+                </div>
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-accent-400" />
                   <input
