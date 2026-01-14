@@ -33,6 +33,12 @@ import { useState } from 'react';
 import { PageSkeleton } from '@/components/LoadingSkeleton';
 import { ErrorState } from '@/components/ui/ErrorState';
 import { useToast } from '@/components/ui/ToastProvider';
+import { StructuredData } from '@/components/seo/StructuredData';
+import {
+  generateProductSchema,
+  generatePlaceSchema,
+  generateBreadcrumbSchema,
+} from '@/lib/seo/structured-data';
 
 export default function ListingDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = use(params);
@@ -208,8 +214,64 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
     );
   }
 
+  // Generate structured data for SEO
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://roomrentalusa.com';
+  const listingUrl = `${siteUrl}/listings/${listingId}`;
+  const city = data.location.city || '';
+  const state = data.location.state || '';
+  const zip = data.location.zip || '';
+  const address = data.location.address || '';
+  
+  const productSchema = generateProductSchema({
+    name: data.title,
+    description: data.description || `${data.title} in ${city}, ${state}`,
+    image: data.images && data.images.length > 0 ? data.images : [`${siteUrl}/og-image.jpg`],
+    offers: {
+      price: data.price,
+      priceCurrency: 'USD',
+      availability: data.status === 'available' ? 'InStock' : 'OutOfStock',
+      url: listingUrl,
+      validFrom: data.availabilityDate || new Date().toISOString(),
+    },
+  });
+
+  const placeSchema = data.location.coordinates
+    ? generatePlaceSchema({
+        name: data.title,
+        description: `Room rental located in ${city}, ${state}`,
+        address: {
+          addressLocality: city,
+          addressRegion: state,
+          postalCode: zip,
+          addressCountry: 'US',
+          ...(address && { streetAddress: address }),
+        },
+        geo: {
+          latitude: data.location.coordinates.lat,
+          longitude: data.location.coordinates.lng,
+        },
+        image: data.images && data.images.length > 0 ? data.images : undefined,
+      })
+    : null;
+
+  const breadcrumbSchema = generateBreadcrumbSchema({
+    items: [
+      { name: 'Home', url: siteUrl },
+      { name: 'Listings', url: `${siteUrl}/listings` },
+      ...(city && state
+        ? [
+            { name: `${city}, ${state}`, url: `${siteUrl}/listings?city=${encodeURIComponent(city)}&state=${encodeURIComponent(state)}` },
+          ]
+        : []),
+      { name: data.title, url: listingUrl },
+    ],
+  });
+
+  const structuredData = [productSchema, breadcrumbSchema, placeSchema].filter(Boolean);
+
   return (
     <>
+      <StructuredData data={structuredData} />
       <Header />
       <main className="min-h-screen bg-gradient-comfort pb-32 md:pb-8">
         <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-6 md:py-8 fade-in">

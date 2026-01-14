@@ -14,6 +14,9 @@ import { SaveSearchButton } from '@/components/search/SaveSearchButton';
 import { ComparisonButton } from '@/components/listings/ComparisonButton';
 import { SlidersHorizontal } from 'lucide-react';
 
+// Note: Metadata is exported from metadata.ts file
+// This is a client component, so metadata must be in a separate file
+
 export const dynamic = 'force-dynamic';
 
 // Wrapper components that use useSearchParams - must be in Suspense
