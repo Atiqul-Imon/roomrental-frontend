@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, Suspense } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { getDefaultRedirectPath } from '@/lib/navigation';
@@ -18,10 +18,18 @@ function LoginFormContent() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const { login, user } = useAuth();
+  const { login, user, isLoading: authLoading } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirectParam = searchParams.get('redirect');
+
+  // Redirect if already authenticated (prevent showing login page during OAuth flow)
+  useEffect(() => {
+    if (!authLoading && user) {
+      const redirectPath = getDefaultRedirectPath(user, redirectParam);
+      router.replace(redirectPath);
+    }
+  }, [user, authLoading, redirectParam, router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -59,6 +67,23 @@ function LoginFormContent() {
       setIsLoading(false);
     }
   };
+
+  // Show loading while checking authentication (prevents login page flash during OAuth)
+  if (authLoading) {
+    return (
+      <>
+        <Header />
+        <main className="min-h-screen flex items-center justify-center py-12 px-4 bg-gradient-comfort">
+          <LoadingSpinner size="lg" text="Loading..." />
+        </main>
+      </>
+    );
+  }
+
+  // Don't render login form if already authenticated (will redirect)
+  if (user) {
+    return null;
+  }
 
   return (
     <>

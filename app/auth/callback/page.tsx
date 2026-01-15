@@ -12,12 +12,17 @@ function AuthCallbackContent() {
   const searchParams = useSearchParams();
   const [error, setError] = useState<string | null>(null);
   const [status, setStatus] = useState<string>('Completing authentication...');
+  const [isProcessing, setIsProcessing] = useState(true);
+  const [isRedirecting, setIsRedirecting] = useState(false);
   
   // Get redirect parameter from URL (preserved through OAuth flow)
   const redirectParam = searchParams.get('redirect');
 
   useEffect(() => {
     const handleCallback = async () => {
+      // Prevent multiple executions
+      if (!isProcessing) return;
+      
       try {
         // Set initial status to show loading state immediately
         setStatus('Processing authentication...');
@@ -114,6 +119,10 @@ function AuthCallbackContent() {
         }
 
         if (response.data.success) {
+          // Mark as redirecting to prevent error display
+          setIsRedirecting(true);
+          setIsProcessing(false);
+          
           // Store tokens and user data
           localStorage.setItem('accessToken', response.data.data.tokens.accessToken);
           localStorage.setItem('refreshToken', response.data.data.tokens.refreshToken);
@@ -144,36 +153,40 @@ function AuthCallbackContent() {
             redirectPath = getDefaultRedirectPath(user, redirectParam);
           }
           
-          // Use window.location for full page reload to ensure auth context updates
-          // This ensures localStorage is fully set and auth context reloads
-          setTimeout(() => {
-            window.location.href = redirectPath;
-          }, 500);
+          // Use window.location immediately for full page reload to ensure auth context updates
+          // No delay to prevent intermediate page flashes
+          window.location.href = redirectPath;
         } else {
+          setIsProcessing(false);
           setError('Failed to authenticate');
           setTimeout(() => router.push('/auth/login?error=auth_failed'), 2000);
         }
       } catch (err: any) {
-        console.error('Callback error:', err);
-        const errorMessage = err.response?.data?.message || 
-                            err.response?.data?.error || 
-                            err.message || 
-                            'Authentication failed';
-        console.error('Full error details:', {
-          message: errorMessage,
-          status: err.response?.status,
-          data: err.response?.data,
-          stack: err.stack
-        });
-        setError(errorMessage);
-        setTimeout(() => router.push(`/auth/login?error=${encodeURIComponent(errorMessage)}`), 2000);
+        // Only set error if we're not already redirecting
+        if (!isRedirecting) {
+          setIsProcessing(false);
+          console.error('Callback error:', err);
+          const errorMessage = err.response?.data?.message || 
+                              err.response?.data?.error || 
+                              err.message || 
+                              'Authentication failed';
+          console.error('Full error details:', {
+            message: errorMessage,
+            status: err.response?.status,
+            data: err.response?.data,
+            stack: err.stack
+          });
+          setError(errorMessage);
+          setTimeout(() => router.push(`/auth/login?error=${encodeURIComponent(errorMessage)}`), 2000);
+        }
       }
     };
 
     handleCallback();
-  }, [searchParams, router]);
+  }, [searchParams, router, isProcessing, isRedirecting]);
 
-  if (error) {
+  // Don't show error if we're redirecting (prevents error flash)
+  if (error && !isRedirecting) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-comfort">
         <div className="text-center bg-white/95 backdrop-blur-sm border border-accent-200 rounded-xl p-8 shadow-large max-w-md">
@@ -192,6 +205,7 @@ function AuthCallbackContent() {
     );
   }
 
+  // Always show loading state while processing or redirecting
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-comfort">
       <div className="text-center bg-white/95 backdrop-blur-sm border border-accent-200 rounded-xl p-8 shadow-large max-w-md">
