@@ -90,9 +90,22 @@ function AuthCallbackContent() {
         setStatus('Verifying with backend...');
 
         // Send to your backend to verify and sync
-        const response = await api.post('/auth/supabase/verify', {
-          accessToken,
-        });
+        let response;
+        try {
+          response = await api.post('/auth/supabase/verify', {
+            accessToken,
+          });
+        } catch (apiError: any) {
+          // Handle rate limiting (429) or other API errors
+          if (apiError.response?.status === 429) {
+            setError('Too many login attempts. Please try again in an hour.');
+            setTimeout(() => router.push('/auth/login?error=rate_limit'), 3000);
+            return;
+          }
+          
+          // Re-throw to be caught by outer catch block
+          throw apiError;
+        }
 
         if (response.data.success) {
           // Store tokens and user data
@@ -115,9 +128,10 @@ function AuthCallbackContent() {
             redirectPath = getDefaultRedirectPath(user, null);
           }
           
-          // Small delay to show success message
+          // Use window.location for full page reload to ensure auth context updates
+          // This ensures localStorage is fully set and auth context reloads
           setTimeout(() => {
-            router.push(redirectPath);
+            window.location.href = redirectPath;
           }, 500);
         } else {
           setError('Failed to authenticate');
