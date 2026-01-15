@@ -16,26 +16,51 @@ function AuthCallbackContent() {
   useEffect(() => {
     const handleCallback = async () => {
       try {
-        // Check for access token in hash fragment first (Supabase OAuth redirect)
-        const hash = window.location.hash;
-        let accessToken: string | null = null;
+        // Initial delay to ensure hash is available (browser may need a moment)
+        await new Promise(resolve => setTimeout(resolve, 200));
 
-        if (hash) {
-          // Parse hash fragment: #access_token=xxx&token_type=xxx&expires_in=xxx
-          const params = new URLSearchParams(hash.substring(1));
-          accessToken = params.get('access_token');
+        let accessToken: string | null = null;
+        let retryCount = 0;
+        const maxRetries = 3;
+
+        // Try to get access token from hash (may take a moment for browser to set it)
+        while (!accessToken && retryCount < maxRetries) {
+          const hash = window.location.hash || window.location.href.split('#')[1] || '';
           
-          // Clean up the hash fragment from URL for security
-          if (accessToken) {
-            window.history.replaceState(null, '', window.location.pathname + window.location.search);
+          if (hash) {
+            // Parse hash fragment: #access_token=xxx&token_type=xxx&expires_in=xxx
+            const params = new URLSearchParams(hash.startsWith('#') ? hash.substring(1) : hash);
+            accessToken = params.get('access_token');
+            
+            // Clean up the hash fragment from URL for security
+            if (accessToken) {
+              window.history.replaceState(null, '', window.location.pathname + window.location.search);
+              break;
+            }
+          }
+
+          // Check for code in query params (alternative flow)
+          const code = searchParams.get('code');
+          if (code && !accessToken) {
+            // Found code, will exchange it below
+            break;
+          }
+
+          // Wait a bit before retry (hash might not be available immediately)
+          if (!accessToken && retryCount < maxRetries - 1) {
+            await new Promise(resolve => setTimeout(resolve, 200));
+            retryCount++;
+          } else {
+            break;
           }
         }
 
-        // If no access token in hash, check for code in query params
+        // If still no access token, try code exchange
         if (!accessToken) {
           const code = searchParams.get('code');
 
           if (!code) {
+            // Only show error after all retries failed
             setError('No authorization code or access token received');
             setTimeout(() => router.push('/auth/login?error=no_code'), 2000);
             return;
