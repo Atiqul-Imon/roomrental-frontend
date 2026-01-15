@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/Button';
 import Link from 'next/link';
 import { Mail, Lock, AlertCircle } from 'lucide-react';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
+import { SocialLoginButtons } from '@/components/auth/SocialLoginButtons';
 
 export const dynamic = 'force-dynamic';
 
@@ -136,6 +137,19 @@ function LoginFormContent() {
                 {isLoading ? 'Signing in...' : 'Sign In'}
               </Button>
             </form>
+
+            <div className="relative my-6">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-grey-300"></div>
+              </div>
+              <div className="relative flex justify-center text-sm">
+                <span className="px-2 bg-white text-grey-500">Or continue with</span>
+              </div>
+            </div>
+
+            <SocialLoginButtons 
+              onError={(error) => setError(error)} 
+            />
 
             <p className="mt-6 text-center text-sm text-grey-600">
               Don&apos;t have an account?{' '}
