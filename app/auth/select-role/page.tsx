@@ -13,23 +13,48 @@ export default function SelectRolePage() {
   const [role, setRole] = useState<'student' | 'landlord' | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
   const router = useRouter();
-  const { user } = useAuth();
+  const { user, isLoading: authLoading } = useAuth();
 
   useEffect(() => {
-    // If not authenticated, redirect to login
+    // Wait for auth context to finish loading
+    if (authLoading) {
+      return;
+    }
+
+    setIsCheckingAuth(false);
+
+    // Check authentication - look in localStorage first (might be set but context not updated yet)
     const accessToken = localStorage.getItem('accessToken');
+    const storedUserStr = localStorage.getItem('user');
+    
     if (!accessToken) {
+      console.log('[SelectRole] No access token found, redirecting to login');
       router.replace('/auth/login');
       return;
     }
 
-    // If user already has a valid role and is authenticated, redirect them
-    if (user && user.role && ['student', 'landlord', 'staff', 'admin', 'super_admin'].includes(user.role)) {
-      const redirectPath = getDefaultRedirectPath(user, null);
-      router.replace(redirectPath);
+    // Parse user from localStorage if auth context hasn't loaded it yet
+    let currentUser = user;
+    if (!currentUser && storedUserStr) {
+      try {
+        currentUser = JSON.parse(storedUserStr);
+        console.log('[SelectRole] Loaded user from localStorage:', currentUser);
+      } catch (e) {
+        console.error('[SelectRole] Error parsing stored user:', e);
+      }
     }
-  }, [user, router]);
+
+    // If user already has a valid role and is authenticated, redirect them
+    if (currentUser && currentUser.role && ['student', 'landlord', 'staff', 'admin', 'super_admin'].includes(currentUser.role)) {
+      console.log('[SelectRole] User already has role:', currentUser.role, 'redirecting to dashboard');
+      const redirectPath = getDefaultRedirectPath(currentUser, null);
+      router.replace(redirectPath);
+    } else {
+      console.log('[SelectRole] User needs to select role. Current user:', currentUser);
+    }
+  }, [user, authLoading, router]);
 
   const handleRoleSelect = async () => {
     if (!role) {
@@ -63,6 +88,21 @@ export default function SelectRolePage() {
       setIsLoading(false);
     }
   };
+
+  // Show loading while checking authentication
+  if (isCheckingAuth || authLoading) {
+    return (
+      <>
+        <Header />
+        <main className="min-h-screen flex items-center justify-center bg-gradient-comfort">
+          <div className="text-center bg-white/95 backdrop-blur-sm border border-accent-200 rounded-xl p-8 shadow-large max-w-md">
+            <LoadingSpinner size="lg" />
+            <p className="mt-4 text-gray-600">Loading...</p>
+          </div>
+        </main>
+      </>
+    );
+  }
 
   return (
     <>
