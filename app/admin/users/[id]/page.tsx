@@ -85,7 +85,16 @@ export default function UserDetailPage() {
     try {
       const response = await api.delete(`/admin/users/${userId}`);
       if (response.data.success) {
-        queryClient.invalidateQueries({ queryKey: ['admin-users'] });
+        // Remove the deleted user detail from cache
+        queryClient.removeQueries({ queryKey: ['admin-user', userId] });
+        
+        // Invalidate all admin-users list queries (this will trigger refetch on the list page)
+        queryClient.invalidateQueries({ 
+          queryKey: ['admin-users'],
+        });
+        
+        // Navigate back to users list
+        // The list page will refetch automatically due to refetchOnMount: true
         router.push('/admin/users');
       }
     } catch (err: any) {

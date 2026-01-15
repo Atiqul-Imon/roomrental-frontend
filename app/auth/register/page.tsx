@@ -428,7 +428,8 @@ function RegisterFormContent() {
                 </div>
 
                 <SocialLoginButtons 
-                  onError={(error) => setError(error)} 
+                  onError={(error) => setError(error)}
+                  redirect={redirectParam || null}
                 />
               </>
             )}

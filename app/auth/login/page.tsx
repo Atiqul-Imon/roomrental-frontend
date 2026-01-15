@@ -148,7 +148,8 @@ function LoginFormContent() {
             </div>
 
             <SocialLoginButtons 
-              onError={(error) => setError(error)} 
+              onError={(error) => setError(error)}
+              redirect={redirectParam || null}
             />
 
             <p className="mt-6 text-center text-sm text-grey-600">
