@@ -80,8 +80,18 @@ function AuthCallbackContent() {
         }
       } catch (err: any) {
         console.error('Callback error:', err);
-        setError(err.response?.data?.message || err.message || 'Authentication failed');
-        setTimeout(() => router.push('/auth/login?error=callback_error'), 2000);
+        const errorMessage = err.response?.data?.message || 
+                            err.response?.data?.error || 
+                            err.message || 
+                            'Authentication failed';
+        console.error('Full error details:', {
+          message: errorMessage,
+          status: err.response?.status,
+          data: err.response?.data,
+          stack: err.stack
+        });
+        setError(errorMessage);
+        setTimeout(() => router.push(`/auth/login?error=${encodeURIComponent(errorMessage)}`), 2000);
       }
     };
 
