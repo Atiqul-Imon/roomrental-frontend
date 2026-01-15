@@ -36,3 +36,4 @@ export function StructuredData({ data }: StructuredDataProps) {
   return null;
 }
 
+

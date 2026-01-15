@@ -57,3 +57,4 @@ export function generateLocationDescription(city?: string, state?: string): stri
   return 'Search and filter through thousands of rooms to find your ideal space. Find verified listings across the United States.';
 }
 
+
