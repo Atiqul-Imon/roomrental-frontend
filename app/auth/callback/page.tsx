@@ -16,37 +16,57 @@ function AuthCallbackContent() {
   useEffect(() => {
     const handleCallback = async () => {
       try {
-        const code = searchParams.get('code');
+        // Check for access token in hash fragment first (Supabase OAuth redirect)
+        const hash = window.location.hash;
+        let accessToken: string | null = null;
 
-        if (!code) {
-          setError('No authorization code received');
-          setTimeout(() => router.push('/auth/login?error=no_code'), 2000);
-          return;
+        if (hash) {
+          // Parse hash fragment: #access_token=xxx&token_type=xxx&expires_in=xxx
+          const params = new URLSearchParams(hash.substring(1));
+          accessToken = params.get('access_token');
+          
+          // Clean up the hash fragment from URL for security
+          if (accessToken) {
+            window.history.replaceState(null, '', window.location.pathname + window.location.search);
+          }
         }
 
-        setStatus('Exchanging code for session...');
+        // If no access token in hash, check for code in query params
+        if (!accessToken) {
+          const code = searchParams.get('code');
 
-        // Exchange code for session
-        const { data: { session }, error: sessionError } = await supabase.auth.exchangeCodeForSession(code);
+          if (!code) {
+            setError('No authorization code or access token received');
+            setTimeout(() => router.push('/auth/login?error=no_code'), 2000);
+            return;
+          }
 
-        if (sessionError) {
-          console.error('Session error:', sessionError);
-          setError(sessionError.message);
-          setTimeout(() => router.push(`/auth/login?error=${encodeURIComponent(sessionError.message)}`), 2000);
-          return;
-        }
+          setStatus('Exchanging code for session...');
 
-        if (!session?.access_token) {
-          setError('No access token received');
-          setTimeout(() => router.push('/auth/login?error=no_token'), 2000);
-          return;
+          // Exchange code for session
+          const { data: { session }, error: sessionError } = await supabase.auth.exchangeCodeForSession(code);
+
+          if (sessionError) {
+            console.error('Session error:', sessionError);
+            setError(sessionError.message);
+            setTimeout(() => router.push(`/auth/login?error=${encodeURIComponent(sessionError.message)}`), 2000);
+            return;
+          }
+
+          if (!session?.access_token) {
+            setError('No access token received');
+            setTimeout(() => router.push('/auth/login?error=no_token'), 2000);
+            return;
+          }
+
+          accessToken = session.access_token;
         }
 
         setStatus('Verifying with backend...');
 
         // Send to your backend to verify and sync
         const response = await api.post('/auth/supabase/verify', {
-          accessToken: session.access_token,
+          accessToken,
         });
 
         if (response.data.success) {
