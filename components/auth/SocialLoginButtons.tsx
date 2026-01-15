@@ -16,10 +16,14 @@ export function SocialLoginButtons({ onError }: SocialLoginButtonsProps) {
     setLoading(provider);
     
     try {
+      // Get the redirect URL from environment or use current origin
+      const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || window.location.origin;
+      const redirectTo = `${siteUrl}/auth/callback`;
+      
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider,
         options: {
-          redirectTo: `${window.location.origin}/auth/callback`,
+          redirectTo,
           queryParams: {
             access_type: 'offline',
             prompt: 'consent',
