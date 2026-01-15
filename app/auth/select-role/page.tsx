@@ -46,13 +46,30 @@ export default function SelectRolePage() {
       }
     }
 
-    // If user already has a valid role and is authenticated, redirect them
-    if (currentUser && currentUser.role && ['student', 'landlord', 'staff', 'admin', 'super_admin'].includes(currentUser.role)) {
-      console.log('[SelectRole] User already has role:', currentUser.role, 'redirecting to dashboard');
-      const redirectPath = getDefaultRedirectPath(currentUser, null);
-      router.replace(redirectPath);
+    // Check if user needs role selection (flag set by OAuth callback for new users)
+    const needsRoleSelection = localStorage.getItem('needsRoleSelection') === 'true';
+    
+    // If user needs role selection, allow them to stay on this page even if they have a default role
+    // This is for new OAuth users who need to confirm their role choice
+    if (!needsRoleSelection) {
+      // If user already has a valid role and doesn't need role selection, redirect them
+      // Allow 'student' and 'landlord' only - staff/admin should not see this page
+      if (currentUser && currentUser.role && ['staff', 'admin', 'super_admin'].includes(currentUser.role)) {
+        console.log('[SelectRole] User already has admin role:', currentUser.role, 'redirecting to dashboard');
+        const redirectPath = getDefaultRedirectPath(currentUser, null);
+        router.replace(redirectPath);
+        return;
+      }
+      
+      // If user has explicitly selected a role (not from new OAuth flow), redirect
+      if (currentUser && currentUser.role && ['student', 'landlord'].includes(currentUser.role)) {
+        console.log('[SelectRole] User already has selected role:', currentUser.role, 'redirecting to dashboard');
+        const redirectPath = getDefaultRedirectPath(currentUser, null);
+        router.replace(redirectPath);
+        return;
+      }
     } else {
-      console.log('[SelectRole] User needs to select role. Current user:', currentUser);
+      console.log('[SelectRole] New OAuth user - needs to select/confirm role. Current user:', currentUser);
     }
   }, [user, authLoading, router]);
 
@@ -76,8 +93,20 @@ export default function SelectRolePage() {
         const updatedUser = response.data.data.user;
         localStorage.setItem('user', JSON.stringify(updatedUser));
         
+        // Clear the needsRoleSelection flag since user has now selected a role
+        localStorage.removeItem('needsRoleSelection');
+        
+        // Get pending redirect if it exists (from OAuth flow)
+        const pendingRedirect = localStorage.getItem('pendingRedirect');
+        if (pendingRedirect) {
+          localStorage.removeItem('pendingRedirect');
+        }
+        
+        // Use pending redirect if available, otherwise use default redirect path
+        const redirectPath = getDefaultRedirectPath(updatedUser, pendingRedirect);
+        
         // Reload the page to update auth context
-        window.location.href = getDefaultRedirectPath(updatedUser, null);
+        window.location.href = redirectPath;
       } else {
         setError(response.data.message || 'Failed to update role');
       }

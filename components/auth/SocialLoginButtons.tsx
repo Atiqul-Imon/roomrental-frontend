@@ -7,9 +7,10 @@ import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 
 interface SocialLoginButtonsProps {
   onError?: (error: string) => void;
+  redirect?: string | null; // Optional redirect parameter to preserve after OAuth
 }
 
-export function SocialLoginButtons({ onError }: SocialLoginButtonsProps) {
+export function SocialLoginButtons({ onError, redirect }: SocialLoginButtonsProps) {
   const [loading, setLoading] = useState<string | null>(null);
 
   const handleSocialLogin = async (provider: 'google') => {
@@ -18,12 +19,19 @@ export function SocialLoginButtons({ onError }: SocialLoginButtonsProps) {
     try {
       // Get the redirect URL from environment or use current origin
       const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || window.location.origin;
-      const redirectTo = `${siteUrl}/auth/callback`;
+      
+      // Build callback URL with redirect parameter if provided
+      let callbackUrl = `${siteUrl}/auth/callback`;
+      if (redirect) {
+        // Encode redirect parameter to pass through OAuth flow
+        const redirectParam = encodeURIComponent(redirect);
+        callbackUrl += `?redirect=${redirectParam}`;
+      }
       
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider,
         options: {
-          redirectTo,
+          redirectTo: callbackUrl,
           queryParams: {
             access_type: 'offline',
             prompt: 'consent',

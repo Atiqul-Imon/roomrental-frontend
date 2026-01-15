@@ -12,10 +12,16 @@ function AuthCallbackContent() {
   const searchParams = useSearchParams();
   const [error, setError] = useState<string | null>(null);
   const [status, setStatus] = useState<string>('Completing authentication...');
+  
+  // Get redirect parameter from URL (preserved through OAuth flow)
+  const redirectParam = searchParams.get('redirect');
 
   useEffect(() => {
     const handleCallback = async () => {
       try {
+        // Set initial status to show loading state immediately
+        setStatus('Processing authentication...');
+
         // Initial delay to ensure hash is available (browser may need a moment)
         await new Promise(resolve => setTimeout(resolve, 200));
 
@@ -119,13 +125,23 @@ function AuthCallbackContent() {
           const user = response.data.data.user;
           const isNewOAuthUser = response.data.data.isNewUser || false;
           
-          // If this is a new OAuth user, redirect them to role selection
-          // Otherwise, redirect to their default dashboard
+          // If this is a new OAuth user, set a flag and redirect them to role selection
+          // Otherwise, redirect to their default dashboard (preserving redirect param if provided)
           let redirectPath;
           if (isNewOAuthUser) {
+            // Set a flag to indicate this user needs to select a role
+            // Even if they have a default 'student' role, they should confirm it
+            // Store redirect param for use after role selection
+            if (redirectParam) {
+              localStorage.setItem('pendingRedirect', redirectParam);
+            }
+            localStorage.setItem('needsRoleSelection', 'true');
             redirectPath = '/auth/select-role';
           } else {
-            redirectPath = getDefaultRedirectPath(user, null);
+            // Clear the flag if user is not new
+            localStorage.removeItem('needsRoleSelection');
+            // Use redirect param if provided, otherwise use default redirect path
+            redirectPath = getDefaultRedirectPath(user, redirectParam);
           }
           
           // Use window.location for full page reload to ensure auth context updates

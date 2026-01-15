@@ -35,6 +35,8 @@ export default function UsersPage() {
         totalPages: backendData.pagination?.totalPages || 0,
       };
     },
+    refetchOnMount: true, // Always refetch when component mounts (ensures fresh data after navigation)
+    refetchOnWindowFocus: false, // Don't refetch on window focus
   });
 
   const getRoleBadgeColor = (role: string) => {
