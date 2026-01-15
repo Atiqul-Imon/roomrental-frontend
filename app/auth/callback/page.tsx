@@ -59,7 +59,16 @@ function AuthCallbackContent() {
 
           // Redirect based on user role
           const user = response.data.data.user;
-          const redirectPath = getDefaultRedirectPath(user, null);
+          const isNewOAuthUser = response.data.data.isNewUser || false;
+          
+          // If this is a new OAuth user, redirect them to role selection
+          // Otherwise, redirect to their default dashboard
+          let redirectPath;
+          if (isNewOAuthUser) {
+            redirectPath = '/auth/select-role';
+          } else {
+            redirectPath = getDefaultRedirectPath(user, null);
+          }
           
           // Small delay to show success message
           setTimeout(() => {
