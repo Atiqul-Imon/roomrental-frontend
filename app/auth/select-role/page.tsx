@@ -17,6 +17,13 @@ export default function SelectRolePage() {
   const { user } = useAuth();
 
   useEffect(() => {
+    // If not authenticated, redirect to login
+    const accessToken = localStorage.getItem('accessToken');
+    if (!accessToken) {
+      router.replace('/auth/login');
+      return;
+    }
+
     // If user already has a valid role and is authenticated, redirect them
     if (user && user.role && ['student', 'landlord', 'staff', 'admin', 'super_admin'].includes(user.role)) {
       const redirectPath = getDefaultRedirectPath(user, null);
