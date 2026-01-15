@@ -12,6 +12,7 @@ import {
 } from '@/lib/seo/structured-data';
 
 // Body font - Inter (for body text, UI elements)
+// Updated: Font configuration optimized for performance
 const inter = Inter({ 
   subsets: ['latin'],
   variable: '--font-body',
