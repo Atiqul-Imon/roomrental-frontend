@@ -14,6 +14,7 @@ function AuthCallbackContent() {
   const [status, setStatus] = useState<string>('Completing authentication...');
   const [isProcessing, setIsProcessing] = useState(true);
   const [isRedirecting, setIsRedirecting] = useState(false);
+  const [hasToken, setHasToken] = useState(false); // Track if we have a token to prevent error display
   
   // Get redirect parameter from URL (preserved through OAuth flow)
   const redirectParam = searchParams.get('redirect');
@@ -27,77 +28,92 @@ function AuthCallbackContent() {
         // Set initial status to show loading state immediately
         setStatus('Processing authentication...');
 
-        // Initial delay to ensure hash is available (browser may need a moment)
-        await new Promise(resolve => setTimeout(resolve, 200));
-
         let accessToken: string | null = null;
-        let retryCount = 0;
-        const maxRetries = 3;
+        let attempts = 0;
+        const maxAttempts = 8; // Total attempts across all methods
 
-        // Try to get access token from hash (may take a moment for browser to set it)
-        while (!accessToken && retryCount < maxRetries) {
-          const hash = window.location.hash || window.location.href.split('#')[1] || '';
-          
-          if (hash) {
-            // Parse hash fragment: #access_token=xxx&token_type=xxx&expires_in=xxx
-            const params = new URLSearchParams(hash.startsWith('#') ? hash.substring(1) : hash);
-            accessToken = params.get('access_token');
-            
-            // Clean up the hash fragment from URL for security
-            if (accessToken) {
-              window.history.replaceState(null, '', window.location.pathname + window.location.search);
+        // Try multiple methods with retries
+        while (!accessToken && attempts < maxAttempts) {
+          attempts++;
+
+          // Method 1: Try to get session from Supabase (might already be set)
+          if (attempts <= 3) {
+            setStatus('Checking session...');
+            const { data: { session: existingSession } } = await supabase.auth.getSession();
+            if (existingSession?.access_token) {
+              accessToken = existingSession.access_token;
               break;
+            }
+            if (attempts < 3) {
+              await new Promise(resolve => setTimeout(resolve, 300));
+              continue;
             }
           }
 
-          // Check for code in query params (alternative flow)
-          const code = searchParams.get('code');
-          if (code && !accessToken) {
-            // Found code, will exchange it below
-            break;
+          // Method 2: Try to get from URL hash
+          if (attempts <= 6 && !accessToken) {
+            setStatus('Processing authentication...');
+            const hash = window.location.hash || window.location.href.split('#')[1] || '';
+            
+            if (hash) {
+              // Parse hash fragment: #access_token=xxx&token_type=xxx&expires_in=xxx
+              const params = new URLSearchParams(hash.startsWith('#') ? hash.substring(1) : hash);
+              accessToken = params.get('access_token');
+              
+              // Clean up the hash fragment from URL for security
+              if (accessToken) {
+                window.history.replaceState(null, '', window.location.pathname + window.location.search);
+                break;
+              }
+            }
+            
+            if (!accessToken && attempts < 6) {
+              await new Promise(resolve => setTimeout(resolve, 300));
+              continue;
+            }
           }
 
-          // Wait a bit before retry (hash might not be available immediately)
-          if (!accessToken && retryCount < maxRetries - 1) {
+          // Method 3: Try code exchange (only once)
+          if (attempts === 7 && !accessToken) {
+            const code = searchParams.get('code');
+
+            if (code) {
+              setStatus('Exchanging code for session...');
+
+              // Exchange code for session
+              const { data: { session }, error: sessionError } = await supabase.auth.exchangeCodeForSession(code);
+
+              if (sessionError) {
+                console.error('Session error:', sessionError);
+                setIsProcessing(false);
+                setError(sessionError.message);
+                setTimeout(() => router.push(`/auth/login?error=${encodeURIComponent(sessionError.message)}`), 2000);
+                return;
+              }
+
+              if (session?.access_token) {
+                accessToken = session.access_token;
+                break;
+              }
+            }
+          }
+
+          // Wait before next attempt if still no token
+          if (!accessToken && attempts < maxAttempts) {
             await new Promise(resolve => setTimeout(resolve, 200));
-            retryCount++;
-          } else {
-            break;
           }
         }
 
-        // If still no access token, try code exchange
+        // Only show error if we've exhausted all methods
         if (!accessToken) {
-          const code = searchParams.get('code');
-
-          if (!code) {
-            // Only show error after all retries failed
-            setError('No authorization code or access token received');
-            setTimeout(() => router.push('/auth/login?error=no_code'), 2000);
-            return;
-          }
-
-          setStatus('Exchanging code for session...');
-
-          // Exchange code for session
-          const { data: { session }, error: sessionError } = await supabase.auth.exchangeCodeForSession(code);
-
-          if (sessionError) {
-            console.error('Session error:', sessionError);
-            setError(sessionError.message);
-            setTimeout(() => router.push(`/auth/login?error=${encodeURIComponent(sessionError.message)}`), 2000);
-            return;
-          }
-
-          if (!session?.access_token) {
-            setError('No access token received');
-            setTimeout(() => router.push('/auth/login?error=no_token'), 2000);
-            return;
-          }
-
-          accessToken = session.access_token;
+          setIsProcessing(false);
+          setError('No authorization code or access token received');
+          setTimeout(() => router.push('/auth/login?error=no_code'), 2000);
+          return;
         }
 
+        // Mark that we have a token - prevents error display
+        setHasToken(true);
         setStatus('Verifying with backend...');
 
         // Send to your backend to verify and sync
@@ -185,8 +201,8 @@ function AuthCallbackContent() {
     handleCallback();
   }, [searchParams, router, isProcessing, isRedirecting]);
 
-  // Don't show error if we're redirecting (prevents error flash)
-  if (error && !isRedirecting) {
+  // Don't show error if we're redirecting or have a token (prevents error flash)
+  if (error && !isRedirecting && !hasToken) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-comfort">
         <div className="text-center bg-white/95 backdrop-blur-sm border border-accent-200 rounded-xl p-8 shadow-large max-w-md">
