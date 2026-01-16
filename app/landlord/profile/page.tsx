@@ -6,12 +6,16 @@ import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '@/lib/auth-context';
 import { api } from '@/lib/api';
-import { User, Mail, Phone, MapPin, Save, Upload, Camera } from 'lucide-react';
+import { queryConfig } from '@/lib/query-config';
+import { User, Mail, Phone, MapPin, Save, Upload, Camera, LayoutDashboard, Home, Eye, TrendingUp } from 'lucide-react';
 import Image from 'next/image';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 export default function LandlordProfilePage() {
   const { user } = useAuth();
   const queryClient = useQueryClient();
+  const router = useRouter();
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
     name: user?.name || '',
@@ -66,12 +70,109 @@ export default function LandlordProfilePage() {
     updateMutation.mutate(formData);
   };
 
+  // Fetch listings data for statistics
+  const { data: listingsData, isLoading: listingsLoading } = useQuery({
+    queryKey: ['my-listings', 'all', 1],
+    ...queryConfig.dashboard,
+    queryFn: async () => {
+      const response = await api.get('/listings/my/listings', { 
+        params: { page: 1, limit: 100 } 
+      });
+      const backendData = response.data.data;
+      return {
+        listings: backendData.listings || [],
+        total: backendData.total || 0,
+      };
+    },
+  });
+
+  const listings = listingsData?.listings || [];
+  
+  // Calculate statistics
+  const stats = {
+    total: listingsData?.total || 0,
+    active: listings.filter((l: any) => l.status === 'available' || l.status === 'active').length,
+    totalViews: listings.reduce((sum: number, l: any) => sum + (l.views || l.viewCount || 0), 0),
+  };
+
   return (
     <div className="space-y-4 sm:space-y-6">
       {/* Header */}
-      <div className="mb-4 sm:mb-6">
-        <h1 className="text-2xl sm:text-3xl font-bold text-grey-900 mb-1 sm:mb-2">Profile Settings</h1>
-        <p className="text-sm sm:text-base text-grey-600">Manage your profile information</p>
+      <div className="mb-4 sm:mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl sm:text-3xl font-bold text-grey-900 mb-1 sm:mb-2">Profile Settings</h1>
+          <p className="text-sm sm:text-base text-grey-600">Manage your profile information</p>
+        </div>
+        <Link
+          href="/landlord/dashboard"
+          className="flex items-center gap-2 px-4 py-2.5 bg-primary-500 text-white rounded-lg hover:bg-primary-600 active:bg-primary-700 transition-colors font-semibold text-sm sm:text-base shadow-medium hover:shadow-lg"
+        >
+          <LayoutDashboard className="w-4 h-4 sm:w-5 sm:h-5" />
+          Dashboard
+        </Link>
+      </div>
+
+      {/* Overview Section with Statistics */}
+      <div className="bg-white rounded-xl p-4 sm:p-6 shadow-medium border border-grey-200">
+        <h2 className="text-lg sm:text-xl font-bold text-grey-900 mb-4 sm:mb-6">Overview</h2>
+        {listingsLoading ? (
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            {[...Array(3)].map((_, i) => (
+              <div key={i} className="bg-grey-100 rounded-lg p-4 animate-pulse">
+                <div className="h-16 bg-grey-200 rounded" />
+              </div>
+            ))}
+          </div>
+        ) : listings.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <Link
+              href="/landlord/listings"
+              className="bg-white rounded-xl p-4 sm:p-6 shadow-medium border border-grey-200 hover:shadow-lg transition-all duration-200 active:scale-95 cursor-pointer"
+            >
+              <div className="flex items-center justify-between mb-3 sm:mb-4">
+                <div className="p-2 sm:p-3 bg-primary-100 rounded-lg">
+                  <Home className="w-5 h-5 sm:w-6 sm:h-6 text-primary-600" />
+                </div>
+                <span className="text-xl sm:text-2xl font-bold text-grey-900">{stats.total}</span>
+              </div>
+              <p className="text-xs sm:text-sm text-grey-600 font-medium">Total Listings</p>
+            </Link>
+
+            <Link
+              href="/landlord/listings?status=available"
+              className="bg-white rounded-xl p-4 sm:p-6 shadow-medium border border-grey-200 hover:shadow-lg transition-all duration-200 active:scale-95 cursor-pointer"
+            >
+              <div className="flex items-center justify-between mb-3 sm:mb-4">
+                <div className="p-2 sm:p-3 bg-green-100 rounded-lg">
+                  <TrendingUp className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
+                </div>
+                <span className="text-xl sm:text-2xl font-bold text-grey-900">{stats.active}</span>
+              </div>
+              <p className="text-xs sm:text-sm text-grey-600 font-medium">Active Listings</p>
+            </Link>
+
+            <div className="bg-white rounded-xl p-4 sm:p-6 shadow-medium border border-grey-200">
+              <div className="flex items-center justify-between mb-3 sm:mb-4">
+                <div className="p-2 sm:p-3 bg-blue-100 rounded-lg">
+                  <Eye className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" />
+                </div>
+                <span className="text-xl sm:text-2xl font-bold text-grey-900">{stats.totalViews.toLocaleString()}</span>
+              </div>
+              <p className="text-xs sm:text-sm text-grey-600 font-medium">Total Views</p>
+            </div>
+          </div>
+        ) : (
+          <div className="text-center py-8 sm:py-12">
+            <Home className="w-12 h-12 sm:w-16 sm:h-16 text-grey-300 mx-auto mb-3 sm:mb-4" />
+            <p className="text-sm sm:text-base text-grey-600 mb-3 sm:mb-4">No listings yet</p>
+            <Link
+              href="/listings/create"
+              className="inline-block px-5 py-2.5 sm:px-6 sm:py-3 bg-primary-500 text-white rounded-lg hover:bg-primary-600 active:bg-primary-700 transition-colors font-semibold text-sm sm:text-base"
+            >
+              Create Your First Listing
+            </Link>
+          </div>
+        )}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
