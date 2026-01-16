@@ -1,16 +1,24 @@
 import { MetadataRoute } from 'next';
 
 const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://roomrentalusa.com';
-const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+// Use production API URL - should be set in production environment
+// For sitemap generation, we need the backend API URL
+const apiUrl = process.env.NEXT_PUBLIC_API_URL || 
+  (process.env.NODE_ENV === 'production' ? 'https://api.roomrentalusa.com' : 'http://localhost:5000');
 
 async function getAllListings(): Promise<Array<{ id: string; updatedAt: string }>> {
   try {
-    const response = await fetch(`${apiUrl}/listings?limit=10000&status=available`, {
+    // Use absolute URL for API calls in sitemap generation
+    const apiEndpoint = `${apiUrl}/api/listings?limit=10000&status=available`;
+    const response = await fetch(apiEndpoint, {
       next: { revalidate: 3600 }, // Revalidate every hour
+      headers: {
+        'Accept': 'application/json',
+      },
     });
     
     if (!response.ok) {
-      console.error('Failed to fetch listings for sitemap');
+      console.error(`Failed to fetch listings for sitemap: ${response.status} ${response.statusText}`);
       return [];
     }
 
