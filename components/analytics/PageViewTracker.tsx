@@ -1,14 +1,13 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, Suspense } from 'react';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { trackPageView } from '@/lib/analytics';
 
 /**
- * Tracks page views for client-side navigation in Next.js App Router
- * This is necessary because Next.js doesn't automatically track route changes
+ * Internal component that uses useSearchParams - must be wrapped in Suspense
  */
-export function PageViewTracker() {
+function PageViewTrackerContent() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
@@ -21,5 +20,17 @@ export function PageViewTracker() {
   }, [pathname, searchParams]);
 
   return null;
+}
+
+/**
+ * Tracks page views for client-side navigation in Next.js App Router
+ * This is necessary because Next.js doesn't automatically track route changes
+ */
+export function PageViewTracker() {
+  return (
+    <Suspense fallback={null}>
+      <PageViewTrackerContent />
+    </Suspense>
+  );
 }
 

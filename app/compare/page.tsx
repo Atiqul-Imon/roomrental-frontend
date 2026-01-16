@@ -1,5 +1,6 @@
 'use client';
 
+import { Suspense } from 'react';
 import { useRouter } from 'next/navigation';
 import { useComparisonStore } from '@/lib/comparison-store';
 import { Header } from '@/components/layout/Header';
@@ -74,7 +75,9 @@ export default function ComparePage() {
   if (!isClient || listings.length === 0) {
     return (
       <>
-        <Header />
+        <Suspense fallback={<div className="h-16 bg-white border-b border-grey-200" />}>
+          <Header />
+        </Suspense>
         <main className="min-h-screen bg-gradient-to-br from-grey-50 via-primary-50/20 to-secondary-50/20 flex items-center justify-center">
           <div className="text-center bg-white rounded-2xl p-8 shadow-xl border border-grey-200">
             <Sparkles className="w-16 h-16 text-primary-500 mx-auto mb-4" />
@@ -105,7 +108,9 @@ export default function ComparePage() {
 
   return (
     <>
-      <Header />
+      <Suspense fallback={<div className="h-16 bg-white border-b border-grey-200" />}>
+        <Header />
+      </Suspense>
       <main className="min-h-screen bg-gradient-to-br from-grey-50 via-primary-50/20 to-secondary-50/20 pb-20 md:pb-8">
         {/* Premium Header with Gradient */}
         <div className="bg-gradient-to-r from-primary-600 via-primary-500 to-secondary-500 text-white">
