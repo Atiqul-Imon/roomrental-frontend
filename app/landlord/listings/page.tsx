@@ -218,24 +218,40 @@ export default function LandlordListingsPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {data.listings.map((listing) => (
               <div key={listing._id} className="relative group bg-white rounded-xl border border-grey-200 overflow-hidden hover:shadow-lg transition-shadow">
-                <ListingCard listing={listing} />
-                <div className="absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition">
+                <div 
+                  onClick={(e) => {
+                    // Only navigate if clicking on the card itself, not on action buttons
+                    if ((e.target as HTMLElement).closest('.listing-actions')) {
+                      return;
+                    }
+                    router.push(`/landlord/listings/${listing._id}`);
+                  }}
+                  className="cursor-pointer"
+                >
+                  <ListingCard listing={listing} />
+                </div>
+                <div className="absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition listing-actions z-10">
                   <Link
-                    href={`/listings/${listing._id}`}
+                    href={`/landlord/listings/${listing._id}`}
+                    onClick={(e) => e.stopPropagation()}
                     className="p-2 bg-white rounded-full shadow-lg hover:bg-grey-50 transition"
-                    title="View"
+                    title="View Details"
                   >
                     <Eye className="w-4 h-4" />
                   </Link>
                   <Link
                     href={`/listings/${listing._id}/edit`}
+                    onClick={(e) => e.stopPropagation()}
                     className="p-2 bg-white rounded-full shadow-lg hover:bg-grey-50 transition"
                     title="Edit"
                   >
                     <Edit className="w-4 h-4" />
                   </Link>
                   <button
-                    onClick={() => handleDelete(listing._id)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDelete(listing._id);
+                    }}
                     className="p-2 bg-white rounded-full shadow-lg hover:bg-red-50 transition text-red-600"
                     title="Delete"
                   >
