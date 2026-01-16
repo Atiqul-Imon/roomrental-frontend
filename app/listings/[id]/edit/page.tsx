@@ -8,9 +8,11 @@ import { useRouter } from 'next/navigation';
 import { api } from '@/lib/api';
 import { Listing } from '@/types';
 import { Header } from '@/components/layout/Header';
+import { LandlordLayout } from '@/components/landlord/LandlordLayout';
 import { EditListingForm } from '@/components/listings/EditListingForm';
 import { useAuth } from '@/lib/auth-context';
 import Link from 'next/link';
+import { PageSkeleton } from '@/components/LoadingSkeleton';
 
 export default function EditListingPage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = use(params);
@@ -29,18 +31,43 @@ export default function EditListingPage({ params }: { params: Promise<{ id: stri
     },
   });
 
+  // Check if user is a landlord to use LandlordLayout
+  const isLandlord = user?.role === 'landlord';
+
   if (authLoading || isLoading) {
+    if (isLandlord) {
+      return (
+        <LandlordLayout>
+          <PageSkeleton />
+        </LandlordLayout>
+      );
+    }
     return (
       <>
         <Header />
         <main className="min-h-screen flex items-center justify-center">
-          <p>Loading...</p>
+          <PageSkeleton />
         </main>
       </>
     );
   }
 
   if (error || !data) {
+    if (isLandlord) {
+      return (
+        <LandlordLayout>
+          <div className="text-center py-12">
+            <h1 className="text-2xl font-bold mb-4">Listing Not Found</h1>
+            <Link
+              href="/landlord/listings"
+              className="px-4 py-2 bg-primary-500 text-white rounded-lg hover:opacity-90 transition"
+            >
+              Back to Listings
+            </Link>
+          </div>
+        </LandlordLayout>
+      );
+    }
     return (
       <>
         <Header />
@@ -62,6 +89,24 @@ export default function EditListingPage({ params }: { params: Promise<{ id: stri
   }
 
   if (user?.id !== data.landlordId._id) {
+    if (isLandlord) {
+      return (
+        <LandlordLayout>
+          <div className="text-center py-12">
+            <h1 className="text-2xl font-bold mb-4">Unauthorized</h1>
+            <p className="text-grey-600 mb-6">
+              You don&apos;t have permission to edit this listing.
+            </p>
+            <Link
+              href="/landlord/listings"
+              className="px-4 py-2 bg-primary-500 text-white rounded-lg hover:opacity-90 transition"
+            >
+              Back to Listings
+            </Link>
+          </div>
+        </LandlordLayout>
+      );
+    }
     return (
       <>
         <Header />
@@ -82,6 +127,28 @@ export default function EditListingPage({ params }: { params: Promise<{ id: stri
           </div>
         </main>
       </>
+    );
+  }
+
+  if (isLandlord) {
+    return (
+      <LandlordLayout>
+        <div className="space-y-6">
+          <div className="flex items-center justify-between">
+            <h1 className="text-2xl sm:text-3xl font-bold text-grey-900">Edit Listing</h1>
+          </div>
+          <div className="bg-white rounded-xl p-6 shadow-medium border border-grey-200">
+            <div className="max-w-3xl">
+              <EditListingForm
+                listing={data}
+                onSuccess={() => {
+                  router.push(`/landlord/listings/${listingId}`);
+                }}
+              />
+            </div>
+          </div>
+        </div>
+      </LandlordLayout>
     );
   }
 

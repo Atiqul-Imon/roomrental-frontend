@@ -108,14 +108,23 @@ export function EditListingForm({ listing, onSuccess }: EditListingFormProps) {
     setError('');
 
     try {
-      const listingData = {
-        ...data,
+      // Extract location fields and remove them from the main data
+      const { city, state, zip, address, ...rest } = data;
+      
+      const listingData: any = {
+        ...rest,
         images,
         location: {
-          city: data.city,
-          state: data.state,
-          zip: data.zip,
-          address: data.address,
+          city: city,
+          state: state,
+          // Only include optional fields if they have values
+          ...(zip && zip.trim() && { zip: zip.trim() }),
+          ...(address && address.trim() && { address: address.trim() }),
+          // Include coordinates if they exist on the original listing
+          ...(listing.location?.coordinates && {
+            latitude: listing.location.coordinates.lat,
+            longitude: listing.location.coordinates.lng,
+          }),
         },
         availabilityDate: new Date(data.availabilityDate).toISOString(),
       };
