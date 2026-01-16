@@ -1,42 +1,43 @@
 'use client';
 
+// Force dynamic rendering - this page should never be statically generated
 export const dynamic = 'force-dynamic';
+export const runtime = 'edge'; // Use edge runtime to prevent static generation
 
-import { Suspense, useEffect } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 
-function ChatRedirect() {
+export default function ChatPage() {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const conversationId = searchParams.get('conversationId');
-
+  const [mounted, setMounted] = useState(false);
+  
   useEffect(() => {
+    setMounted(true);
+    // Get conversationId from URL if needed
+    const params = new URLSearchParams(window.location.search);
+    const conversationId = params.get('conversationId');
+    
     // Redirect to /messages page
-    const params = new URLSearchParams();
     if (conversationId) {
-      params.set('conversationId', conversationId);
+      router.replace(`/messages?conversationId=${conversationId}&tab=chat`);
+    } else {
+      router.replace('/messages?tab=chat');
     }
-    params.set('tab', 'chat');
-    router.replace(`/messages?${params.toString()}`);
-  }, [router, conversationId]);
+  }, [router]);
+
+  if (!mounted) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-grey-50">
+        <LoadingSpinner />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-grey-50">
       <LoadingSpinner />
     </div>
-  );
-}
-
-export default function ChatPage() {
-  return (
-    <Suspense fallback={
-      <div className="min-h-screen flex items-center justify-center bg-grey-50">
-        <LoadingSpinner />
-      </div>
-    }>
-      <ChatRedirect />
-    </Suspense>
   );
 }
 

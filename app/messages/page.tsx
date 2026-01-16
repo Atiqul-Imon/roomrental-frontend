@@ -44,6 +44,18 @@ function ConversationListMobile({ conversationId }: { conversationId?: string })
   );
 }
 
+function MessagesContentWrapper() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-grey-50">
+        <LoadingSpinner />
+      </div>
+    }>
+      <MessagesContent />
+    </Suspense>
+  );
+}
+
 function MessagesContent() {
   const { isLoading: authLoading, isAuthenticated } = useAuth();
   const router = useRouter();
@@ -132,13 +144,7 @@ export default function MessagesPage() {
   return (
     <>
       <Header />
-      <Suspense fallback={
-        <div className="min-h-screen flex items-center justify-center bg-grey-50">
-          <LoadingSpinner />
-        </div>
-      }>
-        <MessagesContent />
-      </Suspense>
+      <MessagesContentWrapper />
     </>
   );
 }
