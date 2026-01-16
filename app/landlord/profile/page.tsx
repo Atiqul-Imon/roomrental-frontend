@@ -67,34 +67,36 @@ export default function LandlordProfilePage() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold text-grey-900 mb-2">Profile Settings</h1>
-        <p className="text-grey-600">Manage your profile information</p>
+      <div className="mb-4 sm:mb-6">
+        <h1 className="text-2xl sm:text-3xl font-bold text-grey-900 mb-1 sm:mb-2">Profile Settings</h1>
+        <p className="text-sm sm:text-base text-grey-600">Manage your profile information</p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
         {/* Profile Card */}
         <div className="lg:col-span-1">
-          <div className="bg-white rounded-xl p-6 shadow-medium border border-grey-200">
+          <div className="bg-gradient-to-br from-primary-500 to-primary-600 rounded-xl p-4 sm:p-6 shadow-lg border border-primary-400">
             <div className="text-center">
-              <div className="relative inline-block mb-4">
+              <div className="relative inline-block mb-3 sm:mb-4">
                 {profileImage ? (
-                  <Image
-                    src={profileImage}
-                    alt={user?.name || 'Profile'}
-                    width={120}
-                    height={120}
-                    className="rounded-full object-cover"
-                  />
+                  <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full overflow-hidden border-4 border-white/30 shadow-xl">
+                    <Image
+                      src={profileImage}
+                      alt={user?.name || 'Profile'}
+                      width={128}
+                      height={128}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
                 ) : (
-                  <div className="w-30 h-30 rounded-full bg-primary-100 flex items-center justify-center">
-                    <User className="w-16 h-16 text-primary-600" />
+                  <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center border-4 border-white/30 shadow-xl">
+                    <User className="w-12 h-12 sm:w-16 sm:h-16 text-white" />
                   </div>
                 )}
-                <label className="absolute bottom-0 right-0 p-2 bg-primary-500 text-white rounded-full cursor-pointer hover:bg-primary-600 transition-colors">
-                  <Camera className="w-4 h-4" />
+                <label className="absolute bottom-0 right-0 p-2 sm:p-2.5 bg-white text-primary-600 rounded-full cursor-pointer hover:bg-grey-50 active:scale-95 transition-all shadow-lg">
+                  <Camera className="w-4 h-4 sm:w-5 sm:h-5" />
                   <input
                     type="file"
                     accept="image/*"
@@ -106,10 +108,15 @@ export default function LandlordProfilePage() {
                     className="hidden"
                   />
                 </label>
+                {isUploading && (
+                  <div className="absolute inset-0 bg-black/50 rounded-full flex items-center justify-center">
+                    <div className="animate-spin rounded-full h-8 w-8 border-2 border-white border-t-transparent" />
+                  </div>
+                )}
               </div>
-              <h2 className="text-xl font-bold text-grey-900 mb-1">{user?.name}</h2>
-              <p className="text-sm text-grey-600 mb-4">{user?.email}</p>
-              <span className="inline-block px-3 py-1 bg-primary-100 text-primary-700 rounded-full text-xs font-semibold">
+              <h2 className="text-lg sm:text-xl font-bold text-white mb-1">{user?.name}</h2>
+              <p className="text-xs sm:text-sm text-white/90 mb-3 sm:mb-4">{user?.email}</p>
+              <span className="inline-block px-3 py-1.5 bg-white/20 backdrop-blur-sm text-white rounded-full text-xs font-semibold">
                 LANDLORD
               </span>
             </div>
@@ -118,87 +125,87 @@ export default function LandlordProfilePage() {
 
         {/* Profile Form */}
         <div className="lg:col-span-2">
-          <form onSubmit={handleSubmit} className="bg-white rounded-xl p-6 shadow-medium border border-grey-200 space-y-6">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-bold text-grey-900">Personal Information</h2>
+          <form onSubmit={handleSubmit} className="bg-white rounded-xl p-4 sm:p-6 shadow-medium border border-grey-200 space-y-4 sm:space-y-6">
+            <div className="flex items-center justify-between mb-4 sm:mb-6">
+              <h2 className="text-lg sm:text-xl font-bold text-grey-900">Personal Information</h2>
               {!isEditing && (
                 <button
                   type="button"
                   onClick={() => setIsEditing(true)}
-                  className="px-4 py-2 text-primary-600 hover:bg-primary-50 rounded-lg transition-colors font-medium"
+                  className="px-3 sm:px-4 py-2 text-primary-600 hover:bg-primary-50 active:bg-primary-100 rounded-lg transition-colors font-medium text-sm sm:text-base"
                 >
                   Edit Profile
                 </button>
               )}
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
               <div>
-                <label className="block text-sm font-semibold text-grey-700 mb-2">
+                <label className="block text-xs sm:text-sm font-semibold text-grey-700 mb-2">
                   Full Name
                 </label>
                 <div className="relative">
-                  <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-grey-400" />
+                  <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-grey-400" />
                   <input
                     type="text"
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     disabled={!isEditing}
-                    className="w-full pl-10 pr-4 py-2 border border-grey-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 disabled:bg-grey-50"
+                    className="w-full pl-9 sm:pl-10 pr-4 py-2.5 sm:py-2 text-sm sm:text-base border border-grey-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 disabled:bg-grey-50"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-grey-700 mb-2">
+                <label className="block text-xs sm:text-sm font-semibold text-grey-700 mb-2">
                   Email
                 </label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-grey-400" />
+                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-grey-400" />
                   <input
                     type="email"
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                     disabled={!isEditing}
-                    className="w-full pl-10 pr-4 py-2 border border-grey-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 disabled:bg-grey-50"
+                    className="w-full pl-9 sm:pl-10 pr-4 py-2.5 sm:py-2 text-sm sm:text-base border border-grey-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 disabled:bg-grey-50"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-grey-700 mb-2">
+                <label className="block text-xs sm:text-sm font-semibold text-grey-700 mb-2">
                   Phone
                 </label>
                 <div className="relative">
-                  <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-grey-400" />
+                  <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-grey-400" />
                   <input
                     type="tel"
                     value={formData.phone}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                     disabled={!isEditing}
-                    className="w-full pl-10 pr-4 py-2 border border-grey-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 disabled:bg-grey-50"
+                    className="w-full pl-9 sm:pl-10 pr-4 py-2.5 sm:py-2 text-sm sm:text-base border border-grey-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 disabled:bg-grey-50"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-grey-700 mb-2">
+                <label className="block text-xs sm:text-sm font-semibold text-grey-700 mb-2">
                   City
                 </label>
                 <div className="relative">
-                  <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-grey-400" />
+                  <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-grey-400" />
                   <input
                     type="text"
                     value={formData.city}
                     onChange={(e) => setFormData({ ...formData, city: e.target.value })}
                     disabled={!isEditing}
-                    className="w-full pl-10 pr-4 py-2 border border-grey-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 disabled:bg-grey-50"
+                    className="w-full pl-9 sm:pl-10 pr-4 py-2.5 sm:py-2 text-sm sm:text-base border border-grey-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 disabled:bg-grey-50"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-grey-700 mb-2">
+                <label className="block text-xs sm:text-sm font-semibold text-grey-700 mb-2">
                   State
                 </label>
                 <input
@@ -206,12 +213,12 @@ export default function LandlordProfilePage() {
                   value={formData.state}
                   onChange={(e) => setFormData({ ...formData, state: e.target.value })}
                   disabled={!isEditing}
-                  className="w-full px-4 py-2 border border-grey-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 disabled:bg-grey-50"
+                  className="w-full px-4 py-2.5 sm:py-2 text-sm sm:text-base border border-grey-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 disabled:bg-grey-50"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-grey-700 mb-2">
+                <label className="block text-xs sm:text-sm font-semibold text-grey-700 mb-2">
                   ZIP Code
                 </label>
                 <input
@@ -219,13 +226,13 @@ export default function LandlordProfilePage() {
                   value={formData.zip}
                   onChange={(e) => setFormData({ ...formData, zip: e.target.value })}
                   disabled={!isEditing}
-                  className="w-full px-4 py-2 border border-grey-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 disabled:bg-grey-50"
+                  className="w-full px-4 py-2.5 sm:py-2 text-sm sm:text-base border border-grey-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 disabled:bg-grey-50"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-grey-700 mb-2">
+              <label className="block text-xs sm:text-sm font-semibold text-grey-700 mb-2">
                 Bio
               </label>
               <textarea
@@ -233,17 +240,17 @@ export default function LandlordProfilePage() {
                 onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
                 disabled={!isEditing}
                 rows={4}
-                className="w-full px-4 py-2 border border-grey-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 disabled:bg-grey-50 resize-none"
+                className="w-full px-4 py-2.5 sm:py-2 text-sm sm:text-base border border-grey-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 disabled:bg-grey-50 resize-none"
                 placeholder="Tell us about yourself..."
               />
             </div>
 
             {isEditing && (
-              <div className="flex gap-3 pt-4 border-t border-grey-200">
+              <div className="flex flex-col sm:flex-row gap-3 pt-4 border-t border-grey-200">
                 <button
                   type="submit"
                   disabled={updateMutation.isPending}
-                  className="flex items-center gap-2 px-6 py-3 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors font-semibold disabled:opacity-50"
+                  className="flex items-center justify-center gap-2 px-6 py-3 bg-primary-500 text-white rounded-lg hover:bg-primary-600 active:bg-primary-700 transition-colors font-semibold disabled:opacity-50 text-sm sm:text-base"
                 >
                   <Save className="w-4 h-4" />
                   {updateMutation.isPending ? 'Saving...' : 'Save Changes'}
@@ -263,7 +270,7 @@ export default function LandlordProfilePage() {
                       zip: (user as any)?.zip || '',
                     });
                   }}
-                  className="px-6 py-3 border border-grey-300 rounded-lg hover:bg-grey-50 transition-colors font-semibold text-grey-700"
+                  className="px-6 py-3 border border-grey-300 rounded-lg hover:bg-grey-50 active:bg-grey-100 transition-colors font-semibold text-grey-700 text-sm sm:text-base"
                 >
                   Cancel
                 </button>
