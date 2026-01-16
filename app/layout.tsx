@@ -6,6 +6,8 @@ import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { BottomNav } from '@/components/layout/BottomNav';
 import { ChatWidgetWrapper } from '@/components/chat/ChatWidgetWrapper';
 import { StructuredData } from '@/components/seo/StructuredData';
+import { GoogleAnalytics } from '@/components/analytics/GoogleAnalytics';
+import { PageViewTracker } from '@/components/analytics/PageViewTracker';
 import {
   generateOrganizationSchema,
   generateWebSiteSchema,
@@ -163,6 +165,7 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <StructuredData data={[organizationSchema, websiteSchema]} />
+        <GoogleAnalytics measurementId={process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || ''} />
       </head>
       <body className={`${inter.variable} ${plusJakartaSans.variable} ${inter.className}`}>
         <a href="#main-content" className="skip-to-main">
@@ -170,6 +173,7 @@ export default function RootLayout({
         </a>
         <ErrorBoundary>
           <Providers>
+            <PageViewTracker />
             <div className="fade-in">
               {children}
             </div>
