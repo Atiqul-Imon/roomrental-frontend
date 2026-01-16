@@ -10,6 +10,16 @@ export function BottomNav() {
   const pathname = usePathname();
   const { user, isAuthenticated } = useAuth();
 
+  // Hide general BottomNav on landlord pages (they have their own MobileBottomNav)
+  if (pathname?.startsWith('/landlord/')) {
+    return null;
+  }
+
+  // Hide general BottomNav on admin pages (they might have their own navigation)
+  if (pathname?.startsWith('/admin/')) {
+    return null;
+  }
+
   // Haptic feedback helper
   const triggerHaptic = (type: 'light' | 'medium' | 'heavy' = 'light') => {
     if ('vibrate' in navigator) {
@@ -30,6 +40,25 @@ export function BottomNav() {
     return pathname?.startsWith(path);
   };
 
+  // Get profile navigation URL based on user role
+  const getProfileHref = () => {
+    if (!isAuthenticated || !user) {
+      return '/auth/login';
+    }
+    
+    // Navigate to role-specific dashboard instead of public profile
+    if (user.role === 'landlord') {
+      return '/landlord/dashboard';
+    } else if (user.role === 'student') {
+      return '/dashboard';
+    } else if (['admin', 'super_admin', 'staff'].includes(user.role)) {
+      return '/admin/dashboard';
+    }
+    
+    // Fallback to public profile if role is unknown
+    return `/profile/${user.id}`;
+  };
+
   // Navigation items
   const navItems = [
     {
@@ -45,7 +74,7 @@ export function BottomNav() {
       show: true,
     },
     {
-      href: isAuthenticated && user ? `/profile/${user.id}` : '/auth/login',
+      href: getProfileHref(),
       label: 'Profile',
       icon: User,
       show: true,
