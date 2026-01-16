@@ -12,6 +12,7 @@ import { ListingCard } from '@/components/listings/ListingCard';
 import { format } from 'date-fns';
 import { Plus, Edit, Trash2, Eye, Search, Filter } from 'lucide-react';
 import Link from 'next/link';
+import { ErrorState } from '@/components/ui/ErrorState';
 
 export default function LandlordListingsPage() {
   const router = useRouter();
@@ -20,21 +21,27 @@ export default function LandlordListingsPage() {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, error } = useQuery({
     queryKey: ['my-listings', statusFilter, page, search],
     ...queryConfig.dashboard,
     queryFn: async () => {
-      const params: any = { page, limit: 12 };
-      if (statusFilter !== 'all') {
-        params.status = statusFilter;
-      }
-      if (search) {
-        params.search = search;
-      }
-      const response = await api.get('/listings/my/listings', { params });
-      const backendData = response.data.data;
-      return {
-        listings: (backendData.listings || []).map((l: any) => ({
+      try {
+        const params: any = { page, limit: 12 };
+        if (statusFilter !== 'all') {
+          params.status = statusFilter;
+        }
+        if (search) {
+          params.search = search;
+        }
+        const response = await api.get('/listings/my/listings', { params });
+        
+        if (!response.data.success) {
+          throw new Error(response.data.error || 'Failed to fetch listings');
+        }
+        
+        const backendData = response.data.data;
+        return {
+          listings: (backendData.listings || []).map((l: any) => ({
           _id: l.id,
           landlordId: {
             _id: l.landlord?.id || l.landlordId,
@@ -69,6 +76,10 @@ export default function LandlordListingsPage() {
         limit: backendData.limit || 12,
         totalPages: backendData.totalPages || 0,
       };
+      } catch (err: any) {
+        console.error('Error fetching listings:', err);
+        throw new Error(err.response?.data?.error || err.message || 'Failed to fetch listings');
+      }
     },
   });
 
@@ -184,7 +195,13 @@ export default function LandlordListingsPage() {
       </div>
 
       {/* Listings */}
-      {isLoading ? (
+      {error ? (
+        <ErrorState 
+          title="Failed to load listings"
+          message={error instanceof Error ? error.message : 'An unexpected error occurred'}
+          onRetry={() => queryClient.invalidateQueries({ queryKey: ['my-listings'] })}
+        />
+      ) : isLoading ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {[...Array(6)].map((_, i) => (
             <div key={i} className="bg-white rounded-xl border border-grey-200 animate-pulse">

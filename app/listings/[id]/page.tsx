@@ -20,16 +20,11 @@ const ImageGallery = dynamic(() => import('@/components/listings/ImageGallery').
   loading: () => <div className="h-96 bg-grey-100 animate-pulse rounded-xl" />,
   ssr: true, // Image gallery can be SSR'd
 });
-import { FavoriteButton } from '@/components/listings/FavoriteButton';
 import { ContactButton } from '@/components/listings/ContactButton';
-import { ReviewList } from '@/components/reviews/ReviewList';
-import { ReviewForm } from '@/components/reviews/ReviewForm';
-import { RatingDisplay } from '@/components/reviews/RatingDisplay';
 import { useAuth } from '@/lib/auth-context';
 import { format } from 'date-fns';
-import { MapPin, Calendar, DollarSign, Share2, Edit, Trash2, Bed, Bath, Square, Shield, Star, Clock, CheckCircle2 } from 'lucide-react';
+import { MapPin, Calendar, DollarSign, Edit, Trash2, Bed, Bath, Square, Shield, Clock, CheckCircle2 } from 'lucide-react';
 import Link from 'next/link';
-import { useState } from 'react';
 import { PageSkeleton } from '@/components/LoadingSkeleton';
 import { ErrorState } from '@/components/ui/ErrorState';
 import { useToast } from '@/components/ui/ToastProvider';
@@ -46,7 +41,6 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
   const { user, isAuthenticated } = useAuth();
   const queryClient = useQueryClient();
   const listingId = resolvedParams.id;
-  const [showReviewForm, setShowReviewForm] = useState(false);
 
   const { data, isLoading, error } = useQuery({
     queryKey: ['listing', listingId],
@@ -135,40 +129,6 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
     : '';
 
   const { success, error: showError } = useToast();
-
-  const handleShare = async () => {
-    const shareData = {
-      title: data?.title || 'Room Rental Listing',
-      text: data?.description?.substring(0, 200) || 'Check out this room rental listing',
-      url: window.location.href,
-    };
-
-    // Try native share API first (mobile)
-    if (navigator.share && navigator.canShare && navigator.canShare(shareData)) {
-      try {
-        await navigator.share(shareData);
-        success('Shared successfully!', { duration: 2000 });
-      } catch (error: any) {
-        // User cancelled or error occurred - don't show error for cancellation
-        if (error.name !== 'AbortError') {
-          // Fallback to clipboard
-          handleClipboardShare();
-        }
-      }
-    } else {
-      // Fallback: copy to clipboard
-      handleClipboardShare();
-    }
-  };
-
-  const handleClipboardShare = async () => {
-    try {
-      await navigator.clipboard.writeText(window.location.href);
-      success('Link copied to clipboard!', { duration: 2000 });
-    } catch (err) {
-      showError('Failed to copy link. Please try again.', { duration: 3000 });
-    }
-  };
 
   const handleDelete = async () => {
     if (!confirm('Are you sure you want to delete this listing?')) {
@@ -289,55 +249,39 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
                 <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-accent-100/30 to-transparent rounded-full blur-3xl -z-0"></div>
                 
                 <div className="relative z-10">
-                  <div className="flex items-start justify-between mb-6">
-                    <div className="flex-1 min-w-0 pr-4">
-                      <h1 className="font-heading text-3xl sm:text-4xl md:text-5xl font-bold mb-4 text-gray-900 leading-tight">
+                  <div className="flex items-start justify-between mb-8 sm:mb-10">
+                    <div className="flex-1 min-w-0 pr-6">
+                      <h1 className="font-heading text-xl sm:text-2xl md:text-3xl font-bold mb-6 text-gray-900 leading-tight tracking-tight">
                         {data.title}
                       </h1>
-                      <div className="flex items-center gap-3 text-gray-600 mb-6">
-                        <div className="flex items-center gap-2 min-w-0 bg-accent-50 px-3 py-1.5 rounded-lg">
-                          <MapPin className="w-5 h-5 text-accent-600 flex-shrink-0" />
-                          <span className="font-semibold text-base sm:text-lg text-gray-800 truncate">
+                      <div className="flex items-center gap-4 text-gray-600 mb-8">
+                        <div className="flex items-center gap-3 min-w-0 bg-accent-50/80 backdrop-blur-sm px-4 py-2.5 rounded-xl border border-accent-200/50">
+                          <MapPin className="w-5 h-5 sm:w-6 sm:h-6 text-accent-600 flex-shrink-0" />
+                          <span className="font-semibold text-base sm:text-lg md:text-xl text-gray-800 truncate">
                             {data.location.city}, {data.location.state}
                             {data.location.zip && ` ${data.location.zip}`}
                           </span>
                         </div>
                       </div>
                     </div>
-                    <div className="flex items-center gap-2 flex-shrink-0">
-                      <FavoriteButton listingId={data._id} />
-                      <button
-                        onClick={(e) => {
-                          handleShare();
-                          e.currentTarget.classList.add('share-bounce');
-                          setTimeout(() => {
-                            e.currentTarget.classList.remove('share-bounce');
-                          }, 300);
-                        }}
-                        className="p-3 border-2 border-gray-200 rounded-xl hover:bg-accent-50 hover:border-accent-300 transition-all duration-200 text-gray-600 hover:text-accent-600 touch-target shadow-sm hover:shadow-md"
-                        title="Share listing"
-                      >
-                        <Share2 className="w-5 h-5" />
-                      </button>
-                      {isOwner && (
-                        <>
-                          <Link
-                            href={`/listings/${data._id}/edit`}
-                            className="p-3 border-2 border-gray-200 rounded-xl hover:bg-blue-50 hover:border-blue-300 transition-all duration-200 text-gray-600 hover:text-blue-600 shadow-sm hover:shadow-md"
-                            title="Edit listing"
-                          >
-                            <Edit className="w-5 h-5" />
-                          </Link>
-                          <button
-                            onClick={handleDelete}
-                            className="p-3 border-2 border-red-200 rounded-xl hover:bg-red-50 transition-all duration-200 text-red-600 hover:border-red-400 shadow-sm hover:shadow-md"
-                            title="Delete listing"
-                          >
-                            <Trash2 className="w-5 h-5" />
-                          </button>
-                        </>
-                      )}
-                    </div>
+                    {isOwner && (
+                      <div className="flex items-center gap-3 flex-shrink-0 ml-6">
+                        <Link
+                          href={`/listings/${data._id}/edit`}
+                          className="p-3 border-2 border-gray-200 rounded-xl hover:bg-blue-50 hover:border-blue-300 transition-all duration-200 text-gray-600 hover:text-blue-600 shadow-sm hover:shadow-md"
+                          title="Edit listing"
+                        >
+                          <Edit className="w-5 h-5" />
+                        </Link>
+                        <button
+                          onClick={handleDelete}
+                          className="p-3 border-2 border-red-200 rounded-xl hover:bg-red-50 transition-all duration-200 text-red-600 hover:border-red-400 shadow-sm hover:shadow-md"
+                          title="Delete listing"
+                        >
+                          <Trash2 className="w-5 h-5" />
+                        </button>
+                      </div>
+                    )}
                   </div>
 
                   {/* Price Badge - Enhanced */}
@@ -352,33 +296,33 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
                   </div>
 
                   {/* Quick Stats - New Section */}
-                  <div className="mt-6 grid grid-cols-3 gap-4 pt-6 border-t border-gray-100">
-                    <div className="flex items-center gap-3">
-                      <div className="p-2 bg-accent-100 rounded-lg">
-                        <Bed className="w-5 h-5 text-accent-600" />
+                  <div className="mt-8 grid grid-cols-3 gap-6 pt-8 border-t border-gray-200">
+                    <div className="flex items-center gap-4">
+                      <div className="p-3 bg-accent-100 rounded-xl flex-shrink-0">
+                        <Bed className="w-6 h-6 text-accent-600" />
                       </div>
                       <div>
-                        <p className="text-xs text-gray-500 font-medium">Bedrooms</p>
-                        <p className="text-lg font-bold text-gray-900">{data.bedrooms}</p>
+                        <p className="text-xs sm:text-sm text-gray-500 font-medium mb-1 uppercase tracking-wide">Bedrooms</p>
+                        <p className="text-xl sm:text-2xl font-bold text-gray-900 leading-none">{data.bedrooms}</p>
                       </div>
                     </div>
-                    <div className="flex items-center gap-3">
-                      <div className="p-2 bg-blue-100 rounded-lg">
-                        <Bath className="w-5 h-5 text-blue-600" />
+                    <div className="flex items-center gap-4">
+                      <div className="p-3 bg-blue-100 rounded-xl flex-shrink-0">
+                        <Bath className="w-6 h-6 text-blue-600" />
                       </div>
                       <div>
-                        <p className="text-xs text-gray-500 font-medium">Bathrooms</p>
-                        <p className="text-lg font-bold text-gray-900">{data.bathrooms}</p>
+                        <p className="text-xs sm:text-sm text-gray-500 font-medium mb-1 uppercase tracking-wide">Bathrooms</p>
+                        <p className="text-xl sm:text-2xl font-bold text-gray-900 leading-none">{data.bathrooms}</p>
                       </div>
                     </div>
                     {data.squareFeet && (
-                      <div className="flex items-center gap-3">
-                        <div className="p-2 bg-purple-100 rounded-lg">
-                          <Square className="w-5 h-5 text-purple-600" />
+                      <div className="flex items-center gap-4">
+                        <div className="p-3 bg-purple-100 rounded-xl flex-shrink-0">
+                          <Square className="w-6 h-6 text-purple-600" />
                         </div>
                         <div>
-                          <p className="text-xs text-gray-500 font-medium">Square Feet</p>
-                          <p className="text-lg font-bold text-gray-900">{data.squareFeet}</p>
+                          <p className="text-xs sm:text-sm text-gray-500 font-medium mb-1 uppercase tracking-wide">Square Feet</p>
+                          <p className="text-xl sm:text-2xl font-bold text-gray-900 leading-none">{data.squareFeet.toLocaleString()}</p>
                         </div>
                       </div>
                     )}
@@ -387,22 +331,24 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
               </div>
 
               {/* Description - Enhanced */}
-              <div className="bg-white rounded-2xl p-6 sm:p-8 md:p-10 shadow-lg border border-gray-100">
-                <div className="flex items-center gap-3 mb-6">
-                  <h2 className="font-heading text-2xl sm:text-3xl font-bold text-gray-900">
+              <div className="bg-white rounded-2xl p-8 sm:p-10 md:p-12 shadow-lg border border-gray-100">
+                <div className="flex items-center gap-3 mb-8">
+                  <h2 className="font-heading text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 leading-tight tracking-tight">
                     About This Room
                   </h2>
                 </div>
-                <p className="text-gray-700 whitespace-pre-line leading-relaxed text-base sm:text-lg md:text-xl">
-                  {data.description}
-                </p>
+                <div className="prose prose-lg sm:prose-xl max-w-none">
+                  <p className="text-gray-700 whitespace-pre-line leading-[1.8] text-base sm:text-lg md:text-xl font-normal">
+                    {data.description}
+                  </p>
+                </div>
               </div>
 
               {/* Amenities - Enhanced for Students */}
               {data.amenities.length > 0 && (
-                <div className="bg-white rounded-2xl p-6 sm:p-8 md:p-10 shadow-lg border border-gray-100">
-                  <div className="flex items-center gap-3 mb-6 sm:mb-8">
-                    <h2 className="font-heading text-2xl sm:text-3xl font-bold text-gray-900">
+                <div className="bg-white rounded-2xl p-8 sm:p-10 md:p-12 shadow-lg border border-gray-100">
+                  <div className="flex items-center gap-3 mb-8 sm:mb-10">
+                    <h2 className="font-heading text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 leading-tight tracking-tight">
                       What's Included
                     </h2>
                   </div>
@@ -435,11 +381,11 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
               )}
 
               {/* Availability - Enhanced */}
-              <div className="bg-gradient-to-br from-white to-accent-50/50 rounded-2xl p-6 sm:p-8 shadow-lg border-2 border-accent-100">
+              <div className="bg-gradient-to-br from-white to-accent-50/50 rounded-2xl p-8 sm:p-10 shadow-lg border-2 border-accent-100">
                 <div className="flex items-center gap-4">
                   <div>
-                    <span className="text-sm text-gray-600 block mb-1 font-medium">Available from</span>
-                    <span className="font-bold text-xl text-gray-900">{formattedDate}</span>
+                    <span className="text-sm sm:text-base text-gray-600 block mb-2 font-medium uppercase tracking-wide">Available from</span>
+                    <span className="font-bold text-2xl sm:text-3xl text-gray-900 leading-tight">{formattedDate}</span>
                   </div>
                 </div>
               </div>
@@ -453,25 +399,25 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
                 <div className="absolute top-0 right-0 w-32 h-32 bg-accent-200/20 rounded-full blur-2xl"></div>
                 
                 <div className="relative z-10">
-                  <div className="flex items-center gap-3 mb-6">
-                    <div className="p-3 bg-accent-100 rounded-xl">
+                  <div className="flex items-center gap-4 mb-8">
+                    <div className="p-3 bg-accent-100 rounded-xl flex-shrink-0">
                       <span className="text-2xl">👤</span>
                     </div>
-                    <h2 className="font-heading text-xl sm:text-2xl font-bold text-gray-900">
+                    <h2 className="font-heading text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 leading-tight tracking-tight">
                       Meet Your Landlord
                     </h2>
                   </div>
-                  <div className="flex items-center gap-4 mb-4">
+                  <div className="flex items-center gap-5 mb-6">
                     {data.landlordId.profileImage ? (
                       <Image
                         src={data.landlordId.profileImage}
                         alt={data.landlordId.name}
                         width={80}
                         height={80}
-                        className="rounded-full border-4 border-accent-300 shadow-lg"
+                        className="rounded-full border-4 border-accent-300 shadow-lg flex-shrink-0"
                       />
                     ) : (
-                      <div className="w-20 h-20 bg-gradient-primary rounded-full flex items-center justify-center border-4 border-accent-300 shadow-lg">
+                      <div className="w-20 h-20 bg-gradient-primary rounded-full flex items-center justify-center border-4 border-accent-300 shadow-lg flex-shrink-0">
                         <span className="text-3xl font-bold text-white">
                           {data.landlordId.name.charAt(0).toUpperCase()}
                         </span>
@@ -480,16 +426,16 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
                     <div className="flex-1 min-w-0">
                       <Link
                         href={`/profile/${data.landlordId._id}`}
-                        className="font-bold text-lg text-gray-900 hover:text-accent-600 transition-colors block mb-1 truncate"
+                        className="font-bold text-lg sm:text-xl text-gray-900 hover:text-accent-600 transition-colors block mb-2 truncate leading-tight"
                       >
                         {data.landlordId.name}
                       </Link>
-                      <p className="text-sm text-gray-600 truncate">{data.landlordId.email}</p>
+                      <p className="text-sm sm:text-base text-gray-600 truncate leading-relaxed">{data.landlordId.email}</p>
                     </div>
                   </div>
                   {(data.landlordId as any).bio && (
-                    <div className="mt-4 mb-4 p-4 bg-white/70 rounded-xl border border-accent-100">
-                      <p className="text-sm text-gray-700 leading-relaxed">
+                    <div className="mt-6 mb-6 p-5 bg-white/70 rounded-xl border border-accent-100">
+                      <p className="text-sm sm:text-base text-gray-700 leading-[1.75] font-normal">
                         {(data.landlordId as any).bio}
                       </p>
                     </div>
@@ -508,21 +454,21 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
               </div>
 
               {/* Quick Info - Enhanced */}
-              <div className="bg-white border-2 border-gray-200 rounded-2xl p-6 shadow-lg">
-                <div className="flex items-center gap-3 mb-5">
-                  <div className="p-2 bg-blue-100 rounded-lg">
+              <div className="bg-white border-2 border-gray-200 rounded-2xl p-8 shadow-lg">
+                <div className="flex items-center gap-4 mb-6">
+                  <div className="p-3 bg-blue-100 rounded-xl flex-shrink-0">
                     <span className="text-xl">ℹ️</span>
                   </div>
-                  <h2 className="font-heading text-xl font-bold text-gray-900">
+                  <h2 className="font-heading text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 leading-tight tracking-tight">
                     Quick Details
                   </h2>
                 </div>
-                <div className="space-y-4">
-                  <div className="flex justify-between items-center py-3 border-b border-gray-100">
-                    <span className="text-gray-600 font-medium flex items-center gap-2">
+                <div className="space-y-5">
+                  <div className="flex justify-between items-center py-4 border-b border-gray-200">
+                    <span className="text-sm sm:text-base text-gray-600 font-semibold flex items-center gap-2">
                       Status:
                     </span>
-                    <span className={`px-4 py-2 rounded-full text-xs font-bold ${
+                    <span className={`px-4 py-2 rounded-full text-xs sm:text-sm font-bold ${
                       data.status === 'available' 
                         ? 'bg-accent-100 text-accent-700 border-2 border-accent-300' 
                         : data.status === 'pending'
@@ -532,12 +478,12 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
                       {data.status.charAt(0).toUpperCase() + data.status.slice(1)}
                     </span>
                   </div>
-                  <div className="flex justify-between items-center py-3">
-                    <span className="text-gray-600 font-medium flex items-center gap-2">
-                      <Clock className="w-4 h-4" />
+                  <div className="flex justify-between items-center py-4">
+                    <span className="text-sm sm:text-base text-gray-600 font-semibold flex items-center gap-2">
+                      <Clock className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
                       Listed:
                     </span>
-                    <span className="font-bold text-gray-900">
+                    <span className="font-bold text-base sm:text-lg text-gray-900 leading-tight">
                       {data.createdAt ? format(new Date(data.createdAt), 'MMM dd, yyyy') : 'N/A'}
                     </span>
                   </div>
@@ -545,63 +491,22 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
               </div>
 
               {/* Safety & Trust Badge for Students */}
-              <div className="bg-gradient-to-br from-accent-50 via-accent-50/50 to-accent-50 border-2 border-accent-200 rounded-2xl p-6 shadow-lg">
-                <div className="flex items-start gap-4">
-                  <div className="p-3 bg-accent-100 rounded-xl">
-                    <Shield className="w-6 h-6 text-accent-600" />
+              <div className="bg-gradient-to-br from-accent-50 via-accent-50/50 to-accent-50 border-2 border-accent-200 rounded-2xl p-8 shadow-lg">
+                <div className="flex items-start gap-5">
+                  <div className="p-3 bg-accent-100 rounded-xl flex-shrink-0">
+                    <Shield className="w-6 h-6 sm:w-7 sm:h-7 text-accent-600" />
                   </div>
-                  <div>
-                    <h3 className="font-heading font-bold text-base text-gray-900 mb-2 flex items-center gap-2">
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-heading font-bold text-base sm:text-lg text-gray-900 mb-3 flex items-center gap-2 leading-tight">
                       Verified Listing
-                      <CheckCircle2 className="w-5 h-5 text-accent-600" />
+                      <CheckCircle2 className="w-5 h-5 sm:w-6 sm:h-6 text-accent-600 flex-shrink-0" />
                     </h3>
-                    <p className="text-sm text-gray-700 leading-relaxed">
+                    <p className="text-sm sm:text-base text-gray-700 leading-[1.75] font-normal">
                       This listing has been verified by our team for accuracy and safety.
                     </p>
                   </div>
                 </div>
               </div>
-            </div>
-          </div>
-
-          {/* Reviews Section - Enhanced */}
-          <div className="mt-10 sm:mt-12 md:mt-16">
-            <div className="bg-white rounded-2xl p-6 sm:p-8 md:p-10 shadow-lg border border-gray-100">
-              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 sm:mb-8">
-                <div className="flex items-center gap-3">
-                  <h2 className="font-heading text-2xl sm:text-3xl font-bold text-gray-900">Reviews</h2>
-                </div>
-                {isAuthenticated && !isOwner && user?.id !== data.landlordId._id && (
-                  <button
-                    onClick={() => setShowReviewForm(!showReviewForm)}
-                    className="px-6 py-3 bg-gradient-primary text-white rounded-xl hover:opacity-90 transition-all duration-200 shadow-md hover:shadow-lg hover:scale-105 min-h-[44px] touch-target text-sm sm:text-base font-semibold"
-                  >
-                    {showReviewForm ? 'Cancel' : 'Write a Review'}
-                  </button>
-                )}
-              </div>
-
-              {showReviewForm && (
-                <div className="mb-6">
-                  <ReviewForm
-                    revieweeId={data.landlordId._id}
-                    listingId={data._id}
-                    onSuccess={() => {
-                      setShowReviewForm(false);
-                      // Invalidate all reviews queries for this user and listing
-                      queryClient.invalidateQueries({ queryKey: ['reviews', data.landlordId._id, data._id] });
-                      queryClient.invalidateQueries({ queryKey: ['reviews', data.landlordId._id] });
-                      // Invalidate rating query
-                      queryClient.invalidateQueries({ queryKey: ['rating', data.landlordId._id] });
-                      // Invalidate listing detail to refresh rating display
-                      queryClient.invalidateQueries({ queryKey: ['listing', listingId] });
-                    }}
-                    onCancel={() => setShowReviewForm(false)}
-                  />
-                </div>
-              )}
-
-              <ReviewList userId={data.landlordId._id} listingId={data._id} />
             </div>
           </div>
 
