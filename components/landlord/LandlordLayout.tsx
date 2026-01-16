@@ -89,11 +89,11 @@ export function LandlordLayout({ children }: LandlordLayoutProps) {
 
       {/* Sidebar */}
       <aside
-        className={`fixed left-0 top-0 h-full w-64 bg-white border-r border-grey-200 z-50 transform transition-transform duration-300 ${
+        className={`fixed left-0 top-0 h-full w-64 bg-white border-r border-grey-200 z-[60] transform transition-transform duration-300 ${
           sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
         }`}
       >
-        <div className="flex flex-col h-full">
+        <div className="flex flex-col h-full pb-20 lg:pb-0">
           {/* Header */}
           <div className="p-6 border-b border-grey-200">
             <div className="flex items-center justify-between mb-4">
@@ -146,7 +146,7 @@ export function LandlordLayout({ children }: LandlordLayoutProps) {
           </nav>
 
           {/* Footer */}
-          <div className="p-4 border-t border-grey-200">
+          <div className="p-4 border-t border-grey-200 bg-white">
             <button
               onClick={handleLogout}
               className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-grey-700 hover:bg-red-50 hover:text-red-600 transition-all duration-200"
