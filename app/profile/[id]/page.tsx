@@ -16,7 +16,7 @@ import { ProfileStats } from '@/components/profile/ProfileStats';
 import { ProfileTabs } from '@/components/profile/ProfileTabs';
 import { SavedListings } from '@/components/profile/SavedListings';
 import { UserListings } from '@/components/profile/UserListings';
-import { Home, Star, Activity, User as UserIcon, Heart, Search, List, Clock } from 'lucide-react';
+import { Home, Star, Activity, User as UserIcon, Heart, Search, List, Clock, LayoutDashboard } from 'lucide-react';
 import Link from 'next/link';
 import { SearchHistoryTab } from '@/components/profile/SearchHistoryTab';
 
@@ -270,6 +270,19 @@ export default function ProfilePage({ params }: { params: Promise<{ id: string }
             ratingData={ratingData}
             isOwnProfile={isOwnProfile}
           />
+
+          {/* Mobile Dashboard Button - Only for Landlords viewing their own profile */}
+          {isOwnProfile && profile.role === 'landlord' && (
+            <div className="lg:hidden mt-4 sm:mt-6">
+              <Link
+                href="/landlord/dashboard"
+                className="flex items-center justify-center gap-2.5 w-full px-4 py-3.5 bg-gradient-primary text-white rounded-xl font-semibold text-sm sm:text-base shadow-medium hover:shadow-lg transition-all duration-200 active:scale-98"
+              >
+                <LayoutDashboard className="w-5 h-5" />
+                <span>Go to Dashboard</span>
+              </Link>
+            </div>
+          )}
 
           {/* Statistics */}
           <div className="mt-4 sm:mt-6 md:mt-8 mb-4 sm:mb-6 md:mb-8">
