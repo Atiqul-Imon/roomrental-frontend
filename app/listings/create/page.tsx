@@ -5,8 +5,8 @@ export const dynamic = 'force-dynamic';
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
-import { Header } from '@/components/layout/Header';
 import { CreateListingForm } from '@/components/listings/CreateListingForm';
+import { LandlordLayout } from '@/components/landlord/LandlordLayout';
 
 export default function CreateListingPage() {
   const { user, isLoading, isAuthenticated } = useAuth();
@@ -20,12 +20,11 @@ export default function CreateListingPage() {
 
   if (isLoading) {
     return (
-      <>
-        <Header />
-        <main className="min-h-screen flex items-center justify-center">
+      <LandlordLayout>
+        <div className="min-h-screen flex items-center justify-center">
           <p>Loading...</p>
-        </main>
-      </>
+        </div>
+      </LandlordLayout>
     );
   }
 
@@ -34,21 +33,16 @@ export default function CreateListingPage() {
   }
 
   return (
-    <>
-      <Header />
-      <main className="min-h-screen pb-20 md:pb-8">
-        <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-6 md:py-8">
-          <h1 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6 md:mb-8">Create New Listing</h1>
-          <div className="max-w-3xl">
-            <CreateListingForm
-              onSuccess={() => {
-                router.push('/dashboard');
-              }}
-            />
-          </div>
-        </div>
-      </main>
-    </>
+    <LandlordLayout>
+      <div className="max-w-4xl mx-auto">
+        <h1 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6">Create New Listing</h1>
+        <CreateListingForm
+          onSuccess={() => {
+            router.push('/landlord/dashboard');
+          }}
+        />
+      </div>
+    </LandlordLayout>
   );
 }
 
