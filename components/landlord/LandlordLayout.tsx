@@ -17,6 +17,7 @@ import {
   FileText,
   BarChart3,
 } from 'lucide-react';
+import { MobileBottomNav } from './MobileBottomNav';
 
 interface LandlordLayoutProps {
   children: ReactNode;
@@ -179,8 +180,13 @@ export function LandlordLayout({ children }: LandlordLayoutProps) {
         </header>
 
         {/* Page Content */}
-        <main className="p-6 bg-grey-50 min-h-screen">{children}</main>
+        <main className="p-4 sm:p-6 bg-grey-50 min-h-screen pb-20 lg:pb-6">
+          {children}
+        </main>
       </div>
+
+      {/* Mobile Bottom Navigation */}
+      <MobileBottomNav />
     </div>
   );
 }

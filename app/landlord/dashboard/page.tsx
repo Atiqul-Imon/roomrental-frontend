@@ -17,6 +17,7 @@ import Link from 'next/link';
 import { format } from 'date-fns';
 import dynamicImport from 'next/dynamic';
 import { PerformanceChart } from '@/components/dashboard/PerformanceChart';
+import { ProfileQuickView } from '@/components/landlord/ProfileQuickView';
 
 // Lazy load LandlordAnalytics - heavy component with charts
 const LandlordAnalytics = dynamicImport(() => import('@/components/dashboard/LandlordAnalytics').then((mod) => ({ default: mod.LandlordAnalytics })), {
@@ -90,55 +91,62 @@ export default function LandlordDashboardPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold text-grey-900 mb-2">Dashboard</h1>
-        <p className="text-grey-600">Welcome back! Here's an overview of your listings and performance</p>
+      <div className="mb-4 sm:mb-6">
+        <h1 className="text-2xl sm:text-3xl font-bold text-grey-900 mb-1 sm:mb-2">
+          Dashboard
+        </h1>
+        <p className="text-sm sm:text-base text-grey-600">
+          Welcome back! Here's an overview of your listings and performance
+        </p>
       </div>
 
+      {/* Profile Quick View - Mobile First */}
+      <ProfileQuickView />
+
       {/* Statistics Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div className="bg-white rounded-xl p-6 shadow-medium border border-grey-200 hover:shadow-lg transition-shadow">
-          <div className="flex items-center justify-between mb-4">
-            <div className="p-3 bg-primary-100 rounded-lg">
-              <Home className="w-6 h-6 text-primary-600" />
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
+        <div className="bg-white rounded-xl p-4 sm:p-6 shadow-medium border border-grey-200 hover:shadow-lg transition-all duration-200 active:scale-95">
+          <div className="flex items-center justify-between mb-3 sm:mb-4">
+            <div className="p-2 sm:p-3 bg-primary-100 rounded-lg">
+              <Home className="w-5 h-5 sm:w-6 sm:h-6 text-primary-600" />
             </div>
-            <span className="text-2xl font-bold text-grey-900">{stats.total}</span>
+            <span className="text-xl sm:text-2xl font-bold text-grey-900">{stats.total}</span>
           </div>
-          <p className="text-sm text-grey-600 font-medium">Total Listings</p>
+          <p className="text-xs sm:text-sm text-grey-600 font-medium">Total Listings</p>
         </div>
 
-        <div className="bg-white rounded-xl p-6 shadow-medium border border-grey-200 hover:shadow-lg transition-shadow">
-          <div className="flex items-center justify-between mb-4">
-            <div className="p-3 bg-green-100 rounded-lg">
-              <TrendingUp className="w-6 h-6 text-green-600" />
+        <div className="bg-white rounded-xl p-4 sm:p-6 shadow-medium border border-grey-200 hover:shadow-lg transition-all duration-200 active:scale-95">
+          <div className="flex items-center justify-between mb-3 sm:mb-4">
+            <div className="p-2 sm:p-3 bg-green-100 rounded-lg">
+              <TrendingUp className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
             </div>
-            <span className="text-2xl font-bold text-grey-900">{stats.active}</span>
+            <span className="text-xl sm:text-2xl font-bold text-grey-900">{stats.active}</span>
           </div>
-          <p className="text-sm text-grey-600 font-medium">Active Listings</p>
+          <p className="text-xs sm:text-sm text-grey-600 font-medium">Active Listings</p>
         </div>
 
-        <div className="bg-white rounded-xl p-6 shadow-medium border border-grey-200 hover:shadow-lg transition-shadow">
-          <div className="flex items-center justify-between mb-4">
-            <div className="p-3 bg-blue-100 rounded-lg">
-              <Eye className="w-6 h-6 text-blue-600" />
+        <div className="bg-white rounded-xl p-4 sm:p-6 shadow-medium border border-grey-200 hover:shadow-lg transition-all duration-200 active:scale-95">
+          <div className="flex items-center justify-between mb-3 sm:mb-4">
+            <div className="p-2 sm:p-3 bg-blue-100 rounded-lg">
+              <Eye className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" />
             </div>
-            <span className="text-2xl font-bold text-grey-900">{stats.totalViews.toLocaleString()}</span>
+            <span className="text-xl sm:text-2xl font-bold text-grey-900">{stats.totalViews.toLocaleString()}</span>
           </div>
-          <p className="text-sm text-grey-600 font-medium">Total Views</p>
+          <p className="text-xs sm:text-sm text-grey-600 font-medium">Total Views</p>
         </div>
 
-        <div className="bg-white rounded-xl p-6 shadow-medium border border-grey-200 hover:shadow-lg transition-shadow">
-          <div className="flex items-center justify-between mb-4">
-            <div className="p-3 bg-amber-100 rounded-lg">
-              <DollarSign className="w-6 h-6 text-amber-600" />
+        <div className="bg-white rounded-xl p-4 sm:p-6 shadow-medium border border-grey-200 hover:shadow-lg transition-all duration-200 active:scale-95">
+          <div className="flex items-center justify-between mb-3 sm:mb-4">
+            <div className="p-2 sm:p-3 bg-amber-100 rounded-lg">
+              <DollarSign className="w-5 h-5 sm:w-6 sm:h-6 text-amber-600" />
             </div>
-            <span className="text-2xl font-bold text-grey-900">
+            <span className="text-xl sm:text-2xl font-bold text-grey-900">
               ${stats.totalRevenue.toLocaleString()}
             </span>
           </div>
-          <p className="text-sm text-grey-600 font-medium">Monthly Revenue</p>
+          <p className="text-xs sm:text-sm text-grey-600 font-medium">Monthly Revenue</p>
         </div>
       </div>
 
@@ -160,54 +168,54 @@ export default function LandlordDashboardPage() {
       )}
 
       {/* Quick Actions */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
         <Link
           href="/listings/create"
-          className="bg-gradient-to-r from-primary-500 to-primary-600 rounded-xl p-6 text-white shadow-medium hover:shadow-lg transition-all duration-200 transform hover:scale-[1.02]"
+          className="bg-gradient-to-r from-primary-500 to-primary-600 rounded-xl p-4 sm:p-6 text-white shadow-medium hover:shadow-lg transition-all duration-200 active:scale-95"
         >
-          <div className="flex items-center gap-4">
-            <div className="p-3 bg-white/20 rounded-lg">
-              <Home className="w-6 h-6" />
+          <div className="flex items-center gap-3 sm:gap-4">
+            <div className="p-2 sm:p-3 bg-white/20 rounded-lg flex-shrink-0">
+              <Home className="w-5 h-5 sm:w-6 sm:h-6" />
             </div>
-            <div>
-              <h3 className="font-bold text-lg mb-1">Create Listing</h3>
-              <p className="text-sm text-white/80">Add a new property</p>
+            <div className="min-w-0">
+              <h3 className="font-bold text-base sm:text-lg mb-0.5 sm:mb-1">Create Listing</h3>
+              <p className="text-xs sm:text-sm text-white/80">Add a new property</p>
             </div>
           </div>
         </Link>
 
         <Link
           href="/landlord/listings"
-          className="bg-white rounded-xl p-6 border border-grey-200 shadow-medium hover:shadow-lg transition-all duration-200 transform hover:scale-[1.02]"
+          className="bg-white rounded-xl p-4 sm:p-6 border border-grey-200 shadow-medium hover:shadow-lg transition-all duration-200 active:scale-95"
         >
-          <div className="flex items-center gap-4">
-            <div className="p-3 bg-primary-100 rounded-lg">
-              <Home className="w-6 h-6 text-primary-600" />
+          <div className="flex items-center gap-3 sm:gap-4">
+            <div className="p-2 sm:p-3 bg-primary-100 rounded-lg flex-shrink-0">
+              <Home className="w-5 h-5 sm:w-6 sm:h-6 text-primary-600" />
             </div>
-            <div>
-              <h3 className="font-bold text-lg mb-1 text-grey-900">Manage Listings</h3>
-              <p className="text-sm text-grey-600">View and edit your listings</p>
+            <div className="min-w-0">
+              <h3 className="font-bold text-base sm:text-lg mb-0.5 sm:mb-1 text-grey-900">Manage Listings</h3>
+              <p className="text-xs sm:text-sm text-grey-600">View and edit your listings</p>
             </div>
           </div>
         </Link>
 
         <Link
           href="/chat"
-          className="bg-white rounded-xl p-6 border border-grey-200 shadow-medium hover:shadow-lg transition-all duration-200 relative transform hover:scale-[1.02]"
+          className="bg-white rounded-xl p-4 sm:p-6 border border-grey-200 shadow-medium hover:shadow-lg transition-all duration-200 relative active:scale-95 sm:col-span-2 lg:col-span-1"
         >
           {unreadCount && unreadCount > 0 && (
-            <span className="absolute top-4 right-4 bg-red-500 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center animate-pulse">
+            <span className="absolute top-3 right-3 sm:top-4 sm:right-4 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 sm:w-6 sm:h-6 flex items-center justify-center animate-pulse">
               {unreadCount > 9 ? '9+' : unreadCount}
             </span>
           )}
-          <div className="flex items-center gap-4">
-            <div className="p-3 bg-blue-100 rounded-lg">
-              <MessageSquare className="w-6 h-6 text-blue-600" />
+          <div className="flex items-center gap-3 sm:gap-4">
+            <div className="p-2 sm:p-3 bg-blue-100 rounded-lg flex-shrink-0">
+              <MessageSquare className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" />
             </div>
-            <div>
-              <h3 className="font-bold text-lg mb-1 text-grey-900">Messages</h3>
-              <p className="text-sm text-grey-600">
-                {unreadCount ? `${unreadCount} unread messages` : 'View messages'}
+            <div className="min-w-0">
+              <h3 className="font-bold text-base sm:text-lg mb-0.5 sm:mb-1 text-grey-900">Messages</h3>
+              <p className="text-xs sm:text-sm text-grey-600">
+                {unreadCount ? `${unreadCount} unread` : 'View messages'}
               </p>
             </div>
           </div>
@@ -215,15 +223,15 @@ export default function LandlordDashboardPage() {
       </div>
 
       {/* Performance Chart and Recent Listings */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
         {/* Top Performing Listings */}
         {listings.length > 0 && (
           <div className="bg-white rounded-xl shadow-medium border border-grey-200">
-            <div className="p-6 border-b border-grey-200">
-              <h2 className="text-xl font-bold text-grey-900">Top Performing Listings</h2>
-              <p className="text-sm text-grey-600 mt-1">Listings with the most views</p>
+            <div className="p-4 sm:p-6 border-b border-grey-200">
+              <h2 className="text-lg sm:text-xl font-bold text-grey-900">Top Performing Listings</h2>
+              <p className="text-xs sm:text-sm text-grey-600 mt-1">Listings with the most views</p>
             </div>
-            <div className="p-6">
+            <div className="p-4 sm:p-6">
               <PerformanceChart listings={listings} maxItems={5} />
             </div>
           </div>
@@ -231,42 +239,42 @@ export default function LandlordDashboardPage() {
 
         {/* Recent Listings */}
         <div className="bg-white rounded-xl shadow-medium border border-grey-200">
-          <div className="p-6 border-b border-grey-200 flex items-center justify-between">
-            <h2 className="text-xl font-bold text-grey-900">Recent Listings</h2>
+          <div className="p-4 sm:p-6 border-b border-grey-200 flex items-center justify-between">
+            <h2 className="text-lg sm:text-xl font-bold text-grey-900">Recent Listings</h2>
             <Link
               href="/landlord/listings"
-              className="text-sm text-primary-600 hover:text-primary-700 font-medium"
+              className="text-xs sm:text-sm text-primary-600 hover:text-primary-700 font-medium"
             >
               View All
             </Link>
           </div>
-          <div className="p-6">
+          <div className="p-4 sm:p-6">
             {recentListings.length > 0 ? (
-              <div className="space-y-4">
+              <div className="space-y-3 sm:space-y-4">
                 {recentListings.map((listing: any) => (
                   <Link
                     key={listing.id}
                     href={`/listings/${listing.id}`}
-                    className="flex items-center gap-4 p-4 border border-grey-200 rounded-lg hover:bg-grey-50 transition-colors group"
+                    className="flex items-center gap-3 sm:gap-4 p-3 sm:p-4 border border-grey-200 rounded-lg hover:bg-grey-50 active:bg-grey-100 transition-colors group"
                   >
                     {listing.images && listing.images[0] && (
                       <img
                         src={listing.images[0]}
                         alt={listing.title}
-                        className="w-16 h-16 object-cover rounded-lg"
+                        className="w-14 h-14 sm:w-16 sm:h-16 object-cover rounded-lg flex-shrink-0"
                       />
                     )}
                     <div className="flex-1 min-w-0">
-                      <h3 className="font-semibold text-grey-900 group-hover:text-primary-600 transition-colors truncate">
+                      <h3 className="font-semibold text-sm sm:text-base text-grey-900 group-hover:text-primary-600 transition-colors truncate">
                         {listing.title}
                       </h3>
-                      <p className="text-sm text-grey-600 truncate">
-                        {listing.city}, {listing.state} • ${listing.price}/month
+                      <p className="text-xs sm:text-sm text-grey-600 truncate">
+                        {listing.city}, {listing.state} • ${listing.price}/mo
                       </p>
                     </div>
                     <div className="text-right flex-shrink-0">
                       <span
-                        className={`inline-block px-3 py-1 rounded-full text-xs font-semibold ${
+                        className={`inline-block px-2 sm:px-3 py-1 rounded-full text-xs font-semibold ${
                           listing.status === 'available' || listing.status === 'active'
                             ? 'bg-green-100 text-green-700'
                             : listing.status === 'pending'
@@ -276,7 +284,7 @@ export default function LandlordDashboardPage() {
                       >
                         {listing.status}
                       </span>
-                      <p className="text-xs text-grey-500 mt-1">
+                      <p className="text-xs text-grey-500 mt-1 hidden sm:block">
                         {listing.createdAt
                           ? format(new Date(listing.createdAt), 'MMM dd, yyyy')
                           : 'N/A'}
@@ -286,12 +294,12 @@ export default function LandlordDashboardPage() {
                 ))}
               </div>
             ) : (
-              <div className="text-center py-12">
-                <Home className="w-16 h-16 text-grey-300 mx-auto mb-4" />
-                <p className="text-grey-600 mb-4">No listings yet</p>
+              <div className="text-center py-8 sm:py-12">
+                <Home className="w-12 h-12 sm:w-16 sm:h-16 text-grey-300 mx-auto mb-3 sm:mb-4" />
+                <p className="text-sm sm:text-base text-grey-600 mb-3 sm:mb-4">No listings yet</p>
                 <Link
                   href="/listings/create"
-                  className="inline-block px-6 py-3 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors font-semibold"
+                  className="inline-block px-5 py-2.5 sm:px-6 sm:py-3 bg-primary-500 text-white rounded-lg hover:bg-primary-600 active:bg-primary-700 transition-colors font-semibold text-sm sm:text-base"
                 >
                   Create Your First Listing
                 </Link>
