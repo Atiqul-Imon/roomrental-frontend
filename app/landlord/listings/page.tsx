@@ -121,24 +121,24 @@ export default function LandlordListingsPage() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6 pb-4 sm:pb-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-grey-900 mb-2">My Listings</h1>
-          <p className="text-grey-600">Manage all your property listings</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-grey-900 mb-2">My Listings</h1>
+          <p className="text-sm sm:text-base text-grey-600">Manage all your property listings</p>
         </div>
         <Link
           href="/listings/create"
-          className="flex items-center gap-2 px-6 py-3 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors font-semibold shadow-medium"
+          className="flex items-center justify-center gap-2 px-4 sm:px-6 py-2.5 sm:py-3 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors font-semibold shadow-medium text-sm sm:text-base"
         >
-          <Plus className="w-5 h-5" />
+          <Plus className="w-4 h-4 sm:w-5 sm:h-5" />
           Create Listing
         </Link>
       </div>
 
       {/* Statistics */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-6">
         <div className="bg-white rounded-xl p-6 shadow-medium border border-grey-200">
           <div className="text-3xl font-bold text-grey-900 mb-1">{stats.total}</div>
           <div className="text-sm text-grey-600 font-medium">Total Listings</div>
@@ -159,7 +159,7 @@ export default function LandlordListingsPage() {
 
       {/* Filters */}
       <div className="bg-white rounded-xl p-4 shadow-medium border border-grey-200">
-        <div className="flex flex-col md:flex-row gap-4">
+        <div className="flex flex-col gap-4">
           <div className="flex-1 relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-grey-400" />
             <input
@@ -173,7 +173,7 @@ export default function LandlordListingsPage() {
               className="w-full pl-10 pr-4 py-2 border border-grey-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
             />
           </div>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2 overflow-x-auto pb-2 -mx-2 px-2 md:overflow-x-visible md:pb-0 md:mx-0 md:px-0">
             {(['all', 'available', 'pending', 'rented', 'inactive'] as const).map((status) => (
               <button
                 key={status}
@@ -181,7 +181,7 @@ export default function LandlordListingsPage() {
                   setStatusFilter(status);
                   setPage(1);
                 }}
-                className={`px-4 py-2 rounded-lg transition capitalize font-medium ${
+                className={`px-4 py-2 rounded-lg transition capitalize font-medium whitespace-nowrap flex-shrink-0 ${
                   statusFilter === status
                     ? 'bg-primary-500 text-white'
                     : 'bg-grey-100 text-grey-700 hover:bg-grey-200'
