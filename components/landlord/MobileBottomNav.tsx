@@ -7,7 +7,6 @@ import {
   Home,
   User,
   MessageSquare,
-  Plus,
 } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { api } from '@/lib/api';
@@ -38,12 +37,6 @@ export function MobileBottomNav() {
       icon: Home,
       label: 'Listings',
       href: '/landlord/listings',
-    },
-    {
-      icon: Plus,
-      label: 'Create',
-      href: '/listings/create',
-      highlight: true,
     },
     {
       icon: MessageSquare,
@@ -104,11 +97,6 @@ export function MobileBottomNav() {
                 </span>
                 {active && (
                   <div className="absolute top-0 left-1/2 -translate-x-1/2 w-12 h-1 bg-primary-600 rounded-b-full" />
-                )}
-                {item.highlight && (
-                  <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-14 h-14 bg-gradient-to-br from-primary-500 to-primary-600 rounded-full flex items-center justify-center shadow-lg z-10">
-                    <Icon className="w-6 h-6 text-white" />
-                  </div>
                 )}
               </Link>
             );
