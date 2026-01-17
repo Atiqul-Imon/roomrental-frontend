@@ -60,7 +60,7 @@ export function MobileBottomNav() {
 
   return (
     <>
-      <nav className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-grey-200 shadow-lg lg:hidden">
+      <nav className="fixed bottom-0 left-0 right-0 z-[100] bg-white border-t border-grey-200 shadow-lg lg:hidden">
         <div className="flex items-center justify-around h-16 px-2 relative overflow-visible">
           {navItems.map((item) => {
             const Icon = item.icon;
@@ -104,7 +104,7 @@ export function MobileBottomNav() {
         </div>
       </nav>
       {/* Safe area for devices with home indicator - separate layer to ensure coverage */}
-      <div className="fixed bottom-0 left-0 right-0 h-[env(safe-area-inset-bottom,0px)] bg-white z-[55] lg:hidden pointer-events-none" />
+      <div className="fixed bottom-0 left-0 right-0 h-[env(safe-area-inset-bottom,0px)] bg-white z-[101] lg:hidden pointer-events-none" />
     </>
   );
 }
