@@ -168,22 +168,7 @@ export default function LandlordDashboardPage() {
       )}
 
       {/* Quick Actions */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-        <Link
-          href="/listings/create"
-          className="bg-gradient-to-r from-primary-500 to-primary-600 rounded-xl p-4 sm:p-6 text-white shadow-medium hover:shadow-lg transition-all duration-200 active:scale-95"
-        >
-          <div className="flex items-center gap-3 sm:gap-4">
-            <div className="p-2 sm:p-3 bg-white/20 rounded-lg flex-shrink-0">
-              <Home className="w-5 h-5 sm:w-6 sm:h-6" />
-            </div>
-            <div className="min-w-0">
-              <h3 className="font-bold text-base sm:text-lg mb-0.5 sm:mb-1">Create Listing</h3>
-              <p className="text-xs sm:text-sm text-white/80">Add a new property</p>
-            </div>
-          </div>
-        </Link>
-
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
         <Link
           href="/landlord/listings"
           className="bg-white rounded-xl p-4 sm:p-6 border border-grey-200 shadow-medium hover:shadow-lg transition-all duration-200 active:scale-95"
@@ -201,7 +186,7 @@ export default function LandlordDashboardPage() {
 
         <Link
           href="/chat"
-          className="bg-white rounded-xl p-4 sm:p-6 border border-grey-200 shadow-medium hover:shadow-lg transition-all duration-200 relative active:scale-95 sm:col-span-2 lg:col-span-1"
+          className="bg-white rounded-xl p-4 sm:p-6 border border-grey-200 shadow-medium hover:shadow-lg transition-all duration-200 relative active:scale-95"
         >
           {unreadCount && unreadCount > 0 && (
             <span className="absolute top-3 right-3 sm:top-4 sm:right-4 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 sm:w-6 sm:h-6 flex items-center justify-center animate-pulse">
