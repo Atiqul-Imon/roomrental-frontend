@@ -334,7 +334,7 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
               <div className="bg-white rounded-2xl p-8 sm:p-10 md:p-12 shadow-lg border border-gray-100">
                 <div className="flex items-center gap-3 mb-8">
                   <h2 className="font-heading text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 leading-tight tracking-tight">
-                    About This Room
+                    Description
                   </h2>
                 </div>
                 <div className="prose prose-lg sm:prose-xl max-w-none">
