@@ -20,12 +20,17 @@ export function UserListings({ userId, isOwnProfile }: UserListingsProps) {
     queryKey: ['user-listings', userId],
     ...queryConfig.dashboard,
     queryFn: async () => {
-      const response = await api.get('/listings', {
-        params: { landlordId: userId, page: 1, limit: 12 },
-      });
-      const backendData = response.data.data;
-      return {
-        listings: (backendData.listings || []).map((l: any) => ({
+      try {
+        const response = await api.get('/listings', {
+          params: { landlordId: userId, page: 1, limit: 12 },
+        });
+        // Handle nested response structure
+        let backendData = response.data.data;
+        if (backendData?.data) {
+          backendData = backendData.data;
+        }
+        return {
+          listings: (backendData?.listings || []).map((l: any) => ({
           _id: l.id,
           landlordId: {
             _id: l.landlord?.id || l.landlordId,
@@ -56,8 +61,15 @@ export function UserListings({ userId, isOwnProfile }: UserListingsProps) {
           createdAt: l.createdAt,
           updatedAt: l.updatedAt,
         })) as Listing[],
-        total: backendData.pagination?.total || 0,
+        total: backendData?.pagination?.total || backendData?.total || 0,
       };
+      } catch (error) {
+        console.error('Error fetching user listings:', error);
+        return {
+          listings: [],
+          total: 0,
+        };
+      }
     },
     enabled: !!userId,
   });

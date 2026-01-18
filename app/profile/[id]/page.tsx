@@ -9,14 +9,13 @@ import { api } from '@/lib/api';
 import { User } from '@/types';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
-import { ReviewList } from '@/components/reviews/ReviewList';
 import { useAuth } from '@/lib/auth-context';
 import { ProfileHero } from '@/components/profile/ProfileHero';
 import { ProfileStats } from '@/components/profile/ProfileStats';
 import { ProfileTabs } from '@/components/profile/ProfileTabs';
 import { SavedListings } from '@/components/profile/SavedListings';
 import { UserListings } from '@/components/profile/UserListings';
-import { Home, Star, Activity, User as UserIcon, Heart, Search, List, Clock, LayoutDashboard } from 'lucide-react';
+import { Home, Heart, Search, List, Clock, LayoutDashboard } from 'lucide-react';
 import Link from 'next/link';
 import { SearchHistoryTab } from '@/components/profile/SearchHistoryTab';
 
@@ -75,7 +74,12 @@ export default function ProfilePage({ params }: { params: Promise<{ id: string }
           const listingsResponse = await api.get('/listings', {
             params: { landlordId: userId, page: 1, limit: 100 },
           });
-          const listings = listingsResponse.data.data.listings || [];
+          // Handle nested response structure
+          let backendData = listingsResponse.data.data;
+          if (backendData?.data) {
+            backendData = backendData.data;
+          }
+          const listings = backendData?.listings || [];
           return {
             listings: listings.length,
             activeListings: listings.filter((l: any) => 
@@ -194,22 +198,6 @@ export default function ProfilePage({ params }: { params: Promise<{ id: string }
           icon: List,
           content: <UserListings userId={userId} isOwnProfile={isOwnProfile} />,
         },
-        {
-          id: 'reviews',
-          label: 'Reviews',
-          icon: Star,
-          content: <ReviewList userId={userId} />,
-        },
-        {
-          id: 'activity',
-          label: 'Activity',
-          icon: Activity,
-          content: (
-            <div className="text-center py-12 text-grey-500">
-              <p>Activity timeline coming soon</p>
-            </div>
-          ),
-        },
       ]
     : [
         {
@@ -241,22 +229,6 @@ export default function ProfilePage({ params }: { params: Promise<{ id: string }
             content: <SearchHistoryTab />,
           },
         ] : []),
-        {
-          id: 'reviews',
-          label: 'Reviews',
-          icon: Star,
-          content: <ReviewList userId={userId} />,
-        },
-        {
-          id: 'activity',
-          label: 'Activity',
-          icon: Activity,
-          content: (
-            <div className="text-center py-12 text-grey-500">
-              <p>Activity timeline coming soon</p>
-            </div>
-          ),
-        },
       ];
 
   return (

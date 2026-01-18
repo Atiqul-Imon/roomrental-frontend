@@ -6,7 +6,6 @@
  */
 
 import Link from 'next/link';
-import { Home, HelpCircle, Mail, Shield, FileText } from 'lucide-react';
 import { BodySmall, Caption } from '@/components/ui/Typography';
 
 export function Footer() {
@@ -31,7 +30,7 @@ export function Footer() {
   };
 
   return (
-    <footer className="bg-gradient-to-b from-primary-900 via-primary-800 to-primary-900 text-white mt-auto" role="contentinfo">
+    <footer className="bg-gradient-to-b from-gray-900 via-gray-800 to-gray-900 text-white mt-auto" role="contentinfo">
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
           {/* Brand */}
@@ -40,16 +39,12 @@ export function Footer() {
               <img 
                 src="/logo/rrlogo-optimized.png" 
                 alt="RoomRentalUSA" 
-                className="h-10 w-auto"
+                className="h-12 w-auto sm:h-14 md:h-16"
               />
             </Link>
-            <BodySmall className="text-accent-100 mb-4">
+            <BodySmall className="text-gray-300 mb-4">
               Find your perfect room across the United States. Connecting students and young professionals with quality housing.
             </BodySmall>
-            <div className="flex items-center gap-2 text-accent-200">
-              <Shield className="w-4 h-4" aria-hidden="true" />
-              <Caption className="text-xs">Secure & Verified</Caption>
-            </div>
           </div>
 
           {/* Platform Links */}
@@ -61,7 +56,7 @@ export function Footer() {
                   <li key={link.href}>
                     <Link
                       href={link.href}
-                      className="text-accent-100 hover:text-accent-300 transition-colors text-sm hover:translate-x-1 inline-block"
+                      className="text-white hover:text-gray-200 transition-colors text-sm hover:translate-x-1 inline-block"
                     >
                       {link.label}
                     </Link>
@@ -80,7 +75,7 @@ export function Footer() {
                   <li key={link.href}>
                     <Link
                       href={link.href}
-                      className="text-accent-100 hover:text-accent-300 transition-colors text-sm hover:translate-x-1 inline-block"
+                      className="text-white hover:text-gray-200 transition-colors text-sm hover:translate-x-1 inline-block"
                     >
                       {link.label}
                     </Link>
@@ -99,7 +94,7 @@ export function Footer() {
                   <li key={link.href}>
                     <Link
                       href={link.href}
-                      className="text-accent-100 hover:text-accent-300 transition-colors text-sm hover:translate-x-1 inline-block"
+                      className="text-white hover:text-gray-200 transition-colors text-sm hover:translate-x-1 inline-block"
                     >
                       {link.label}
                     </Link>
@@ -111,22 +106,22 @@ export function Footer() {
         </div>
 
         {/* Bottom Bar */}
-        <div className="border-t border-primary-700/50 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-          <BodySmall className="text-accent-200">
+        <div className="border-t border-gray-700/50 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+          <BodySmall className="text-gray-400">
             © {currentYear} RoomRentalUSA. All rights reserved.
           </BodySmall>
           <div className="flex items-center gap-4">
             <Link
               href="/accessibility"
-              className="text-accent-200 hover:text-accent-300 transition-colors text-sm"
+              className="text-white hover:text-gray-200 transition-colors text-sm"
               aria-label="Accessibility statement"
             >
               Accessibility
             </Link>
-            <span className="text-accent-300" aria-hidden="true">|</span>
+            <span className="text-gray-600" aria-hidden="true">|</span>
             <Link
               href="/sitemap"
-              className="text-accent-200 hover:text-accent-300 transition-colors text-sm"
+              className="text-white hover:text-gray-200 transition-colors text-sm"
             >
               Sitemap
             </Link>

@@ -52,13 +52,13 @@ export function Header() {
             onClick={() => {
               window.location.href = '/';
             }}
-            className="flex items-center gap-2 transition-smooth hover:opacity-90"
+            className="flex items-center gap-2 transition-smooth hover:opacity-90 p-1 rounded-lg hover:bg-gray-50"
             aria-label="Go to homepage"
           >
             <img 
               src="/logo/rrlogo-optimized.png" 
               alt="RoomRentalUSA" 
-              className="h-10 w-auto sm:h-12 md:h-14"
+              className="h-12 w-auto sm:h-14 md:h-16 drop-shadow-sm"
             />
           </button>
 
