@@ -27,7 +27,54 @@ export default function EditListingPage({ params }: { params: Promise<{ id: stri
       if (!response.data.success) {
         throw new Error(response.data.error || 'Failed to fetch listing');
       }
-      return response.data.data as Listing;
+      
+      const listing = response.data.data;
+      
+      // Transform to match Listing type structure
+      const city = listing.city || listing.location?.city || '';
+      const state = listing.state || listing.location?.state || '';
+      const zip = listing.zip || listing.location?.zip || '';
+      const address = listing.address || listing.location?.address || '';
+      const latitude = listing.latitude || listing.location?.latitude || listing.location?.coordinates?.lat;
+      const longitude = listing.longitude || listing.location?.longitude || listing.location?.coordinates?.lng;
+      
+      // Handle landlord data
+      const landlordId = listing.landlord?.id || listing.landlordId || '';
+      const landlordName = listing.landlord?.name || '';
+      const landlordEmail = listing.landlord?.email || '';
+      const landlordProfileImage = listing.landlord?.profileImage || null;
+      
+      return {
+        _id: listing.id || listing._id,
+        landlordId: {
+          _id: landlordId,
+          name: landlordName,
+          email: landlordEmail,
+          profileImage: landlordProfileImage,
+        },
+        title: listing.title || '',
+        description: listing.description || '',
+        price: listing.price || 0,
+        bedrooms: listing.bedrooms || 1,
+        bathrooms: listing.bathrooms || 1,
+        squareFeet: listing.squareFeet || null,
+        location: {
+          city: city,
+          state: state,
+          zip: zip || undefined,
+          address: address || undefined,
+          coordinates: latitude && longitude
+            ? { lat: Number(latitude), lng: Number(longitude) }
+            : undefined,
+        },
+        images: listing.images || [],
+        amenities: listing.amenities || [],
+        propertyType: listing.propertyType || 'apartment',
+        availabilityDate: listing.availabilityDate || new Date().toISOString(),
+        status: listing.status || 'available',
+        createdAt: listing.createdAt || new Date().toISOString(),
+        updatedAt: listing.updatedAt || new Date().toISOString(),
+      } as Listing;
     },
   });
 
@@ -88,7 +135,12 @@ export default function EditListingPage({ params }: { params: Promise<{ id: stri
     );
   }
 
-  if (user?.id !== data.landlordId._id) {
+  // Check ownership - compare as strings for consistency
+  const isOwner = user?.id && data?.landlordId?._id 
+    ? String(user.id) === String(data.landlordId._id)
+    : false;
+
+  if (!isOwner) {
     if (isLandlord) {
       return (
         <LandlordLayout>

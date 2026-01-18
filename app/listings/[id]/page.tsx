@@ -116,7 +116,9 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
     },
   });
 
-  const isOwner = isAuthenticated && user?.id === data?.landlordId?._id;
+  const isOwner = isAuthenticated && user?.id && data?.landlordId?._id 
+    ? String(user.id) === String(data.landlordId._id)
+    : false;
   const formattedDate = data && data.availabilityDate 
     ? (() => {
         try {
