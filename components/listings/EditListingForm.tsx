@@ -140,11 +140,14 @@ export function EditListingForm({ listing, onSuccess }: EditListingFormProps) {
         queryClient.invalidateQueries({ queryKey: ['admin-listings'] }); // Admin listings
         queryClient.invalidateQueries({ queryKey: ['listing', listing._id] }); // Specific listing
         
-        if (onSuccess) {
-          onSuccess();
-        } else {
-          router.push(`/listings/${listing._id}`);
-        }
+        // Small delay to ensure cache is marked stale before navigation
+        setTimeout(() => {
+          if (onSuccess) {
+            onSuccess();
+          } else {
+            router.push(`/listings/${listing._id}`);
+          }
+        }, 50);
       } else {
         setError(response.data.error || 'Failed to update listing');
       }
