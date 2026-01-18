@@ -87,8 +87,12 @@ export default function LandlordListingsPage() {
     mutationFn: async (id: string) => {
       await api.delete(`/listings/${id}`);
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['my-listings'] });
+    onSuccess: (_, id) => {
+      // Invalidate all listing-related caches
+      queryClient.invalidateQueries({ queryKey: ['listings'] }); // Public listings
+      queryClient.invalidateQueries({ queryKey: ['my-listings'] }); // Landlord listings
+      queryClient.invalidateQueries({ queryKey: ['admin-listings'] }); // Admin listings
+      queryClient.invalidateQueries({ queryKey: ['listing', id] }); // Specific listing
     },
   });
 
@@ -96,8 +100,12 @@ export default function LandlordListingsPage() {
     mutationFn: async ({ id, status }: { id: string; status: string }) => {
       await api.patch(`/listings/${id}/status`, { status });
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['my-listings'] });
+    onSuccess: (_, { id }) => {
+      // Invalidate all listing-related caches
+      queryClient.invalidateQueries({ queryKey: ['listings'] }); // Public listings
+      queryClient.invalidateQueries({ queryKey: ['my-listings'] }); // Landlord listings
+      queryClient.invalidateQueries({ queryKey: ['admin-listings'] }); // Admin listings
+      queryClient.invalidateQueries({ queryKey: ['listing', id] }); // Specific listing
     },
   });
 

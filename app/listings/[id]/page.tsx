@@ -137,6 +137,11 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
 
     try {
       await api.delete(`/listings/${listingId}`);
+      // Invalidate all listing-related caches
+      queryClient.invalidateQueries({ queryKey: ['listings'] }); // Public listings
+      queryClient.invalidateQueries({ queryKey: ['my-listings'] }); // Landlord listings
+      queryClient.invalidateQueries({ queryKey: ['admin-listings'] }); // Admin listings
+      queryClient.invalidateQueries({ queryKey: ['listing', listingId] }); // Specific listing
       router.push('/dashboard');
     } catch (error) {
       alert('Failed to delete listing');

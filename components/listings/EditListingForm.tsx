@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import { useQueryClient } from '@tanstack/react-query';
 import { api } from '@/lib/api';
 import { Listing } from '@/types';
 import { Upload, X } from 'lucide-react';
@@ -31,6 +32,7 @@ interface EditListingFormProps {
 
 export function EditListingForm({ listing, onSuccess }: EditListingFormProps) {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const [images, setImages] = useState<string[]>(listing.images || []);
   const [isUploading, setIsUploading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -132,6 +134,12 @@ export function EditListingForm({ listing, onSuccess }: EditListingFormProps) {
       const response = await api.patch(`/listings/${listing._id}`, listingData);
 
       if (response.data.success) {
+        // Invalidate all listing-related caches to reflect changes immediately
+        queryClient.invalidateQueries({ queryKey: ['listings'] }); // Public listings
+        queryClient.invalidateQueries({ queryKey: ['my-listings'] }); // Landlord listings
+        queryClient.invalidateQueries({ queryKey: ['admin-listings'] }); // Admin listings
+        queryClient.invalidateQueries({ queryKey: ['listing', listing._id] }); // Specific listing
+        
         if (onSuccess) {
           onSuccess();
         } else {

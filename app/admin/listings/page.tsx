@@ -41,7 +41,11 @@ export default function AdminListingsPage() {
   const handleStatusChange = async (listingId: string, newStatus: 'active' | 'pending' | 'rented' | 'available' | 'inactive') => {
     try {
       await api.put(`/listings/${listingId}/status`, { status: newStatus });
-      queryClient.invalidateQueries({ queryKey: ['admin-listings'] });
+      // Invalidate all listing-related caches
+      queryClient.invalidateQueries({ queryKey: ['listings'] }); // Public listings
+      queryClient.invalidateQueries({ queryKey: ['my-listings'] }); // Landlord listings
+      queryClient.invalidateQueries({ queryKey: ['admin-listings'] }); // Admin listings
+      queryClient.invalidateQueries({ queryKey: ['listing', listingId] }); // Specific listing
     } catch (error) {
       alert('Failed to update listing status');
     }
@@ -54,7 +58,11 @@ export default function AdminListingsPage() {
 
     try {
       await api.delete(`/listings/${listingId}`);
-      queryClient.invalidateQueries({ queryKey: ['admin-listings'] });
+      // Invalidate all listing-related caches
+      queryClient.invalidateQueries({ queryKey: ['listings'] }); // Public listings
+      queryClient.invalidateQueries({ queryKey: ['my-listings'] }); // Landlord listings
+      queryClient.invalidateQueries({ queryKey: ['admin-listings'] }); // Admin listings
+      queryClient.invalidateQueries({ queryKey: ['listing', listingId] }); // Specific listing
     } catch (error) {
       alert('Failed to delete listing');
     }
