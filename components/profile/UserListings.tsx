@@ -16,7 +16,7 @@ interface UserListingsProps {
 }
 
 export function UserListings({ userId, isOwnProfile }: UserListingsProps) {
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, error } = useQuery({
     queryKey: ['user-listings', userId],
     ...queryConfig.dashboard,
     queryFn: async () => {
@@ -24,11 +24,13 @@ export function UserListings({ userId, isOwnProfile }: UserListingsProps) {
         const response = await api.get('/listings', {
           params: { landlordId: userId, page: 1, limit: 12 },
         });
-        // Handle nested response structure
+        
+        // Handle nested response structure (same as ListingList component)
         let backendData = response.data.data;
         if (backendData?.data) {
           backendData = backendData.data;
         }
+        
         return {
           listings: (backendData?.listings || []).map((l: any) => ({
           _id: l.id,
@@ -63,8 +65,9 @@ export function UserListings({ userId, isOwnProfile }: UserListingsProps) {
         })) as Listing[],
         total: backendData?.pagination?.total || backendData?.total || 0,
       };
-      } catch (error) {
+      } catch (error: any) {
         console.error('Error fetching user listings:', error);
+        console.error('Error response:', error.response?.data);
         return {
           listings: [],
           total: 0,
@@ -80,6 +83,16 @@ export function UserListings({ userId, isOwnProfile }: UserListingsProps) {
         {[...Array(6)].map((_, i) => (
           <ListingCardSkeleton key={i} />
         ))}
+      </div>
+    );
+  }
+
+  if (error) {
+    console.error('UserListings error:', error);
+    return (
+      <div className="text-center py-8">
+        <p className="text-red-600 mb-2">Failed to load listings</p>
+        <p className="text-sm text-grey-500">Please try refreshing the page</p>
       </div>
     );
   }
