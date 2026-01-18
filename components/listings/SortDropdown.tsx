@@ -54,7 +54,7 @@ export function SortDropdown() {
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-56 sm:w-48 bg-white border border-grey-200 rounded-lg shadow-large z-50 max-h-[60vh] sm:max-h-96 overflow-y-auto">
+        <div className="absolute left-0 sm:right-0 mt-2 w-56 sm:w-48 bg-white border border-grey-200 rounded-lg shadow-large z-50 max-h-[60vh] sm:max-h-96 overflow-y-auto">
           <ul className="py-1 sm:py-2">
             {sortOptions.map((option) => (
               <li key={option.value}>
