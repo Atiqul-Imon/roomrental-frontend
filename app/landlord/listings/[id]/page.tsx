@@ -159,9 +159,6 @@ export default function LandlordListingDetailPage({ params }: { params: Promise<
     statusMutation.mutate(status);
   };
 
-  // Check if user owns this listing
-  const isOwner = user?.id === data?.landlordId._id;
-
   if (isLoading) {
     return <PageSkeleton />;
   }
@@ -177,8 +174,13 @@ export default function LandlordListingDetailPage({ params }: { params: Promise<
     );
   }
 
-  // Verify ownership
-  if (!isOwner) {
+  // Check if user owns this listing (compare as strings for consistency)
+  const isOwner = user?.id && data?.landlordId?._id 
+    ? String(user.id) === String(data.landlordId._id)
+    : false;
+
+  // Verify ownership - only check if user is not a landlord or doesn't own the listing
+  if (!user || user.role !== 'landlord' || !isOwner) {
     return (
       <ErrorState
         title="Unauthorized"
