@@ -188,8 +188,12 @@ export default function AdminListingDetailPage({ params }: { params: Promise<{ i
       const response = await api.patch(`/listings/${listingId}`, updateData);
       
       if (response.data.success) {
-        queryClient.invalidateQueries({ queryKey: ['admin-listing', listingId] });
-        queryClient.invalidateQueries({ queryKey: ['admin-listings'] });
+        // Invalidate all listing-related caches
+        queryClient.invalidateQueries({ queryKey: ['listings'] }); // Public listings
+        queryClient.invalidateQueries({ queryKey: ['my-listings'] }); // Landlord listings
+        queryClient.invalidateQueries({ queryKey: ['admin-listings'] }); // Admin listings
+        queryClient.invalidateQueries({ queryKey: ['admin-listing', listingId] }); // Admin specific listing
+        queryClient.invalidateQueries({ queryKey: ['listing', listingId] }); // Public specific listing
         setIsEditing(false);
       } else {
         setError(response.data.error || 'Failed to update listing');
@@ -209,7 +213,11 @@ export default function AdminListingDetailPage({ params }: { params: Promise<{ i
     try {
       const response = await api.delete(`/listings/${listingId}`);
       if (response.data.success) {
-        queryClient.invalidateQueries({ queryKey: ['admin-listings'] });
+        // Invalidate all listing-related caches
+        queryClient.invalidateQueries({ queryKey: ['listings'] }); // Public listings
+        queryClient.invalidateQueries({ queryKey: ['my-listings'] }); // Landlord listings
+        queryClient.invalidateQueries({ queryKey: ['admin-listings'] }); // Admin listings
+        queryClient.invalidateQueries({ queryKey: ['listing', listingId] }); // Specific listing
         router.push('/admin/listings');
       }
     } catch (err: any) {
@@ -220,8 +228,12 @@ export default function AdminListingDetailPage({ params }: { params: Promise<{ i
   const handleStatusChange = async (newStatus: 'available' | 'pending' | 'rented' | 'inactive') => {
     try {
       await api.put(`/listings/${listingId}/status`, { status: newStatus });
-      queryClient.invalidateQueries({ queryKey: ['admin-listing', listingId] });
-      queryClient.invalidateQueries({ queryKey: ['admin-listings'] });
+      // Invalidate all listing-related caches
+      queryClient.invalidateQueries({ queryKey: ['listings'] }); // Public listings
+      queryClient.invalidateQueries({ queryKey: ['my-listings'] }); // Landlord listings
+      queryClient.invalidateQueries({ queryKey: ['admin-listings'] }); // Admin listings
+      queryClient.invalidateQueries({ queryKey: ['admin-listing', listingId] }); // Admin specific listing
+      queryClient.invalidateQueries({ queryKey: ['listing', listingId] }); // Public specific listing
     } catch (err: any) {
       setError(err.response?.data?.error || 'Failed to update listing status');
     }

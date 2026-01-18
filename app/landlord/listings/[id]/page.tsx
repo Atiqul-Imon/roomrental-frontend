@@ -118,7 +118,11 @@ export default function LandlordListingDetailPage({ params }: { params: Promise<
       await api.delete(`/listings/${listingId}`);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['my-listings'] });
+      // Invalidate all listing-related caches
+      queryClient.invalidateQueries({ queryKey: ['listings'] }); // Public listings
+      queryClient.invalidateQueries({ queryKey: ['my-listings'] }); // Landlord listings
+      queryClient.invalidateQueries({ queryKey: ['admin-listings'] }); // Admin listings
+      queryClient.invalidateQueries({ queryKey: ['listing', listingId] }); // Specific listing
       toast.success('Listing deleted successfully');
       router.push('/landlord/listings');
     },
@@ -132,8 +136,11 @@ export default function LandlordListingDetailPage({ params }: { params: Promise<
       await api.patch(`/listings/${listingId}/status`, { status });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['listing', listingId] });
-      queryClient.invalidateQueries({ queryKey: ['my-listings'] });
+      // Invalidate all listing-related caches
+      queryClient.invalidateQueries({ queryKey: ['listings'] }); // Public listings
+      queryClient.invalidateQueries({ queryKey: ['my-listings'] }); // Landlord listings
+      queryClient.invalidateQueries({ queryKey: ['admin-listings'] }); // Admin listings
+      queryClient.invalidateQueries({ queryKey: ['listing', listingId] }); // Specific listing
       toast.success('Listing status updated');
     },
     onError: (error: any) => {

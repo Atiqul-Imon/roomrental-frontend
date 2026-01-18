@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import { useQueryClient } from '@tanstack/react-query';
 import { api } from '@/lib/api';
 import { ChevronRight, ChevronLeft, Upload, X, Check } from 'lucide-react';
 
@@ -47,6 +48,7 @@ export function CreateListingForm({
   landlords = []
 }: CreateListingFormProps) {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const [step, setStep] = useState(1);
   const [images, setImages] = useState<string[]>([]);
   const [isUploading, setIsUploading] = useState(false);
@@ -182,6 +184,16 @@ export function CreateListingForm({
 
       if (response.data.success) {
         console.log('Listing created successfully');
+        
+        // Invalidate all listing-related caches to reflect changes immediately
+        const listingId = response.data.data.id;
+        queryClient.invalidateQueries({ queryKey: ['listings'] }); // Public listings
+        queryClient.invalidateQueries({ queryKey: ['my-listings'] }); // Landlord listings
+        queryClient.invalidateQueries({ queryKey: ['admin-listings'] }); // Admin listings
+        if (listingId) {
+          queryClient.invalidateQueries({ queryKey: ['listing', listingId] }); // Specific listing
+        }
+        
         if (onSuccess) {
           onSuccess();
         } else {
