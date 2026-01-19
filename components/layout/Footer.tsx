@@ -25,6 +25,8 @@ export function Footer() {
     legal: [
       { href: '/terms', label: 'Terms of Service' },
       { href: '/privacy', label: 'Privacy Policy' },
+      { href: '/privacy#cookies', label: 'Cookie Policy' },
+      { href: '/account/data-request', label: 'Data Rights' },
       { href: '/accessibility', label: 'Accessibility' },
     ],
   };
