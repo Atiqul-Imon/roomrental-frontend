@@ -117,7 +117,7 @@ export default function AdminListingDetailPage({ params }: { params: Promise<{ i
     enabled: !!listingId,
   });
 
-  const { register, handleSubmit, setValue, formState: { errors } } = useForm<EditListingForm>({
+  const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm<EditListingForm>({
     defaultValues: {
       title: '',
       description: '',
@@ -371,18 +371,38 @@ export default function AdminListingDetailPage({ params }: { params: Promise<{ i
             {isEditing ? (
               <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                 <div>
-                  <label className="block text-sm font-semibold text-gray-600 mb-2">Title</label>
+                  <label className="block text-sm font-semibold text-gray-600 mb-2">
+                    Title
+                    <span className="text-xs text-gray-500 font-normal ml-2">
+                      ({watch('title')?.length || 0}/200 characters)
+                    </span>
+                  </label>
                   <input
-                    {...register('title', { required: 'Title is required' })}
+                    {...register('title', { 
+                      required: 'Title is required',
+                      minLength: { value: 5, message: 'Title must be at least 5 characters' },
+                      maxLength: { value: 200, message: 'Title must not exceed 200 characters' }
+                    })}
+                    maxLength={200}
                     className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg bg-gray-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500"
                   />
                   {errors.title && <p className="text-sm text-red-600 mt-1">{errors.title.message}</p>}
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-gray-600 mb-2">Description</label>
+                  <label className="block text-sm font-semibold text-gray-600 mb-2">
+                    Description
+                    <span className="text-xs text-gray-500 font-normal ml-2">
+                      ({watch('description')?.length || 0}/2000 characters)
+                    </span>
+                  </label>
                   <textarea
-                    {...register('description', { required: 'Description is required' })}
+                    {...register('description', { 
+                      required: 'Description is required',
+                      minLength: { value: 20, message: 'Description must be at least 20 characters' },
+                      maxLength: { value: 2000, message: 'Description must not exceed 2000 characters' }
+                    })}
+                    maxLength={2000}
                     rows={6}
                     className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg bg-gray-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500"
                   />

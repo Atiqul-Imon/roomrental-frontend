@@ -41,7 +41,7 @@ function ListingCardComponent({ listing, onQuickView }: ListingCardProps) {
     <>
       <div
         onClick={handleCardClick}
-        className="block group cursor-pointer relative overflow-hidden"
+        className="block group cursor-pointer relative overflow-hidden h-full"
         role="button"
         tabIndex={0}
         onKeyDown={(e) => {
@@ -57,7 +57,7 @@ function ListingCardComponent({ listing, onQuickView }: ListingCardProps) {
         className="bg-white border-refined border-accent-100 rounded-xl overflow-hidden card-hover-enhanced shadow-soft h-full flex flex-col group relative hover:border-accent-200 hover:shadow-medium transition-all duration-300"
       >
         {/* Image Container */}
-        <div className="relative w-full h-48 sm:h-56 bg-gradient-to-br from-accent-50 to-coral-50 overflow-hidden aspect-[16/9] sm:aspect-auto">
+        <div className="relative w-full h-48 sm:h-56 md:h-64 bg-gradient-to-br from-accent-50 to-coral-50 overflow-hidden flex-shrink-0">
           {listing.images[0] && !imageError ? (
             <img
               src={imageUrl}
@@ -117,11 +117,11 @@ function ListingCardComponent({ listing, onQuickView }: ListingCardProps) {
 
           {/* Price Badge */}
           <div className="absolute top-2 sm:top-3 right-2 sm:right-3">
-            <div className="bg-coral-500 text-white px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg shadow-medium backdrop-blur-sm">
-              <span className="text-base sm:text-lg font-bold" aria-label={`Price: $${listing.price} per month`}>
+            <div className="bg-coral-500 text-white px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg shadow-medium backdrop-blur-sm">
+              <span className="text-lg sm:text-xl md:text-2xl font-bold" aria-label={`Price: $${listing.price} per month`}>
                 ${listing.price}
               </span>
-              <span className="text-[10px] sm:text-xs text-white/90 font-medium">/mo</span>
+              <span className="text-xs sm:text-sm text-white/95 font-semibold">/mo</span>
             </div>
           </div>
 
@@ -130,9 +130,9 @@ function ListingCardComponent({ listing, onQuickView }: ListingCardProps) {
         </div>
 
         {/* Content */}
-        <div className="p-4 sm:p-5 md:p-6 flex-1 flex flex-col">
+        <div className="p-4 sm:p-5 md:p-6 flex-1 flex flex-col min-h-0">
           {/* Title */}
-          <h3 className="font-semibold text-base sm:text-lg text-grey-900 line-clamp-1 mb-2 sm:mb-3 group-hover:text-accent-600 transition-colors duration-200 leading-tight">
+          <h3 className="font-bold text-lg sm:text-xl md:text-2xl text-grey-900 line-clamp-2 mb-3 sm:mb-4 group-hover:text-accent-600 transition-colors duration-200 leading-snug flex-shrink-0">
             {searchQuery ? (
               <span>{highlightSearchTermsReact(listing.title, searchQuery)}</span>
             ) : (
@@ -141,10 +141,10 @@ function ListingCardComponent({ listing, onQuickView }: ListingCardProps) {
           </h3>
 
           {/* Location */}
-          <div className="flex items-center justify-between mb-2 sm:mb-3">
-            <div className="flex items-center gap-1 sm:gap-1.5 text-grey-600 min-w-0 flex-1">
-              <MapPin className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-grey-400 flex-shrink-0" />
-              <p className="text-xs sm:text-sm font-medium truncate" aria-label={`Location: ${listing.location.city}, ${listing.location.state}`}>
+          <div className="flex items-center justify-between mb-3 sm:mb-4 flex-shrink-0">
+            <div className="flex items-center gap-1.5 sm:gap-2 text-grey-700 min-w-0 flex-1">
+              <MapPin className="w-4 h-4 sm:w-5 sm:h-5 text-accent-600 flex-shrink-0" />
+              <p className="text-sm sm:text-base font-semibold truncate" aria-label={`Location: ${listing.location.city}, ${listing.location.state}`}>
                 {searchQuery ? (
                   <span>
                     {highlightSearchTermsReact(listing.location.city, searchQuery)},{' '}
@@ -156,15 +156,15 @@ function ListingCardComponent({ listing, onQuickView }: ListingCardProps) {
               </p>
             </div>
             {listing.distance !== undefined && (
-              <div className="flex items-center gap-1 text-[10px] sm:text-xs text-accent-600 font-medium flex-shrink-0 ml-2">
-                <Navigation className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+              <div className="flex items-center gap-1 text-xs sm:text-sm text-accent-600 font-semibold flex-shrink-0 ml-2">
+                <Navigation className="w-4 h-4 sm:w-4 sm:h-4" />
                 <span>{listing.distance.toFixed(1)} mi</span>
               </div>
             )}
           </div>
 
           {/* Description */}
-          <p className="text-xs sm:text-sm text-grey-600 line-clamp-2 mb-4 sm:mb-5 flex-1 leading-relaxed">
+          <p className="text-sm sm:text-base text-grey-700 line-clamp-2 mb-4 sm:mb-5 flex-1 leading-relaxed font-normal min-h-[3rem]">
             {searchQuery ? (
               <span>{highlightSearchTermsReact(listing.description, searchQuery)}</span>
             ) : (
@@ -173,15 +173,15 @@ function ListingCardComponent({ listing, onQuickView }: ListingCardProps) {
           </p>
 
           {/* Footer Info */}
-          <div className="flex items-center justify-between pt-4 sm:pt-5 border-t border-accent-100">
-            <div className="flex items-center gap-1 sm:gap-1.5 text-[10px] sm:text-xs text-accent-600">
-              <Calendar className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
-              <span className="font-medium">{formattedDate}</span>
+          <div className="flex items-center justify-between pt-4 sm:pt-5 border-t border-accent-200 flex-shrink-0 mt-auto">
+            <div className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm text-grey-700">
+              <Calendar className="w-4 h-4 sm:w-4 sm:h-4 text-accent-600" />
+              <span className="font-semibold">{formattedDate}</span>
             </div>
             {listing.amenities.length > 0 && (
-              <div className="flex items-center gap-1 sm:gap-1.5 text-[10px] sm:text-xs text-coral-600" aria-label={`${listing.amenities.length} amenities`}>
-                <Sparkles className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
-                <span className="font-medium">{listing.amenities.length} amenities</span>
+              <div className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm text-coral-600" aria-label={`${listing.amenities.length} amenities`}>
+                <Sparkles className="w-4 h-4 sm:w-4 sm:h-4" />
+                <span className="font-semibold">{listing.amenities.length} amenities</span>
               </div>
             )}
           </div>

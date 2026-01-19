@@ -210,7 +210,7 @@ export default function LandlordListingsPage() {
           onRetry={() => queryClient.invalidateQueries({ queryKey: ['my-listings'] })}
         />
       ) : isLoading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">
           {[...Array(6)].map((_, i) => (
             <div key={i} className="bg-white rounded-xl border border-grey-200 animate-pulse">
               <div className="h-48 bg-grey-200" />
@@ -223,9 +223,9 @@ export default function LandlordListingsPage() {
         </div>
       ) : data && data.listings.length > 0 ? (
         <>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">
             {data.listings.map((listing) => (
-              <div key={listing._id} className="relative group bg-white rounded-xl border border-grey-200 overflow-hidden hover:shadow-lg transition-shadow">
+              <div key={listing._id} className="relative group bg-white rounded-xl border border-grey-200 overflow-hidden hover:shadow-lg transition-shadow h-full flex flex-col">
                 <div 
                   onClick={(e) => {
                     // Only navigate if clicking on the card itself, not on action buttons
@@ -234,7 +234,7 @@ export default function LandlordListingsPage() {
                     }
                     router.push(`/landlord/listings/${listing._id}`);
                   }}
-                  className="cursor-pointer"
+                  className="cursor-pointer flex-1"
                 >
                   <ListingCard listing={listing} />
                 </div>

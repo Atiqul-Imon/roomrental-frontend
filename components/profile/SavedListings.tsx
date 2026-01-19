@@ -108,9 +108,11 @@ export function SavedListings({ userId, isOwnProfile }: SavedListingsProps) {
           View All
         </Link>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">
         {favorites.map((favorite: { listingId: Listing }) => (
-          <ListingCard key={favorite.listingId._id} listing={favorite.listingId} />
+          <div key={favorite.listingId._id} className="h-full">
+            <ListingCard listing={favorite.listingId} />
+          </div>
         ))}
       </div>
     </div>

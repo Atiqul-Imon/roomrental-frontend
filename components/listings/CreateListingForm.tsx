@@ -293,9 +293,13 @@ export function CreateListingForm({
           <div>
             <label className="block text-sm font-semibold text-grey-700 mb-2">
               Title <span className="text-red-500">*</span>
+              <span className="text-xs text-grey-500 font-normal ml-2">
+                ({watch('title')?.length || 0}/200 characters)
+              </span>
             </label>
             <input
               {...register('title')}
+              maxLength={200}
               className="w-full px-3 sm:px-4 py-3 border-2 border-grey-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200 bg-white text-base sm:text-sm min-h-[44px] input-focus"
               placeholder="e.g., Cozy Room in Downtown"
             />
@@ -307,9 +311,13 @@ export function CreateListingForm({
           <div>
             <label className="block text-sm font-semibold text-grey-700 mb-2">
               Description <span className="text-red-500">*</span>
+              <span className="text-xs text-grey-500 font-normal ml-2">
+                ({watch('description')?.length || 0}/2000 characters)
+              </span>
             </label>
             <textarea
               {...register('description')}
+              maxLength={2000}
               rows={6}
               className="w-full px-3 sm:px-4 py-3 border-2 border-grey-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200 bg-white resize-none text-base sm:text-sm input-focus"
               placeholder="Describe the room, neighborhood, and what makes it special..."

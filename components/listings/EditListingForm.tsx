@@ -184,9 +184,13 @@ export function EditListingForm({ listing, onSuccess }: EditListingFormProps) {
       <div>
         <label className="block text-sm font-medium mb-2">
           Title <span className="text-red-500">*</span>
+          <span className="text-xs text-grey-500 font-normal ml-2">
+            ({watch('title')?.length || 0}/200 characters)
+          </span>
         </label>
         <input
           {...register('title')}
+          maxLength={200}
           className="w-full px-4 py-2 border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-ring"
         />
         {errors.title && (
@@ -197,9 +201,13 @@ export function EditListingForm({ listing, onSuccess }: EditListingFormProps) {
       <div>
         <label className="block text-sm font-medium mb-2">
           Description <span className="text-red-500">*</span>
+          <span className="text-xs text-grey-500 font-normal ml-2">
+            ({watch('description')?.length || 0}/2000 characters)
+          </span>
         </label>
         <textarea
           {...register('description')}
+          maxLength={2000}
           rows={6}
           className="w-full px-4 py-2 border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-ring"
         />

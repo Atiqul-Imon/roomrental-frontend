@@ -8,6 +8,7 @@ import { ChatWidgetWrapper } from '@/components/chat/ChatWidgetWrapper';
 import { StructuredData } from '@/components/seo/StructuredData';
 import { GoogleAnalytics } from '@/components/analytics/GoogleAnalytics';
 import { PageViewTracker } from '@/components/analytics/PageViewTracker';
+import { CookieConsent } from '@/components/gdpr/CookieConsent';
 import {
   generateOrganizationSchema,
   generateWebSiteSchema,
@@ -179,6 +180,7 @@ export default function RootLayout({
             </div>
             <ChatWidgetWrapper />
             <BottomNav />
+            <CookieConsent />
           </Providers>
         </ErrorBoundary>
       </body>

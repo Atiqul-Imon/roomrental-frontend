@@ -129,9 +129,9 @@ export function UserListings({ userId, isOwnProfile }: UserListingsProps) {
           </Link>
         )}
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">
         {listings.map((listing) => (
-          <div key={listing._id} className="relative">
+          <div key={listing._id} className="relative h-full">
             <ListingCard listing={listing} />
             {listing.viewCount !== undefined && listing.viewCount > 0 && (
               <div className="absolute top-3 right-3 bg-black/60 text-white text-xs px-2 py-1 rounded-full">
