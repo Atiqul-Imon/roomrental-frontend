@@ -57,6 +57,9 @@ export function transformImageKitUrl(
       at_max: 'c-at_max',
     };
     transformations.push(cropMap[crop] || 'c-maintain_ratio');
+  } else if (width && height) {
+    // Default to maintain_ratio when both width and height are specified
+    transformations.push('c-maintain_ratio');
   }
   if (quality !== 'auto') transformations.push(`q-${quality}`);
   if (format !== 'auto') transformations.push(`f-${format}`);
@@ -106,16 +109,49 @@ export function getResponsiveImageKitUrl(
 
 /**
  * Get optimized image URL for a specific use case
+ * Optimized for cost-effectiveness and performance:
+ * - Uses 16:9 aspect ratio (standard for listings)
+ * - Quality optimized per use case
+ * - Format auto (WebP/AVIF when supported)
+ * - Maintains aspect ratio to avoid distortion
  */
 export const imageKitPresets = {
+  // Thumbnail: Small, fast loading (4:3 ratio for better preview)
   thumbnail: (url: string) =>
-    transformImageKitUrl(url, { width: 300, height: 200, quality: 80, format: 'auto' }),
+    transformImageKitUrl(url, {
+      width: 300,
+      height: 225, // 4:3 ratio
+      quality: 75, // Lower quality for thumbnails
+      format: 'auto',
+      crop: 'maintain_ratio',
+    }),
+  // Card: Listing cards in lists (16:9 ratio)
   card: (url: string) =>
-    transformImageKitUrl(url, { width: 600, height: 400, quality: 85, format: 'auto' }),
+    transformImageKitUrl(url, {
+      width: 640,
+      height: 360, // 16:9 ratio
+      quality: 80, // Balanced quality/size
+      format: 'auto',
+      crop: 'maintain_ratio',
+    }),
+  // Gallery: Main image in listing details (16:9 ratio)
   gallery: (url: string) =>
-    transformImageKitUrl(url, { width: 1200, height: 800, quality: 90, format: 'auto' }),
+    transformImageKitUrl(url, {
+      width: 1280,
+      height: 720, // 16:9 ratio
+      quality: 85, // Good quality for detail view
+      format: 'auto',
+      crop: 'maintain_ratio',
+    }),
+  // Lightbox: Full screen view (16:9 ratio, max 1920px)
   lightbox: (url: string) =>
-    transformImageKitUrl(url, { width: 1920, height: 1080, quality: 95, format: 'auto' }),
+    transformImageKitUrl(url, {
+      width: 1920,
+      height: 1080, // 16:9 ratio
+      quality: 90, // High quality for zoom
+      format: 'auto',
+      crop: 'maintain_ratio',
+    }),
 };
 
 
