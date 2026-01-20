@@ -23,7 +23,7 @@ const ImageGallery = dynamic(() => import('@/components/listings/ImageGallery').
 import { ContactButton } from '@/components/listings/ContactButton';
 import { useAuth } from '@/lib/auth-context';
 import { format } from 'date-fns';
-import { MapPin, Calendar, DollarSign, Edit, Trash2, Bed, Bath, Square, Shield, CheckCircle2 } from 'lucide-react';
+import { MapPin, Calendar, DollarSign, Edit, Trash2, Bed, Bath, Square, CheckCircle2 } from 'lucide-react';
 import Link from 'next/link';
 import { PageSkeleton } from '@/components/LoadingSkeleton';
 import { ErrorState } from '@/components/ui/ErrorState';
@@ -457,52 +457,6 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
                       />
                     </div>
                   )}
-                </div>
-              </div>
-
-              {/* Quick Info - Enhanced */}
-              <div className="bg-white border-2 border-gray-200 rounded-2xl p-8 shadow-lg">
-                <div className="flex items-center gap-4 mb-6">
-                  <div className="p-3 bg-blue-100 rounded-xl flex-shrink-0">
-                    <span className="text-xl">ℹ️</span>
-                  </div>
-                  <h2 className="font-heading text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 leading-tight tracking-tight">
-                    Quick Details
-                  </h2>
-                </div>
-                <div className="space-y-5">
-                  <div className="flex justify-between items-center py-4">
-                    <span className="text-sm sm:text-base text-gray-600 font-semibold flex items-center gap-2">
-                      Status:
-                    </span>
-                    <span className={`px-4 py-2 rounded-full text-xs sm:text-sm font-bold ${
-                      data.status === 'available' 
-                        ? 'bg-accent-100 text-accent-700 border-2 border-accent-300' 
-                        : data.status === 'pending'
-                        ? 'bg-amber-100 text-amber-700 border-2 border-amber-300'
-                        : 'bg-gray-100 text-gray-700 border-2 border-gray-300'
-                    }`}>
-                      {data.status.charAt(0).toUpperCase() + data.status.slice(1)}
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Safety & Trust Badge for Students */}
-              <div className="bg-gradient-to-br from-accent-50 via-accent-50/50 to-accent-50 border-2 border-accent-200 rounded-2xl p-8 shadow-lg">
-                <div className="flex items-start gap-5">
-                  <div className="p-3 bg-accent-100 rounded-xl flex-shrink-0">
-                    <Shield className="w-6 h-6 sm:w-7 sm:h-7 text-accent-600" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <h3 className="font-heading font-bold text-base sm:text-lg text-gray-900 mb-3 flex items-center gap-2 leading-tight">
-                      Verified Listing
-                      <CheckCircle2 className="w-5 h-5 sm:w-6 sm:h-6 text-accent-600 flex-shrink-0" />
-                    </h3>
-                    <p className="text-sm sm:text-base text-gray-700 leading-[1.75] font-normal">
-                      This listing has been verified by our team for accuracy and safety.
-                    </p>
-                  </div>
                 </div>
               </div>
             </div>

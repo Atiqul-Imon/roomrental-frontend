@@ -29,12 +29,18 @@ function ListingCardComponent({ listing, onQuickView }: ListingCardProps) {
 
 
   const handleCardClick = (e: React.MouseEvent) => {
-    // Only open quick view if not clicking on a link
-    if ((e.target as HTMLElement).closest('a')) {
+    // Only open quick view if not clicking on a link or button
+    if ((e.target as HTMLElement).closest('a') || (e.target as HTMLElement).closest('button')) {
       return;
     }
-    e.preventDefault();
-    onQuickView?.(listing);
+    // If onQuickView is provided, use it; otherwise navigate to listing details
+    if (onQuickView) {
+      e.preventDefault();
+      onQuickView(listing);
+    } else {
+      // Navigate to listing details page
+      router.push(`/listings/${listing._id}`);
+    }
   };
 
   return (
@@ -47,10 +53,14 @@ function ListingCardComponent({ listing, onQuickView }: ListingCardProps) {
         onKeyDown={(e) => {
           if (e.key === 'Enter' || e.key === ' ') {
             e.preventDefault();
-            onQuickView?.(listing);
+            if (onQuickView) {
+              onQuickView(listing);
+            } else {
+              router.push(`/listings/${listing._id}`);
+            }
           }
         }}
-        aria-label={`Quick view listing: ${listing.title} in ${listing.location.city}, ${listing.location.state} for $${listing.price} per month`}
+        aria-label={`View listing: ${listing.title} in ${listing.location.city}, ${listing.location.state} for $${listing.price} per month`}
       >
       <article 
         ref={cardRef}
