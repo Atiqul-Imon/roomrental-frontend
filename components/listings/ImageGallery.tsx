@@ -119,9 +119,9 @@ export function ImageGallery({ images, title = 'Listing' }: ImageGalleryProps) {
     <>
       {/* Main Gallery */}
       <div className="relative w-full">
-        {/* Main Image Display */}
+        {/* Main Image Display - Using aspect ratio for natural proportions */}
         <div
-          className="relative w-full h-[500px] md:h-[600px] lg:h-[700px] bg-grey-100 cursor-pointer group overflow-hidden"
+          className="relative w-full aspect-[4/3] sm:aspect-[16/10] md:aspect-[16/9] bg-grey-100 cursor-pointer group overflow-hidden"
           onClick={() => setIsLightboxOpen(true)}
           onTouchStart={onTouchStart}
           onTouchMove={onTouchMove}
@@ -140,6 +140,8 @@ export function ImageGallery({ images, title = 'Listing' }: ImageGalleryProps) {
             src={currentImage}
             alt={`${title} - Image ${selectedIndex + 1}`}
             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+            loading="eager"
+            decoding="async"
           />
           
           {/* Overlay with controls hint */}
