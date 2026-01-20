@@ -23,7 +23,7 @@ const ImageGallery = dynamic(() => import('@/components/listings/ImageGallery').
 import { ContactButton } from '@/components/listings/ContactButton';
 import { useAuth } from '@/lib/auth-context';
 import { format } from 'date-fns';
-import { MapPin, Calendar, DollarSign, Edit, Trash2, Bed, Bath, Square, Shield, Clock, CheckCircle2 } from 'lucide-react';
+import { MapPin, Calendar, DollarSign, Edit, Trash2, Bed, Bath, Square, Shield, CheckCircle2 } from 'lucide-react';
 import Link from 'next/link';
 import { PageSkeleton } from '@/components/LoadingSkeleton';
 import { ErrorState } from '@/components/ui/ErrorState';
@@ -471,7 +471,7 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
                   </h2>
                 </div>
                 <div className="space-y-5">
-                  <div className="flex justify-between items-center py-4 border-b border-gray-200">
+                  <div className="flex justify-between items-center py-4">
                     <span className="text-sm sm:text-base text-gray-600 font-semibold flex items-center gap-2">
                       Status:
                     </span>
@@ -483,15 +483,6 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
                         : 'bg-gray-100 text-gray-700 border-2 border-gray-300'
                     }`}>
                       {data.status.charAt(0).toUpperCase() + data.status.slice(1)}
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-center py-4">
-                    <span className="text-sm sm:text-base text-gray-600 font-semibold flex items-center gap-2">
-                      <Clock className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
-                      Listed:
-                    </span>
-                    <span className="font-bold text-base sm:text-lg text-gray-900 leading-tight">
-                      {data.createdAt ? format(new Date(data.createdAt), 'MMM dd, yyyy') : 'N/A'}
                     </span>
                   </div>
                 </div>

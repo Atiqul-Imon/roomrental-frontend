@@ -11,12 +11,16 @@ export function ChatWidget() {
   const { isAuthenticated } = useAuth();
   const { isChatOpen, closeChat, conversationId } = useChat();
 
-  // Fetch unread count
+  // Fetch unread count - no caching for real-time updates
   const { data: unreadCount = 0 } = useQuery({
     queryKey: ['chat-unread-count'],
     queryFn: () => chatApi.getUnreadCount(),
     enabled: isAuthenticated,
-    refetchInterval: 30000, // Refetch every 30 seconds
+    staleTime: 0, // Always consider data stale
+    gcTime: 0, // Don't cache unread count
+    refetchInterval: 10000, // Refetch every 10 seconds for better real-time feel
+    refetchOnMount: true, // Always refetch on mount
+    refetchOnWindowFocus: true, // Refetch when window gains focus
   });
 
   if (!isAuthenticated || !isChatOpen) {
