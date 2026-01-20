@@ -52,12 +52,52 @@ const nextConfig: NextConfig = {
         runtimeChunk: 'single',
         splitChunks: {
           chunks: 'all',
+          maxInitialRequests: 25,
+          minSize: 20000,
           cacheGroups: {
+            // React and React DOM - separate chunk
+            react: {
+              test: /[\\/]node_modules[\\/](react|react-dom|scheduler)[\\/]/,
+              name: 'react',
+              priority: 30,
+              reuseExistingChunk: true,
+            },
+            // Next.js framework
+            nextjs: {
+              test: /[\\/]node_modules[\\/](next)[\\/]/,
+              name: 'nextjs',
+              priority: 25,
+              reuseExistingChunk: true,
+            },
+            // TanStack Query - separate chunk
+            reactQuery: {
+              test: /[\\/]node_modules[\\/](@tanstack[\\/]react-query)[\\/]/,
+              name: 'react-query',
+              priority: 20,
+              reuseExistingChunk: true,
+            },
+            // Chart libraries
+            charts: {
+              test: /[\\/]node_modules[\\/](recharts)[\\/]/,
+              name: 'charts',
+              priority: 15,
+              reuseExistingChunk: true,
+            },
+            // Socket.io - separate chunk (only loaded when needed)
+            socket: {
+              test: /[\\/]node_modules[\\/](socket\.io-client)[\\/]/,
+              name: 'socket',
+              priority: 15,
+              reuseExistingChunk: true,
+            },
+            // Other vendor libraries
             vendor: {
               test: /[\\/]node_modules[\\/]/,
               name: 'vendors',
               priority: 10,
+              reuseExistingChunk: true,
             },
+            // Common chunks
             common: {
               minChunks: 2,
               priority: 5,
