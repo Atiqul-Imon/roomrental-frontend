@@ -27,7 +27,7 @@ export function ChatWindow({ initialConversationId }: ChatWindowProps) {
   const [selectedConversation, setSelectedConversation] = useState<Conversation | null>(null);
   const [typingUsers, setTypingUsers] = useState<Set<string>>(new Set());
 
-  // Fetch conversations
+  // Fetch conversations - no caching for real-time updates
   const {
     data: conversationsData,
     isLoading: conversationsLoading,
@@ -36,6 +36,10 @@ export function ChatWindow({ initialConversationId }: ChatWindowProps) {
     queryKey: ['conversations'],
     queryFn: () => chatApi.getConversations(1, 50),
     enabled: !!user,
+    staleTime: 0, // Always consider data stale
+    gcTime: 0, // Don't cache conversations
+    refetchOnMount: true, // Always refetch on mount
+    refetchOnWindowFocus: true, // Refetch when window gains focus
   });
 
   // Fetch messages for selected conversation with infinite scroll
@@ -79,25 +83,21 @@ export function ChatWindow({ initialConversationId }: ChatWindowProps) {
         data.attachments || []
       ),
     onSuccess: (data: Message) => {
-      // Refetch messages to get fresh data (no caching)
-      refetchMessages();
+      // Invalidate all chat caches immediately
+      queryClient.invalidateQueries({ queryKey: ['messages'] });
+      queryClient.invalidateQueries({ queryKey: ['conversations'] });
+      queryClient.invalidateQueries({ queryKey: ['chat-unread-count'] });
+      queryClient.invalidateQueries({ queryKey: ['unread-count'] });
       
-      // Update conversations metadata (cached) with last message info
-      queryClient.setQueryData(['conversations'], (old: any) => {
-        if (!old?.conversations) return old;
-        return {
-          ...old,
-          conversations: old.conversations.map((conv: Conversation) =>
-            conv.id === selectedConversation?.id
-              ? {
-                  ...conv,
-                  lastMessage: data.content,
-                  lastMessageAt: data.createdAt,
-                }
-              : conv
-          ),
-        };
-      });
+      // Reset infinite query to ensure fresh data
+      if (selectedConversation) {
+        queryClient.resetQueries({ queryKey: ['messages', selectedConversation.id] });
+      }
+      
+      // Refetch messages to get fresh data immediately
+      refetchMessages();
+      // Refetch conversations to update the list
+      refetchConversations();
     },
   });
 
@@ -105,7 +105,9 @@ export function ChatWindow({ initialConversationId }: ChatWindowProps) {
   const markAsReadMutation = useMutation({
     mutationFn: () => chatApi.markAsRead(selectedConversation!.id),
     onSuccess: () => {
+      // Invalidate all chat-related caches
       queryClient.invalidateQueries({ queryKey: ['conversations'] });
+      queryClient.invalidateQueries({ queryKey: ['chat-unread-count'] });
       queryClient.invalidateQueries({ queryKey: ['unread-count'] });
     },
   });
@@ -150,32 +152,37 @@ export function ChatWindow({ initialConversationId }: ChatWindowProps) {
     }
   }, [selectedConversation?.id, isConnected]);
 
+  // Invalidate cache and refetch when socket reconnects
+  useEffect(() => {
+    if (isConnected && selectedConversation) {
+      // Clear all chat caches on reconnect to ensure fresh data
+      queryClient.invalidateQueries({ queryKey: ['messages'] });
+      queryClient.invalidateQueries({ queryKey: ['conversations'] });
+      queryClient.invalidateQueries({ queryKey: ['chat-unread-count'] });
+      queryClient.invalidateQueries({ queryKey: ['unread-count'] });
+      // Refetch messages immediately
+      refetchMessages();
+      refetchConversations();
+    }
+  }, [isConnected, selectedConversation, queryClient, refetchMessages, refetchConversations]);
+
   // Listen for new messages
   useEffect(() => {
     if (!socket || !selectedConversation) return;
 
     const handleNewMessage = (message: Message) => {
+      // Invalidate all chat-related caches immediately for real-time updates
+      queryClient.invalidateQueries({ queryKey: ['messages'] });
+      queryClient.invalidateQueries({ queryKey: ['conversations'] });
+      queryClient.invalidateQueries({ queryKey: ['chat-unread-count'] });
+      queryClient.invalidateQueries({ queryKey: ['unread-count'] });
+      
+      // Reset infinite query to ensure fresh data
+      queryClient.resetQueries({ queryKey: ['messages', message.conversationId] });
+      
       if (message.conversationId === selectedConversation.id) {
-        // Refetch messages to get fresh data (no caching)
+        // Refetch messages to get fresh data immediately
         refetchMessages();
-        
-        // Update conversations metadata (cached) with last message info
-        queryClient.setQueryData(['conversations'], (old: any) => {
-          if (!old?.conversations) return old;
-          return {
-            ...old,
-            conversations: old.conversations.map((conv: Conversation) =>
-              conv.id === selectedConversation.id
-                ? {
-                    ...conv,
-                    lastMessage: message.content,
-                    lastMessageAt: message.createdAt,
-                  }
-                : conv
-            ),
-          };
-        });
-        
         markAsReadMutation.mutate();
       } else {
         // Message in another conversation - show notification
@@ -186,22 +193,8 @@ export function ChatWindow({ initialConversationId }: ChatWindowProps) {
             message.conversationId
           );
         }
-        // Update conversations metadata (cached) for other conversations
-        queryClient.setQueryData(['conversations'], (old: any) => {
-          if (!old?.conversations) return old;
-          return {
-            ...old,
-            conversations: old.conversations.map((conv: Conversation) =>
-              conv.id === message.conversationId
-                ? {
-                    ...conv,
-                    lastMessage: message.content,
-                    lastMessageAt: message.createdAt,
-                  }
-                : conv
-            ),
-          };
-        });
+        // Refetch conversations to update the list
+        refetchConversations();
       }
     };
 
