@@ -24,93 +24,50 @@ export default function ProfilePage({ params }: { params: Promise<{ id: string }
   const { user: currentUser } = useAuth();
   const userId = resolvedParams.id;
 
-  const { data: profile, isLoading } = useQuery({
-    queryKey: ['profile', userId],
+  // Use batch endpoint to fetch profile, ratings, and stats in one call
+  const { data: fullProfileData, isLoading } = useQuery({
+    queryKey: ['full-profile', userId],
     ...queryConfig.userProfile,
     queryFn: async () => {
-      const response = await api.get(`/profile/${userId}`);
+      const response = await api.get(`/profile/${userId}/full`);
       if (!response.data.success) {
         throw new Error(response.data.error || 'Failed to fetch profile');
       }
-      const backendData = response.data.data;
-      return {
-        id: backendData.user.id,
-        email: backendData.user.email,
-        name: backendData.user.name || '',
-        role: backendData.user.role,
-        profileImage: backendData.user.profileImage,
-        bio: backendData.user.bio,
-        phone: backendData.user.phone,
-        preferences: backendData.user.preferences as any,
-        verification: backendData.user.verification
+      return response.data.data;
+    },
+  });
+
+  // Extract data from batch response
+  const profile = fullProfileData?.user
+    ? {
+        id: fullProfileData.user.id,
+        email: fullProfileData.user.email,
+        name: fullProfileData.user.name || '',
+        role: fullProfileData.user.role,
+        profileImage: fullProfileData.user.profileImage,
+        bio: fullProfileData.user.bio,
+        phone: fullProfileData.user.phone,
+        preferences: fullProfileData.user.preferences as any,
+        verification: fullProfileData.user.verification
           ? {
-              emailVerified: backendData.user.emailVerified || false,
+              emailVerified: fullProfileData.user.emailVerified || false,
               phoneVerified: false,
-              idVerified: backendData.user.verification === 'verified',
+              idVerified: fullProfileData.user.verification === 'verified',
             }
           : undefined,
-        createdAt: backendData.user.createdAt,
-        updatedAt: backendData.user.updatedAt,
-      } as User;
-    },
-  });
+        createdAt: fullProfileData.user.createdAt,
+        updatedAt: fullProfileData.user.updatedAt,
+      } as User
+    : undefined;
 
-  const { data: ratingData } = useQuery({
-    queryKey: ['rating', userId],
-    queryFn: async () => {
-      const response = await api.get(`/reviews/rating/${userId}`);
-      return response.data.data as { averageRating: number; totalReviews: number };
-    },
-    enabled: !!profile,
-  });
-
-  // Fetch user statistics
-  const { data: userStats } = useQuery({
-    queryKey: ['user-stats', userId],
-    queryFn: async () => {
-      try {
-        // For landlords - get listing stats
-        if (profile?.role === 'landlord') {
-          const listingsResponse = await api.get('/listings', {
-            params: { landlordId: userId, page: 1, limit: 100 },
-          });
-          // Handle nested response structure
-          let backendData = listingsResponse.data.data;
-          if (backendData?.data) {
-            backendData = backendData.data;
-          }
-          const listings = backendData?.listings || [];
-          return {
-            listings: listings.length,
-            activeListings: listings.filter((l: any) => 
-              l.status === 'available' || l.status === 'active'
-            ).length,
-            totalViews: listings.reduce((sum: number, l: any) => 
-              sum + (l.viewCount || 0), 0
-            ),
-            revenue: listings
-              .filter((l: any) => l.status === 'rented')
-              .reduce((sum: number, l: any) => sum + (l.price || 0), 0),
-          };
-        }
-        // For students - get saved listings and search history
-        if (profile?.role === 'student' && currentUser?.id === userId) {
-          const [favoritesResponse, searchHistoryResponse] = await Promise.all([
-            api.get('/favorites', { params: { page: 1, limit: 1 } }).catch(() => ({ data: { data: { pagination: { total: 0 } } } })),
-            api.get('/search-history', { params: { limit: 1 } }).catch(() => ({ data: { data: [] } })),
-          ]);
-          return {
-            savedListings: favoritesResponse.data.data?.pagination?.total || 0,
-            searchHistory: searchHistoryResponse.data.data?.length || 0,
-          };
-        }
-        return {};
-      } catch (error) {
-        return {};
+  const ratingData = fullProfileData?.rating
+    ? {
+        averageRating: fullProfileData.rating.averageRating,
+        totalReviews: fullProfileData.rating.totalReviews,
       }
-    },
-    enabled: !!profile,
-  });
+    : undefined;
+
+  const userStats = fullProfileData?.stats || {};
 
   const isOwnProfile = currentUser?.id === userId;
 

@@ -3,12 +3,13 @@ import { Review } from '@/types';
 import { RatingDisplay } from './RatingDisplay';
 import { format } from 'date-fns';
 import Link from 'next/link';
+import { memo } from 'react';
 
 interface ReviewCardProps {
   review: Review;
 }
 
-export function ReviewCard({ review }: ReviewCardProps) {
+function ReviewCardComponent({ review }: ReviewCardProps) {
   return (
     <div className="border border-accent-100 rounded-xl p-5 bg-white shadow-soft hover:shadow-medium transition-all">
       <div className="flex items-start gap-4">
@@ -19,6 +20,9 @@ export function ReviewCard({ review }: ReviewCardProps) {
             width={48}
             height={48}
             className="rounded-full border-2 border-accent-200"
+            loading="lazy"
+            decoding="async"
+            fetchPriority="low"
           />
         ) : (
           <div className="w-12 h-12 bg-gradient-primary rounded-full flex items-center justify-center border-2 border-accent-200">
@@ -59,4 +63,18 @@ export function ReviewCard({ review }: ReviewCardProps) {
     </div>
   );
 }
+
+// Memoize ReviewCard to prevent unnecessary re-renders
+export const ReviewCard = memo(ReviewCardComponent, (prevProps, nextProps) => {
+  // Re-render if review ID changed
+  if (prevProps.review._id !== nextProps.review._id) {
+    return false;
+  }
+  // Re-render if review data changed
+  if (prevProps.review.updatedAt !== nextProps.review.updatedAt) {
+    return false;
+  }
+  // Don't re-render if nothing changed
+  return true;
+});
 
