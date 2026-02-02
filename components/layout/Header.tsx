@@ -58,7 +58,10 @@ export function Header() {
             <img 
               src="/logo/rrlogo-optimized.png" 
               alt="RoomRentalUSA" 
+              width={48}
+              height={62}
               className="h-12 w-auto sm:h-14 md:h-16 drop-shadow-sm"
+              style={{ aspectRatio: '48/62' }}
             />
           </button>
 
