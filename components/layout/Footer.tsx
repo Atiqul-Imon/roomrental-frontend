@@ -41,7 +41,10 @@ export function Footer() {
               <img 
                 src="/logo/rrlogo-optimized.png" 
                 alt="RoomRentalUSA" 
+                width={48}
+                height={62}
                 className="h-12 w-auto sm:h-14 md:h-16"
+                style={{ aspectRatio: '48/62' }}
               />
             </Link>
             <BodySmall className="text-gray-300 mb-4">
