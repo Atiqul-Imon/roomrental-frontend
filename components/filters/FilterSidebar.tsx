@@ -89,27 +89,33 @@ export function FilterSidebar({ isOpen, onClose }: FilterSidebarProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Fetch filter counts for faceted search
+  // Fetch filter counts for faceted search - NON-BLOCKING (lazy load after initial render)
+  // This was causing 1-2 minute delays on first load - now loads asynchronously
   useEffect(() => {
-    const fetchFilterCounts = async () => {
-      try {
-        const params: Record<string, any> = {};
-        searchParams.forEach((value, key) => {
-          if (key !== 'page' && key !== 'sort') {
-            params[key] = value;
+    // Delay filter counts fetch to not block initial listings load
+    const timeoutId = setTimeout(() => {
+      const fetchFilterCounts = async () => {
+        try {
+          const params: Record<string, any> = {};
+          searchParams.forEach((value, key) => {
+            if (key !== 'page' && key !== 'sort') {
+              params[key] = value;
+            }
+          });
+
+          const response = await api.get('/listings/filters/counts', { params });
+          if (response.data.success) {
+            setFilterCounts(response.data.data);
           }
-        });
-
-        const response = await api.get('/listings/filters/counts', { params });
-        if (response.data.success) {
-          setFilterCounts(response.data.data);
+        } catch (error) {
+          console.error('Error fetching filter counts:', error);
         }
-      } catch (error) {
-        console.error('Error fetching filter counts:', error);
-      }
-    };
+      };
 
-    fetchFilterCounts();
+      fetchFilterCounts();
+    }, 1000); // Load filter counts 1 second after initial render (non-blocking)
+
+    return () => clearTimeout(timeoutId);
   }, [searchParams]);
 
   const handleFilterChange = (key: string, value: string | string[] | boolean) => {
