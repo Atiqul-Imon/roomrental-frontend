@@ -2,7 +2,7 @@
 
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useSearchParams } from 'next/navigation';
-import { useEffect, useRef, useState, useCallback, memo } from 'react';
+import { useEffect, useRef, useState, memo } from 'react';
 import { api } from '@/lib/api';
 import { Listing } from '@/types';
 import { ListingCard } from './ListingCard';
@@ -13,7 +13,6 @@ import { ErrorState } from '@/components/ui/ErrorState';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { queryConfig } from '@/lib/query-config';
 import { Loader2 } from 'lucide-react';
-import { QuickViewModal } from './QuickViewModal';
 
 function ListingListComponent() {
   const searchParams = useSearchParams();
@@ -22,12 +21,6 @@ function ListingListComponent() {
   const [pullDistance, setPullDistance] = useState(0);
   const touchStartY = useRef<number | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const [selectedListing, setSelectedListing] = useState<Listing | null>(null);
-  
-  // Memoize onQuickView callback to prevent ListingCard re-renders
-  const handleQuickView = useCallback((listing: Listing) => {
-    setSelectedListing(listing);
-  }, []);
   
   // Build query params from URL
   const queryParams: Record<string, string> = {};
@@ -220,18 +213,11 @@ function ListingListComponent() {
             {data.listings.map((listing, index) => (
               <div key={listing._id} className="stagger-item fade-in-up-delayed h-full" style={{ animationDelay: `${index * 0.05}s` }}>
                 <ListingCard 
-                  listing={listing} 
-                  onQuickView={handleQuickView}
+                  listing={listing}
                 />
               </div>
             ))}
           </div>
-          {/* Single modal for all listings */}
-          <QuickViewModal
-            listing={selectedListing}
-            isOpen={!!selectedListing}
-            onClose={() => setSelectedListing(null)}
-          />
           <Pagination
             currentPage={data.page}
             totalPages={data.totalPages}

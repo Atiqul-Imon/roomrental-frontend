@@ -3,17 +3,16 @@ import { Listing } from '@/types';
 import { format } from 'date-fns';
 import { useState, useRef, useEffect, memo } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { MapPin, Calendar, Sparkles, Navigation, Check } from 'lucide-react';
+import { MapPin, Calendar, Sparkles, Navigation, Check, Loader2 } from 'lucide-react';
 import { imageKitPresets } from '@/lib/imagekit';
 import { highlightSearchTermsReact } from '@/lib/search-highlight';
 import { useComparisonStore } from '@/lib/comparison-store';
 
 interface ListingCardProps {
   listing: Listing;
-  onQuickView?: (listing: Listing) => void;
 }
 
-function ListingCardComponent({ listing, onQuickView }: ListingCardProps) {
+function ListingCardComponent({ listing }: ListingCardProps) {
   const searchParams = useSearchParams();
   const router = useRouter();
   const searchQuery = searchParams.get('search') || '';
@@ -23,24 +22,29 @@ function ListingCardComponent({ listing, onQuickView }: ListingCardProps) {
     : originalImageUrl;
   const formattedDate = format(new Date(listing.availabilityDate), 'MMM dd, yyyy');
   const [imageError, setImageError] = useState(false);
+  const [isNavigating, setIsNavigating] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
   const { addListing, removeListing, isInComparison, canAddMore } = useComparisonStore();
   const isSelected = isInComparison(listing._id);
 
+  // Reset loading state after timeout (in case navigation fails)
+  useEffect(() => {
+    if (isNavigating) {
+      const timeout = setTimeout(() => {
+        setIsNavigating(false);
+      }, 5000); // Reset after 5 seconds if navigation doesn't complete
+      return () => clearTimeout(timeout);
+    }
+  }, [isNavigating]);
 
   const handleCardClick = (e: React.MouseEvent) => {
-    // Only open quick view if not clicking on a link or button
-    if ((e.target as HTMLElement).closest('a') || (e.target as HTMLElement).closest('button')) {
+    // Don't navigate if already navigating or clicking on a link or button
+    if (isNavigating || (e.target as HTMLElement).closest('a') || (e.target as HTMLElement).closest('button')) {
       return;
     }
-    // If onQuickView is provided, use it; otherwise navigate to listing details
-    if (onQuickView) {
-      e.preventDefault();
-      onQuickView(listing);
-    } else {
-      // Navigate to listing details page
-      router.push(`/listings/${listing._id}`);
-    }
+    // Navigate to listing details page
+    setIsNavigating(true);
+    router.push(`/listings/${listing._id}`);
   };
 
   return (
@@ -53,9 +57,8 @@ function ListingCardComponent({ listing, onQuickView }: ListingCardProps) {
         onKeyDown={(e) => {
           if (e.key === 'Enter' || e.key === ' ') {
             e.preventDefault();
-            if (onQuickView) {
-              onQuickView(listing);
-            } else {
+            if (!isNavigating) {
+              setIsNavigating(true);
               router.push(`/listings/${listing._id}`);
             }
           }
@@ -64,8 +67,17 @@ function ListingCardComponent({ listing, onQuickView }: ListingCardProps) {
       >
       <article 
         ref={cardRef}
-        className="bg-white border-refined border-accent-100 rounded-xl overflow-hidden card-hover-enhanced shadow-soft h-full flex flex-col group relative hover:border-accent-200 hover:shadow-medium transition-all duration-300"
+        className={`bg-white border-refined border-accent-100 rounded-xl overflow-hidden card-hover-enhanced shadow-soft h-full flex flex-col group relative hover:border-accent-200 hover:shadow-medium transition-all duration-300 ${isNavigating ? 'opacity-75 pointer-events-none' : ''}`}
       >
+        {/* Loading Overlay */}
+        {isNavigating && (
+          <div className="absolute inset-0 bg-white/80 backdrop-blur-sm z-50 flex items-center justify-center rounded-xl">
+            <div className="flex flex-col items-center gap-2">
+              <Loader2 className="w-6 h-6 animate-spin text-accent-600" />
+              <span className="text-sm font-medium text-grey-700">Loading...</span>
+            </div>
+          </div>
+        )}
         {/* Image Container */}
         <div className="relative w-full h-48 sm:h-56 md:h-64 bg-gradient-to-br from-accent-50 to-coral-50 overflow-hidden flex-shrink-0">
           {listing.images[0] && !imageError ? (
@@ -216,11 +228,6 @@ export const ListingCard = memo(ListingCardComponent, (prevProps, nextProps) => 
   const prevUpdated = prevProps.listing.updatedAt || prevProps.listing.createdAt;
   const nextUpdated = nextProps.listing.updatedAt || nextProps.listing.createdAt;
   if (prevUpdated !== nextUpdated) {
-    return false;
-  }
-  
-  // Re-render if onQuickView callback changed (reference equality)
-  if (prevProps.onQuickView !== nextProps.onQuickView) {
     return false;
   }
   
