@@ -3,6 +3,7 @@
 import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Header } from '@/components/layout/Header';
+import { Footer } from '@/components/layout/Footer';
 import { Button } from '@/components/ui/Button';
 import Link from 'next/link';
 import { Lock, AlertCircle, CheckCircle, Eye, EyeOff } from 'lucide-react';
@@ -132,6 +133,7 @@ function ResetPasswordFormContent() {
             </div>
           </div>
         </main>
+        <Footer />
       </>
     );
   }
@@ -168,6 +170,7 @@ function ResetPasswordFormContent() {
             </div>
           </div>
         </main>
+        <Footer />
       </>
     );
   }
@@ -197,6 +200,7 @@ function ResetPasswordFormContent() {
             </div>
           </div>
         </main>
+        <Footer />
       </>
     );
   }
@@ -323,6 +327,7 @@ function ResetPasswordFormContent() {
           </div>
         </div>
       </main>
+      <Footer />
     </>
   );
 }
@@ -335,6 +340,7 @@ function ResetPasswordForm() {
         <main className="min-h-screen flex items-center justify-center py-12 px-4">
           <LoadingSpinner size="lg" text="Loading..." />
         </main>
+        <Footer />
       </>
     }>
       <ResetPasswordFormContent />

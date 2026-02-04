@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { getDefaultRedirectPath } from '@/lib/navigation';
 import { Header } from '@/components/layout/Header';
+import { Footer } from '@/components/layout/Footer';
 import { Button } from '@/components/ui/Button';
 import Link from 'next/link';
 import { Mail, Lock, AlertCircle } from 'lucide-react';
@@ -76,6 +77,7 @@ function LoginFormContent() {
         <main className="min-h-screen flex items-center justify-center py-12 px-4 bg-gradient-comfort">
           <LoadingSpinner size="lg" text="Loading..." />
         </main>
+        <Footer />
       </>
     );
   }
@@ -186,6 +188,7 @@ function LoginFormContent() {
           </div>
         </div>
       </main>
+      <Footer />
     </>
   );
 }
@@ -198,6 +201,7 @@ function LoginForm() {
         <main className="min-h-screen flex items-center justify-center py-12 px-4">
           <LoadingSpinner size="lg" text="Loading..." />
         </main>
+        <Footer />
       </>
     }>
       <LoginFormContent />

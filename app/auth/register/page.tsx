@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { getDefaultRedirectPath } from '@/lib/navigation';
 import { Header } from '@/components/layout/Header';
+import { Footer } from '@/components/layout/Footer';
 import Link from 'next/link';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { api } from '@/lib/api';
@@ -221,6 +222,7 @@ function RegisterFormContent() {
             />
           </div>
         </main>
+        <Footer />
       </>
     );
   }
@@ -474,6 +476,7 @@ function RegisterFormContent() {
           </div>
         </div>
       </main>
+      <Footer />
     </>
   );
 }
@@ -486,6 +489,7 @@ function RegisterForm() {
         <main className="min-h-screen flex items-center justify-center py-12 px-4">
           <LoadingSpinner size="lg" text="Loading..." />
         </main>
+        <Footer />
       </>
     }>
       <RegisterFormContent />

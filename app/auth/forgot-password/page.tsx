@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { Header } from '@/components/layout/Header';
+import { Footer } from '@/components/layout/Footer';
 import { Button } from '@/components/ui/Button';
 import Link from 'next/link';
 import { Mail, AlertCircle, CheckCircle, ArrowLeft } from 'lucide-react';
@@ -176,6 +177,7 @@ export default function ForgotPasswordPage() {
           </div>
         </div>
       </main>
+      <Footer />
     </>
   );
 }
