@@ -53,12 +53,12 @@ export default function ListingsPage() {
       <Header />
       <main className="min-h-screen bg-gradient-comfort">
         {/* Hero Section */}
-        <section className="bg-gradient-to-r from-blue-500 to-teal-500 text-white py-12 sm:py-16 md:py-20 relative overflow-hidden">
+        <section className="bg-gradient-to-br from-pink-400 via-pink-500 to-rose-500 text-white py-8 sm:py-10 md:py-12 relative overflow-hidden">
           {/* Decorative Background Elements */}
           <div className="absolute inset-0 opacity-20">
-            <div className="absolute top-10 right-10 w-64 h-64 bg-blue-300 rounded-full blur-3xl animate-pulse" />
-            <div className="absolute bottom-10 left-10 w-80 h-80 bg-teal-300 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
-            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-cyan-300 rounded-full blur-3xl opacity-30 animate-pulse" style={{ animationDelay: '2s' }} />
+            <div className="absolute top-10 right-10 w-64 h-64 bg-gradient-to-br from-pink-300 to-pink-400 rounded-full blur-3xl animate-pulse" />
+            <div className="absolute bottom-10 left-10 w-80 h-80 bg-gradient-to-br from-rose-300 to-pink-400 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
+            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-gradient-to-br from-pink-500 to-rose-500 rounded-full blur-3xl opacity-30 animate-pulse" style={{ animationDelay: '2s' }} />
           </div>
           <div className="container mx-auto px-3 sm:px-4 relative z-10">
             <div className="max-w-4xl mx-auto text-center">
