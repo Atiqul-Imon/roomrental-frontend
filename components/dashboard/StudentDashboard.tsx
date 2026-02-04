@@ -3,6 +3,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { api } from '@/lib/api';
 import { queryConfig } from '@/lib/query-config';
+import { chatApi } from '@/lib/chat-api';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { 
@@ -103,12 +104,11 @@ export function StudentDashboard() {
   });
 
   // Fetch unread messages count
-  const { data: unreadCount } = useQuery({
-    queryKey: ['unread-count'],
-    queryFn: async () => {
-      const response = await api.get('/chat/unread-count');
-      return response.data.count || 0;
-    },
+  const { data: unreadCount = 0 } = useQuery({
+    queryKey: ['chat-unread-count'],
+    queryFn: () => chatApi.getUnreadCount(),
+    refetchInterval: 30000, // Refetch every 30 seconds
+    retry: 1,
   });
 
   const favorites = favoritesData?.favorites || [];

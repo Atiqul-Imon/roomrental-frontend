@@ -1,12 +1,15 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import { User as UserIcon, CheckCircle, Mail, Phone, Calendar, Loader2 } from 'lucide-react';
+import { User as UserIcon, CheckCircle, Mail, Phone, Calendar, Loader2, MessageCircle } from 'lucide-react';
 import { User as UserType } from '@/types';
 import { format } from 'date-fns';
 import { RatingDisplay } from '@/components/reviews/RatingDisplay';
+import { useQuery } from '@tanstack/react-query';
+import { chatApi } from '@/lib/chat-api';
+import Link from 'next/link';
 
 interface ProfileHeroProps {
   profile: UserType;
@@ -17,6 +20,22 @@ interface ProfileHeroProps {
 export function ProfileHero({ profile, ratingData, isOwnProfile }: ProfileHeroProps) {
   const router = useRouter();
   const [isNavigating, setIsNavigating] = useState(false);
+  
+  // Fetch unread message count for own profile
+  const { data: unreadCount = 0, error: unreadCountError } = useQuery({
+    queryKey: ['chat-unread-count'],
+    queryFn: () => chatApi.getUnreadCount(),
+    enabled: isOwnProfile,
+    refetchInterval: 30000, // Refetch every 30 seconds
+    retry: 1,
+  });
+
+  // Handle errors (React Query v5 doesn't support onError in query options)
+  useEffect(() => {
+    if (unreadCountError) {
+      console.error('Failed to fetch unread count:', unreadCountError);
+    }
+  }, [unreadCountError]);
   
   const roleColors = {
     student: 'bg-accent-100 text-accent-700',
@@ -95,20 +114,35 @@ export function ProfileHero({ profile, ratingData, isOwnProfile }: ProfileHeroPr
                   </div>
                 </div>
                 {isOwnProfile && (
-                  <button
-                    onClick={handleEditProfile}
-                    disabled={isNavigating}
-                    className="px-3 sm:px-4 py-2 bg-gradient-primary text-white rounded-lg hover:opacity-90 transition-all font-semibold text-xs sm:text-sm whitespace-nowrap shadow-soft hover:shadow-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-                  >
-                    {isNavigating ? (
-                      <>
-                        <Loader2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 animate-spin" />
-                        <span className="hidden sm:inline">Loading...</span>
-                      </>
-                    ) : (
-                      'Edit Profile'
+                  <div className="flex items-center gap-2 sm:gap-3">
+                    {/* Unread Messages Badge */}
+                    {unreadCount > 0 && (
+                      <Link
+                        href={profile.role === 'landlord' ? '/landlord/dashboard' : '/messages'}
+                        className="relative px-3 sm:px-4 py-2 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition-all font-semibold text-xs sm:text-sm whitespace-nowrap shadow-soft hover:shadow-medium flex items-center gap-2 border border-blue-200"
+                      >
+                        <MessageCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                        <span className="hidden sm:inline">Messages</span>
+                        <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 sm:w-6 sm:h-6 flex items-center justify-center animate-pulse">
+                          {unreadCount > 9 ? '9+' : unreadCount}
+                        </span>
+                      </Link>
                     )}
-                  </button>
+                    <button
+                      onClick={handleEditProfile}
+                      disabled={isNavigating}
+                      className="px-3 sm:px-4 py-2 bg-gradient-primary text-white rounded-lg hover:opacity-90 transition-all font-semibold text-xs sm:text-sm whitespace-nowrap shadow-soft hover:shadow-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                    >
+                      {isNavigating ? (
+                        <>
+                          <Loader2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 animate-spin" />
+                          <span className="hidden sm:inline">Loading...</span>
+                        </>
+                      ) : (
+                        'Edit Profile'
+                      )}
+                    </button>
+                  </div>
                 )}
               </div>
 

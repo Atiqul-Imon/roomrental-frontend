@@ -9,22 +9,16 @@ import {
   MessageSquare,
 } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
-import { api } from '@/lib/api';
+import { chatApi } from '@/lib/chat-api';
 
 export function MobileBottomNav() {
   const pathname = usePathname();
 
   const { data: unreadCount = 0 } = useQuery({
-    queryKey: ['unread-count'],
-    queryFn: async () => {
-      try {
-        const response = await api.get('/chat/unread-count');
-        return response.data.count || 0;
-      } catch {
-        return 0;
-      }
-    },
-    refetchInterval: 30000,
+    queryKey: ['chat-unread-count'],
+    queryFn: () => chatApi.getUnreadCount(),
+    refetchInterval: 30000, // Refetch every 30 seconds
+    retry: 1,
   });
 
   const navItems = [
@@ -41,7 +35,7 @@ export function MobileBottomNav() {
     {
       icon: MessageSquare,
       label: 'Messages',
-      href: '/chat',
+      href: '/messages',
       badge: unreadCount > 0 ? unreadCount : undefined,
     },
     {

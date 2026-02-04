@@ -2,9 +2,13 @@
 
 export const dynamic = 'force-dynamic';
 
+import { useEffect, Suspense } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { api } from '@/lib/api';
 import { queryConfig } from '@/lib/query-config';
+import { chatApi } from '@/lib/chat-api';
 import { 
   Home, 
   Eye, 
@@ -25,7 +29,18 @@ const LandlordAnalytics = dynamicImport(() => import('@/components/dashboard/Lan
   ssr: false, // Charts don't need SSR
 });
 
-export default function LandlordDashboardPage() {
+function LandlordDashboardContent() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const conversationId = searchParams.get('conversationId');
+
+  // If conversationId is in URL (from email link), navigate to messages page
+  useEffect(() => {
+    if (conversationId) {
+      router.replace(`/messages/${conversationId}`);
+    }
+  }, [conversationId, router]);
+
   const { data: listingsData, isLoading: listingsLoading } = useQuery({
     queryKey: ['my-listings', 'all', 1],
     ...queryConfig.dashboard,
@@ -41,17 +56,19 @@ export default function LandlordDashboardPage() {
     },
   });
 
-  const { data: unreadCount } = useQuery({
-    queryKey: ['unread-count'],
-    queryFn: async () => {
-      try {
-        const response = await api.get('/chat/unread-count');
-        return response.data.count || 0;
-      } catch (error) {
-        return 0;
-      }
-    },
+  const { data: unreadCount = 0, error: unreadCountError } = useQuery({
+    queryKey: ['chat-unread-count'],
+    queryFn: () => chatApi.getUnreadCount(),
+    refetchInterval: 30000, // Refetch every 30 seconds
+    retry: 1,
   });
+
+  // Handle errors (React Query v5 doesn't support onError in query options)
+  useEffect(() => {
+    if (unreadCountError) {
+      console.error('Failed to fetch unread count:', unreadCountError);
+    }
+  }, [unreadCountError]);
 
   const listings = listingsData?.listings || [];
   
@@ -185,7 +202,7 @@ export default function LandlordDashboardPage() {
         </Link>
 
         <Link
-          href="/chat"
+          href="/messages"
           className="bg-white rounded-xl p-4 sm:p-6 border border-grey-200 shadow-medium hover:shadow-lg transition-all duration-200 relative active:scale-95"
         >
           {unreadCount && unreadCount > 0 && (
@@ -294,5 +311,24 @@ export default function LandlordDashboardPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function LandlordDashboardPage() {
+  return (
+    <Suspense fallback={
+      <div className="space-y-6">
+        <div className="h-9 bg-grey-200 rounded w-64 mb-2 animate-pulse" />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {[...Array(4)].map((_, i) => (
+            <div key={i} className="bg-white rounded-xl p-6 shadow-medium border border-grey-200">
+              <div className="h-20 bg-grey-100 rounded animate-pulse" />
+            </div>
+          ))}
+        </div>
+      </div>
+    }>
+      <LandlordDashboardContent />
+    </Suspense>
   );
 }
