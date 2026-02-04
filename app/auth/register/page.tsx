@@ -19,9 +19,7 @@ function RegisterFormContent() {
     password: '',
     name: '',
     role: 'student' as 'student' | 'landlord',
-    acceptTerms: false,
-    acceptPrivacy: false,
-    acceptMarketing: false,
+    acceptConsent: false,
   });
   const [otpCode, setOtpCode] = useState('');
   const [error, setError] = useState('');
@@ -82,13 +80,8 @@ function RegisterFormContent() {
       return;
     }
 
-    if (!formData.acceptTerms) {
-      setError('You must accept the Terms of Service to continue');
-      return;
-    }
-
-    if (!formData.acceptPrivacy) {
-      setError('You must accept the Privacy Policy to continue');
+    if (!formData.acceptConsent) {
+      setError('You must accept the Terms of Service and Privacy Policy to continue');
       return;
     }
 
@@ -134,11 +127,6 @@ function RegisterFormContent() {
         name: formData.name.trim(),
         role: formData.role,
         otpCode: otpCode.trim(),
-        consent: {
-          terms: formData.acceptTerms,
-          privacy: formData.acceptPrivacy,
-          marketing: formData.acceptMarketing,
-        },
       });
 
       if (response.data.success) {
@@ -347,54 +335,27 @@ function RegisterFormContent() {
                 </select>
               </div>
 
-              {/* GDPR Consent Checkboxes */}
-              <div className="space-y-3 pt-2">
+              {/* GDPR Consent Checkbox */}
+              <div className="pt-2">
                 <div className="flex items-start gap-2">
                   <input
-                    id="acceptTerms"
+                    id="acceptConsent"
                     type="checkbox"
-                    checked={formData.acceptTerms}
-                    onChange={(e) => setFormData({ ...formData, acceptTerms: e.target.checked })}
+                    checked={formData.acceptConsent}
+                    onChange={(e) => setFormData({ ...formData, acceptConsent: e.target.checked })}
                     required
                     className="mt-1 h-4 w-4 text-primary-600 focus:ring-primary-500 border-grey-300 rounded"
                   />
-                  <label htmlFor="acceptTerms" className="text-sm text-grey-700">
+                  <label htmlFor="acceptConsent" className="text-sm text-grey-700">
                     I agree to the{' '}
                     <Link href="/terms" target="_blank" className="text-primary-600 hover:text-primary-700 underline">
                       Terms of Service
                     </Link>
-                    {' '}*
-                  </label>
-                </div>
-
-                <div className="flex items-start gap-2">
-                  <input
-                    id="acceptPrivacy"
-                    type="checkbox"
-                    checked={formData.acceptPrivacy}
-                    onChange={(e) => setFormData({ ...formData, acceptPrivacy: e.target.checked })}
-                    required
-                    className="mt-1 h-4 w-4 text-primary-600 focus:ring-primary-500 border-grey-300 rounded"
-                  />
-                  <label htmlFor="acceptPrivacy" className="text-sm text-grey-700">
-                    I agree to the{' '}
+                    {' '}and{' '}
                     <Link href="/privacy" target="_blank" className="text-primary-600 hover:text-primary-700 underline">
                       Privacy Policy
                     </Link>
-                    {' '}and consent to the processing of my personal data *
-                  </label>
-                </div>
-
-                <div className="flex items-start gap-2">
-                  <input
-                    id="acceptMarketing"
-                    type="checkbox"
-                    checked={formData.acceptMarketing}
-                    onChange={(e) => setFormData({ ...formData, acceptMarketing: e.target.checked })}
-                    className="mt-1 h-4 w-4 text-primary-600 focus:ring-primary-500 border-grey-300 rounded"
-                  />
-                  <label htmlFor="acceptMarketing" className="text-sm text-grey-700">
-                    I consent to receive marketing communications and promotional emails (optional)
+                    , and consent to the processing of my personal data and to receive marketing communications *
                   </label>
                 </div>
               </div>
