@@ -7,6 +7,7 @@ import { useRouter, useParams } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { Header } from '@/components/layout/Header';
 import { ChatSidebarContent } from '@/components/chat/ChatSidebarContent';
+import { ChatWindow } from '@/components/chat/ChatWindow';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { ArrowLeft } from 'lucide-react';
 
@@ -36,19 +37,25 @@ function ChatContent() {
   }
 
   return (
-    <main className="h-[calc(100vh-4rem)] bg-white overflow-hidden md:hidden">
-      {/* Mobile Header with Back Button */}
-      <div className="bg-gradient-primary text-white px-4 py-3 flex items-center gap-3 border-b border-white/20 flex-shrink-0">
-        <button
-          onClick={() => router.push('/messages')}
-          className="p-1.5 hover:bg-white/20 rounded-lg transition-colors flex-shrink-0"
-          aria-label="Back to conversations"
-        >
-          <ArrowLeft className="w-5 h-5" />
-        </button>
-        <h2 className="font-semibold text-base">Messages</h2>
+    <main className="min-h-screen bg-white">
+      {/* Desktop: Show ChatWindow with side-by-side layout */}
+      <div className="hidden md:block h-[calc(100vh-4rem)]">
+        <ChatWindow initialConversationId={conversationId} />
       </div>
-      <ChatSidebarContent initialConversationId={conversationId} />
+      {/* Mobile: Show ChatSidebarContent with back button */}
+      <div className="md:hidden h-[calc(100vh-4rem)] bg-white overflow-hidden">
+        <div className="bg-gradient-primary text-white px-4 py-3 flex items-center gap-3 border-b border-white/20 flex-shrink-0">
+          <button
+            onClick={() => router.push('/messages')}
+            className="p-1.5 hover:bg-white/20 rounded-lg transition-colors flex-shrink-0"
+            aria-label="Back to conversations"
+          >
+            <ArrowLeft className="w-5 h-5" />
+          </button>
+          <h2 className="font-semibold text-base">Messages</h2>
+        </div>
+        <ChatSidebarContent initialConversationId={conversationId} />
+      </div>
     </main>
   );
 }

@@ -2,14 +2,15 @@
 
 export const dynamic = 'force-dynamic';
 
-import { useState } from 'react';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useState, useEffect } from 'react';
+import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
 import { useAuth } from '@/lib/auth-context';
 import { api } from '@/lib/api';
-import { User, Mail, Phone, MapPin, Save, Camera } from 'lucide-react';
+import { User, Mail, Phone, MapPin, Save, Camera, MessageCircle } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { chatApi } from '@/lib/chat-api';
 
 export default function LandlordProfilePage() {
   const { user } = useAuth();
@@ -28,6 +29,21 @@ export default function LandlordProfilePage() {
   });
   const [profileImage, setProfileImage] = useState(user?.profileImage || '');
   const [isUploading, setIsUploading] = useState(false);
+
+  // Fetch unread message count
+  const { data: unreadCount = 0, error: unreadCountError } = useQuery({
+    queryKey: ['chat-unread-count'],
+    queryFn: () => chatApi.getUnreadCount(),
+    refetchInterval: 30000, // Refetch every 30 seconds
+    retry: 1,
+  });
+
+  // Handle errors (React Query v5 doesn't support onError in query options)
+  useEffect(() => {
+    if (unreadCountError) {
+      console.error('Failed to fetch unread count:', unreadCountError);
+    }
+  }, [unreadCountError]);
 
   const updateMutation = useMutation({
     mutationFn: async (data: any) => {
@@ -73,8 +89,25 @@ export default function LandlordProfilePage() {
     <div className="space-y-4 sm:space-y-6">
       {/* Header */}
       <div className="mb-4 sm:mb-6">
-        <h1 className="text-2xl sm:text-3xl font-bold text-grey-900 mb-1 sm:mb-2">Profile Settings</h1>
-        <p className="text-sm sm:text-base text-grey-600">Manage your profile information</p>
+        <div className="flex items-center justify-between mb-1 sm:mb-2">
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-bold text-grey-900">Profile Settings</h1>
+            <p className="text-sm sm:text-base text-grey-600 mt-1">Manage your profile information</p>
+          </div>
+          {/* Unread Messages Badge */}
+          {unreadCount > 0 && (
+            <Link
+              href="/landlord/dashboard"
+              className="relative px-4 py-2 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition-all font-semibold text-sm whitespace-nowrap shadow-soft hover:shadow-medium flex items-center gap-2 border border-blue-200"
+            >
+              <MessageCircle className="w-4 h-4" />
+              <span className="hidden sm:inline">Messages</span>
+              <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center animate-pulse">
+                {unreadCount > 9 ? '9+' : unreadCount}
+              </span>
+            </Link>
+          )}
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">

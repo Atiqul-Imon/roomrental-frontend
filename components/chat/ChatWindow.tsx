@@ -199,7 +199,6 @@ export function ChatWindow({ initialConversationId }: ChatWindowProps) {
       // Invalidate all chat-related caches
       queryClient.invalidateQueries({ queryKey: ['conversations'] });
       queryClient.invalidateQueries({ queryKey: ['chat-unread-count'] });
-      queryClient.invalidateQueries({ queryKey: ['unread-count'] });
     },
   });
 
