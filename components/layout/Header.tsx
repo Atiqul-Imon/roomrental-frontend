@@ -36,12 +36,16 @@ export function Header() {
   const { openChat } = useChat();
   const userMenuRef = useRef<HTMLDivElement>(null);
 
-  // Fetch unread count for chat
+  // Fetch unread count for chat - always fetch when authenticated
   const { data: unreadCount = 0 } = useQuery({
     queryKey: ['chat-unread-count'],
     queryFn: () => chatApi.getUnreadCount(),
     enabled: isAuthenticated,
     refetchInterval: 30000, // Refetch every 30 seconds
+    staleTime: 0, // Always consider stale to get fresh data
+    refetchOnMount: true, // Always refetch on mount
+    refetchOnWindowFocus: true, // Refetch when window gains focus
+    gcTime: 0, // Don't cache
   });
 
   // Close user menu when clicking outside
@@ -142,16 +146,23 @@ export function Header() {
                   className={`relative px-4 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 ${
                     pathname === '/messages' || pathname === '/chat'
                       ? 'bg-gradient-to-r from-pink-50 to-rose-50 text-pink-700 shadow-sm'
+                      : unreadCount > 0
+                      ? 'text-pink-600 bg-pink-50/30'
                       : 'text-grey-700 hover:text-pink-600 hover:bg-pink-50/50'
                   }`}
-                  aria-label="Open messages"
+                  aria-label={`Open messages${unreadCount > 0 ? ` (${unreadCount} unread)` : ''}`}
                 >
-                  <MessageCircle className="w-4 h-4" />
-                  {unreadCount > 0 && (
-                    <span className="absolute -top-1 -right-1 bg-gradient-to-r from-red-500 to-red-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold shadow-sm animate-pulse">
-                      {unreadCount > 9 ? '9+' : unreadCount}
-                    </span>
-                  )}
+                  <div className="relative flex items-center">
+                    <MessageCircle className={`w-5 h-5 ${unreadCount > 0 ? 'text-pink-600' : ''}`} />
+                    {unreadCount > 0 && (
+                      <>
+                        <span className="absolute -top-3 -right-3 bg-gradient-to-r from-red-500 to-red-600 text-white text-xs rounded-full min-w-[26px] h-6 px-2 flex items-center justify-center font-bold shadow-xl ring-2 ring-white animate-pulse z-20">
+                          {unreadCount > 9 ? '9+' : unreadCount}
+                        </span>
+                        <span className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-red-500 rounded-full animate-ping opacity-75 z-10"></span>
+                      </>
+                    )}
+                  </div>
                 </button>
 
                 {user?.role === 'landlord' && (
@@ -289,15 +300,24 @@ export function Header() {
               <>
                 <button
                   onClick={handleChatClick}
-                  className="relative p-2 rounded-lg text-grey-700 hover:text-pink-600 hover:bg-pink-50/50 transition-all"
-                  aria-label="Open messages"
+                  className={`relative p-2.5 rounded-lg transition-all ${
+                    unreadCount > 0
+                      ? 'text-pink-600 bg-pink-50/30'
+                      : 'text-grey-700 hover:text-pink-600 hover:bg-pink-50/50'
+                  }`}
+                  aria-label={`Open messages${unreadCount > 0 ? ` (${unreadCount} unread)` : ''}`}
                 >
-                  <MessageCircle className="w-5 h-5" />
-                  {unreadCount > 0 && (
-                    <span className="absolute -top-1 -right-1 bg-gradient-to-r from-red-500 to-red-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">
-                      {unreadCount > 9 ? '9+' : unreadCount}
-                    </span>
-                  )}
+                  <div className="relative flex items-center">
+                    <MessageCircle className={`w-6 h-6 ${unreadCount > 0 ? 'text-pink-600' : ''}`} />
+                    {unreadCount > 0 && (
+                      <>
+                        <span className="absolute -top-3 -right-3 bg-gradient-to-r from-red-500 to-red-600 text-white text-xs rounded-full min-w-[26px] h-6 px-2 flex items-center justify-center font-bold shadow-xl ring-2 ring-white animate-pulse z-20">
+                          {unreadCount > 9 ? '9+' : unreadCount}
+                        </span>
+                        <span className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-red-500 rounded-full animate-ping opacity-75 z-10"></span>
+                      </>
+                    )}
+                  </div>
                 </button>
               </>
             )}
@@ -362,6 +382,37 @@ export function Header() {
                       </Link>
                     </>
                   )}
+                  <button
+                    onClick={() => {
+                      handleChatClick();
+                      setIsMobileMenuOpen(false);
+                    }}
+                    className={`relative flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all duration-200 text-left w-full ${
+                      pathname === '/messages' || pathname === '/chat'
+                        ? 'bg-gradient-to-r from-pink-50 to-rose-50 text-pink-700'
+                        : unreadCount > 0
+                        ? 'bg-pink-50/40 text-pink-700 border border-pink-200'
+                        : 'text-grey-700 hover:text-pink-600 hover:bg-pink-50/50'
+                    }`}
+                  >
+                    <div className="relative flex items-center">
+                      <MessageCircle className={`w-5 h-5 ${unreadCount > 0 ? 'text-pink-600' : ''}`} />
+                      {unreadCount > 0 && (
+                        <>
+                          <span className="absolute -top-3 -right-3 bg-gradient-to-r from-red-500 to-red-600 text-white text-xs rounded-full min-w-[26px] h-6 px-2 flex items-center justify-center font-bold shadow-xl ring-2 ring-white animate-pulse z-20">
+                            {unreadCount > 9 ? '9+' : unreadCount}
+                          </span>
+                          <span className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-red-500 rounded-full animate-ping opacity-75 z-10"></span>
+                        </>
+                      )}
+                    </div>
+                    <span className={`flex-1 font-semibold ${unreadCount > 0 ? 'text-pink-600' : ''}`}>Messages</span>
+                    {unreadCount > 0 && (
+                      <span className="ml-auto bg-gradient-to-r from-red-500 to-red-600 text-white text-xs font-bold rounded-full px-3 py-1.5 min-w-[28px] h-7 flex items-center justify-center shadow-lg animate-pulse">
+                        {unreadCount > 9 ? '9+' : unreadCount}
+                      </span>
+                    )}
+                  </button>
                   <Link
                     href={`/profile/${user?.id}`}
                     onClick={() => setIsMobileMenuOpen(false)}
