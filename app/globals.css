@@ -49,7 +49,8 @@ body {
   border-radius: 4px;
 }
 
-/* Safe area utilities for mobile bottom navigation */
+/* Safe area utilities for mobile bottom navigation
+   Ensures chat input field stays visible above bottom nav on mobile devices */
 .safe-area-bottom {
   padding-bottom: calc(4rem + env(safe-area-inset-bottom, 0px));
 }
