@@ -122,7 +122,7 @@ function MessagesContent() {
       </div>
 
       {/* Content */}
-      <div className="h-[calc(100vh-8rem)] md:h-[calc(100vh-4rem)] overflow-hidden">
+      <div className="h-[calc(100vh-8rem)] md:h-[calc(100vh-4rem)] overflow-hidden flex flex-col">
         {tab === 'chat' ? (
           <>
             {/* Desktop: Show ChatWindow with side-by-side layout */}
@@ -130,10 +130,14 @@ function MessagesContent() {
               <ChatWindow initialConversationId={conversationId || undefined} />
             </div>
             {/* Mobile: Show only conversation list, navigate to separate page for chat */}
-            <ConversationListMobile conversationId={conversationId || undefined} />
+            <div className="md:hidden flex-1 min-h-0 overflow-hidden">
+              <ConversationListMobile conversationId={conversationId || undefined} />
+            </div>
           </>
         ) : (
-          <NotificationList />
+          <div className="flex-1 min-h-0 overflow-hidden">
+            <NotificationList />
+          </div>
         )}
       </div>
     </main>

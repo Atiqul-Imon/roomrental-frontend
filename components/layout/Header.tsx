@@ -24,8 +24,9 @@ import {
 import { SavedSearchesDropdown } from '@/components/search/SavedSearchesDropdown';
 import { useChat } from '@/lib/chat-context';
 import { NotificationDropdown } from '@/components/notifications/NotificationDropdown';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { chatApi } from '@/lib/chat-api';
+import { useSocket } from '@/lib/socket-context';
 
 export function Header() {
   const { user, isAuthenticated, logout } = useAuth();
@@ -35,11 +36,21 @@ export function Header() {
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const { openChat } = useChat();
   const userMenuRef = useRef<HTMLDivElement>(null);
+  const queryClient = useQueryClient();
+  const { onMessage, offMessage, socket, isConnected } = useSocket();
 
   // Fetch unread count for chat - always fetch when authenticated
-  const { data: unreadCount = 0 } = useQuery({
+  const { data: unreadCount = 0, error: unreadCountError, isLoading: isLoadingUnreadCount } = useQuery({
     queryKey: ['chat-unread-count'],
-    queryFn: () => chatApi.getUnreadCount(),
+    queryFn: async () => {
+      try {
+        const count = await chatApi.getUnreadCount();
+        return count;
+      } catch (error) {
+        console.error('Error fetching unread count:', error);
+        return 0;
+      }
+    },
     enabled: isAuthenticated,
     refetchInterval: 30000, // Refetch every 30 seconds
     staleTime: 0, // Always consider stale to get fresh data
@@ -47,6 +58,33 @@ export function Header() {
     refetchOnWindowFocus: true, // Refetch when window gains focus
     gcTime: 0, // Don't cache
   });
+
+
+  // Listen for new messages via socket to update unread count in real-time
+  useEffect(() => {
+    if (!isAuthenticated || !socket || !onMessage || !offMessage) return;
+
+    const handleNewMessage = (message: any) => {
+      // Only update if the message is not from the current user
+      if (message.senderId !== user?.id) {
+        // Immediately invalidate and refetch unread count
+        queryClient.invalidateQueries({ queryKey: ['chat-unread-count'] });
+        // Also force a refetch immediately
+        queryClient.refetchQueries({ queryKey: ['chat-unread-count'] });
+      }
+    };
+
+    // Add listener when socket is available
+    if (socket) {
+      onMessage(handleNewMessage);
+    }
+
+    return () => {
+      if (socket) {
+        offMessage(handleNewMessage);
+      }
+    };
+  }, [isAuthenticated, socket, isConnected, onMessage, offMessage, user?.id, queryClient]);
 
   // Close user menu when clicking outside
   useEffect(() => {

@@ -247,7 +247,7 @@ export function MessageInput({
     attachments.every((att) => att.url && !att.url.startsWith('blob:'));
 
   return (
-    <div className="border-t border-grey-200 bg-white">
+    <div className="border-t border-grey-200 bg-white lg:pb-0">
       {/* Attachment Previews */}
       {attachments.length > 0 && (
         <div className="p-3 border-b border-grey-200 bg-grey-50">
