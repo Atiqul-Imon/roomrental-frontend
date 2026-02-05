@@ -45,7 +45,9 @@ export function Header() {
     queryFn: async () => {
       try {
         const count = await chatApi.getUnreadCount();
-        return count;
+        // Ensure we return a number
+        const numCount = typeof count === 'number' ? count : parseInt(String(count), 10) || 0;
+        return numCount;
       } catch (error) {
         console.error('Error fetching unread count:', error);
         return 0;
@@ -57,34 +59,47 @@ export function Header() {
     refetchOnMount: true, // Always refetch on mount
     refetchOnWindowFocus: true, // Refetch when window gains focus
     gcTime: 0, // Don't cache
+    retry: 2, // Retry on failure
   });
+
+  // Log unread count for debugging
+  useEffect(() => {
+    if (unreadCountError) {
+      console.error('Unread count query error:', unreadCountError);
+    }
+    if (isAuthenticated && !isLoadingUnreadCount) {
+      console.log('Unread count:', unreadCount);
+    }
+  }, [unreadCount, unreadCountError, isLoadingUnreadCount, isAuthenticated]);
 
 
   // Listen for new messages via socket to update unread count in real-time
   useEffect(() => {
-    if (!isAuthenticated || !socket || !onMessage || !offMessage) return;
-
-    const handleNewMessage = (message: any) => {
-      // Only update if the message is not from the current user
-      if (message.senderId !== user?.id) {
-        // Immediately invalidate and refetch unread count
-        queryClient.invalidateQueries({ queryKey: ['chat-unread-count'] });
-        // Also force a refetch immediately
-        queryClient.refetchQueries({ queryKey: ['chat-unread-count'] });
-      }
-    };
-
-    // Add listener when socket is available
-    if (socket) {
-      onMessage(handleNewMessage);
+    if (!isAuthenticated || !onMessage || !offMessage) {
+      return;
     }
 
-    return () => {
-      if (socket) {
-        offMessage(handleNewMessage);
+    const handleNewMessage = (message: any) => {
+      console.log('New message received in header:', message);
+      // Only update if the message is not from the current user
+      if (message?.senderId && message.senderId !== user?.id) {
+        console.log('Updating unread count for message from:', message.senderId);
+        // Immediately invalidate and refetch unread count
+        queryClient.invalidateQueries({ queryKey: ['chat-unread-count'] });
+        // Also force a refetch immediately with a small delay to ensure backend has updated
+        setTimeout(() => {
+          queryClient.refetchQueries({ queryKey: ['chat-unread-count'] });
+        }, 500);
       }
     };
-  }, [isAuthenticated, socket, isConnected, onMessage, offMessage, user?.id, queryClient]);
+
+    // Add listener
+    onMessage(handleNewMessage);
+
+    return () => {
+      offMessage(handleNewMessage);
+    };
+  }, [isAuthenticated, onMessage, offMessage, user?.id, queryClient]);
 
   // Close user menu when clicking outside
   useEffect(() => {
@@ -184,18 +199,18 @@ export function Header() {
                   className={`relative px-4 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 ${
                     pathname === '/messages' || pathname === '/chat'
                       ? 'bg-gradient-to-r from-pink-50 to-rose-50 text-pink-700 shadow-sm'
-                      : unreadCount > 0
+                      : Number(unreadCount) > 0
                       ? 'text-pink-600 bg-pink-50/30'
                       : 'text-grey-700 hover:text-pink-600 hover:bg-pink-50/50'
                   }`}
-                  aria-label={`Open messages${unreadCount > 0 ? ` (${unreadCount} unread)` : ''}`}
+                  aria-label={`Open messages${Number(unreadCount) > 0 ? ` (${Number(unreadCount)} unread)` : ''}`}
                 >
                   <div className="relative flex items-center">
-                    <MessageCircle className={`w-5 h-5 ${unreadCount > 0 ? 'text-pink-600' : ''}`} />
-                    {unreadCount > 0 && (
+                    <MessageCircle className={`w-5 h-5 ${Number(unreadCount) > 0 ? 'text-pink-600' : ''}`} />
+                    {Number(unreadCount) > 0 && (
                       <>
                         <span className="absolute -top-3 -right-3 bg-gradient-to-r from-red-500 to-red-600 text-white text-xs rounded-full min-w-[26px] h-6 px-2 flex items-center justify-center font-bold shadow-xl ring-2 ring-white animate-pulse z-20">
-                          {unreadCount > 9 ? '9+' : unreadCount}
+                          {Number(unreadCount) > 9 ? '9+' : Number(unreadCount)}
                         </span>
                         <span className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-red-500 rounded-full animate-ping opacity-75 z-10"></span>
                       </>
@@ -339,18 +354,18 @@ export function Header() {
                 <button
                   onClick={handleChatClick}
                   className={`relative p-2.5 rounded-lg transition-all ${
-                    unreadCount > 0
+                    Number(unreadCount) > 0
                       ? 'text-pink-600 bg-pink-50/30'
                       : 'text-grey-700 hover:text-pink-600 hover:bg-pink-50/50'
                   }`}
-                  aria-label={`Open messages${unreadCount > 0 ? ` (${unreadCount} unread)` : ''}`}
+                  aria-label={`Open messages${Number(unreadCount) > 0 ? ` (${Number(unreadCount)} unread)` : ''}`}
                 >
                   <div className="relative flex items-center">
-                    <MessageCircle className={`w-6 h-6 ${unreadCount > 0 ? 'text-pink-600' : ''}`} />
-                    {unreadCount > 0 && (
+                    <MessageCircle className={`w-6 h-6 ${Number(unreadCount) > 0 ? 'text-pink-600' : ''}`} />
+                    {Number(unreadCount) > 0 && (
                       <>
                         <span className="absolute -top-3 -right-3 bg-gradient-to-r from-red-500 to-red-600 text-white text-xs rounded-full min-w-[26px] h-6 px-2 flex items-center justify-center font-bold shadow-xl ring-2 ring-white animate-pulse z-20">
-                          {unreadCount > 9 ? '9+' : unreadCount}
+                          {Number(unreadCount) > 9 ? '9+' : Number(unreadCount)}
                         </span>
                         <span className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-red-500 rounded-full animate-ping opacity-75 z-10"></span>
                       </>
@@ -428,26 +443,26 @@ export function Header() {
                     className={`relative flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all duration-200 text-left w-full ${
                       pathname === '/messages' || pathname === '/chat'
                         ? 'bg-gradient-to-r from-pink-50 to-rose-50 text-pink-700'
-                        : unreadCount > 0
+                        : Number(unreadCount) > 0
                         ? 'bg-pink-50/40 text-pink-700 border border-pink-200'
                         : 'text-grey-700 hover:text-pink-600 hover:bg-pink-50/50'
                     }`}
                   >
                     <div className="relative flex items-center">
-                      <MessageCircle className={`w-5 h-5 ${unreadCount > 0 ? 'text-pink-600' : ''}`} />
-                      {unreadCount > 0 && (
+                      <MessageCircle className={`w-5 h-5 ${Number(unreadCount) > 0 ? 'text-pink-600' : ''}`} />
+                      {Number(unreadCount) > 0 && (
                         <>
                           <span className="absolute -top-3 -right-3 bg-gradient-to-r from-red-500 to-red-600 text-white text-xs rounded-full min-w-[26px] h-6 px-2 flex items-center justify-center font-bold shadow-xl ring-2 ring-white animate-pulse z-20">
-                            {unreadCount > 9 ? '9+' : unreadCount}
+                            {Number(unreadCount) > 9 ? '9+' : Number(unreadCount)}
                           </span>
                           <span className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-red-500 rounded-full animate-ping opacity-75 z-10"></span>
                         </>
                       )}
                     </div>
-                    <span className={`flex-1 font-semibold ${unreadCount > 0 ? 'text-pink-600' : ''}`}>Messages</span>
-                    {unreadCount > 0 && (
+                    <span className={`flex-1 font-semibold ${Number(unreadCount) > 0 ? 'text-pink-600' : ''}`}>Messages</span>
+                    {Number(unreadCount) > 0 && (
                       <span className="ml-auto bg-gradient-to-r from-red-500 to-red-600 text-white text-xs font-bold rounded-full px-3 py-1.5 min-w-[28px] h-7 flex items-center justify-center shadow-lg animate-pulse">
-                        {unreadCount > 9 ? '9+' : unreadCount}
+                        {Number(unreadCount) > 9 ? '9+' : Number(unreadCount)}
                       </span>
                     )}
                   </button>

@@ -1,6 +1,6 @@
 'use client';
 
-import { ReactNode, useState } from 'react';
+import { ReactNode } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
@@ -10,21 +10,18 @@ import {
   User,
   MessageSquare,
   Settings,
-  Menu,
-  X,
   LogOut,
   Plus,
-  FileText,
   BarChart3,
 } from 'lucide-react';
 import { MobileBottomNav } from './MobileBottomNav';
+import { Header } from '@/components/layout/Header';
 
 interface LandlordLayoutProps {
   children: ReactNode;
 }
 
 export function LandlordLayout({ children }: LandlordLayoutProps) {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
   const { user, logout } = useAuth();
@@ -58,7 +55,7 @@ export function LandlordLayout({ children }: LandlordLayoutProps) {
     {
       icon: MessageSquare,
       label: 'Messages',
-      href: '/chat',
+      href: '/messages',
     },
     {
       icon: User,
@@ -79,31 +76,15 @@ export function LandlordLayout({ children }: LandlordLayoutProps) {
 
   return (
     <div className="min-h-screen bg-grey-50">
-      {/* Mobile Sidebar Overlay */}
-      {sidebarOpen && (
-        <div
-          className="fixed inset-0 bg-black/70 backdrop-blur-sm z-40 lg:hidden"
-          onClick={() => setSidebarOpen(false)}
-        />
-      )}
+      {/* Mobile Sidebar Overlay - Removed since we're using standard header */}
 
-      {/* Sidebar */}
-      <aside
-        className={`fixed left-0 top-0 h-full w-64 bg-white border-r border-grey-200 z-[60] transform transition-transform duration-300 ${
-          sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
-        }`}
-      >
+      {/* Sidebar - Hidden on mobile, shown on desktop */}
+      <aside className="hidden lg:block fixed left-0 top-0 h-full w-64 bg-white border-r border-grey-200 z-[60]">
         <div className="flex flex-col h-full pb-20 lg:pb-0">
           {/* Header */}
           <div className="p-6 border-b border-grey-200">
             <div className="flex items-center justify-between mb-4">
               <h1 className="text-2xl font-bold text-grey-900">Landlord Panel</h1>
-              <button
-                onClick={() => setSidebarOpen(false)}
-                className="lg:hidden text-grey-600 hover:text-grey-900 transition-colors"
-              >
-                <X className="w-5 h-5" />
-              </button>
             </div>
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-primary-500 rounded-full flex items-center justify-center text-white font-bold">
@@ -128,7 +109,6 @@ export function LandlordLayout({ children }: LandlordLayoutProps) {
                 <Link
                   key={item.href}
                   href={item.href}
-                  onClick={() => setSidebarOpen(false)}
                   className={`group flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 relative ${
                     isActive
                       ? 'bg-primary-500 text-white shadow-medium'
@@ -160,24 +140,8 @@ export function LandlordLayout({ children }: LandlordLayoutProps) {
 
       {/* Main Content */}
       <div className="lg:pl-64">
-        {/* Top Bar */}
-        <header className="sticky top-0 z-30 bg-white/80 backdrop-blur-md border-b border-grey-200 shadow-sm">
-          <div className="flex items-center justify-between px-6 h-16 gap-4">
-            <button
-              onClick={() => setSidebarOpen(true)}
-              className="lg:hidden text-grey-600 hover:text-grey-900 transition-colors"
-            >
-              <Menu className="w-6 h-6" />
-            </button>
-            <div className="flex-1" />
-            <Link
-              href="/"
-              className="text-sm text-grey-600 hover:text-primary-600 font-medium transition-colors"
-            >
-              View Site
-            </Link>
-          </div>
-        </header>
+        {/* Standard Header - Same as rest of site */}
+        <Header />
 
         {/* Page Content */}
         <main className="p-4 sm:p-6 bg-grey-50 min-h-screen pb-20 lg:pb-6">
