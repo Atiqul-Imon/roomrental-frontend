@@ -68,8 +68,15 @@ export const chatApi = {
 
   // Get unread message count
   getUnreadCount: async (): Promise<number> => {
-    const response = await api.get('/chat/unread-count');
-    return response.data.count || 0;
+    try {
+      const response = await api.get('/chat/unread-count');
+      // Handle different response formats
+      const count = response.data?.count ?? response.data?.data?.count ?? response.data ?? 0;
+      return typeof count === 'number' ? count : 0;
+    } catch (error) {
+      console.error('Error fetching unread count:', error);
+      return 0;
+    }
   },
 
   // Update message
