@@ -493,8 +493,8 @@ export function ChatSidebarContent({ initialConversationId }: ChatSidebarContent
         </div>
       )}
 
-      {/* Message Input */}
-      <div className="flex-shrink-0">
+      {/* Message Input - Fixed above bottom nav on mobile */}
+      <div className="flex-shrink-0 sticky bottom-0 lg:static bg-white z-10 safe-area-bottom">
         <MessageInput
           onSendMessage={handleSendMessage}
           onTyping={handleTyping}

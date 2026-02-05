@@ -140,7 +140,7 @@ export function MessageList({
   const messageGroups = groupMessagesByDate(messages);
 
   return (
-    <div ref={messagesContainerRef} className="flex-1 overflow-y-auto p-4 space-y-4 bg-grey-50">
+    <div ref={messagesContainerRef} className="flex-1 overflow-y-auto p-4 space-y-4 bg-grey-50 min-h-0">
       {messageGroups.map((group, groupIndex) => (
         <div key={group.date}>
           {/* Date Separator */}

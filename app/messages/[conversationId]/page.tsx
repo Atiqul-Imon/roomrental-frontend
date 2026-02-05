@@ -43,7 +43,7 @@ function ChatContent() {
         <ChatWindow initialConversationId={conversationId} />
       </div>
       {/* Mobile: Show ChatSidebarContent with back button */}
-      <div className="md:hidden h-[calc(100vh-4rem)] bg-white overflow-hidden">
+      <div className="md:hidden h-[calc(100vh-4rem)] bg-white overflow-hidden flex flex-col">
         <div className="bg-gradient-primary text-white px-4 py-3 flex items-center gap-3 border-b border-white/20 flex-shrink-0">
           <button
             onClick={() => router.push('/messages')}
@@ -54,7 +54,9 @@ function ChatContent() {
           </button>
           <h2 className="font-semibold text-base">Messages</h2>
         </div>
-        <ChatSidebarContent initialConversationId={conversationId} />
+        <div className="flex-1 min-h-0 overflow-hidden">
+          <ChatSidebarContent initialConversationId={conversationId} />
+        </div>
       </div>
     </main>
   );
