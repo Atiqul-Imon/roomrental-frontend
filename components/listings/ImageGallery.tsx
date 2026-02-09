@@ -144,14 +144,7 @@ export function ImageGallery({ images, title = 'Listing' }: ImageGalleryProps) {
             decoding="async"
           />
 
-          {/* Image Counter */}
-          {hasMultipleImages && (
-            <div className="absolute top-4 right-4 bg-black/70 backdrop-blur-sm px-4 py-2 rounded-full text-white text-sm font-semibold">
-              {selectedIndex + 1} / {images.length}
-            </div>
-          )}
-
-          {/* Navigation Arrows (Desktop) */}
+          {/* Navigation Arrows */}
           {hasMultipleImages && (
             <>
               <button
@@ -159,20 +152,20 @@ export function ImageGallery({ images, title = 'Listing' }: ImageGalleryProps) {
                   e.stopPropagation();
                   goToPrevious();
                 }}
-                className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/90 backdrop-blur-sm p-3 rounded-full shadow-large opacity-100 z-10"
+                className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 bg-white/80 backdrop-blur-sm p-1.5 sm:p-2.5 rounded-full shadow-sm opacity-100 z-10"
                 aria-label="Previous image"
               >
-                <ChevronLeft className="w-6 h-6 text-grey-900" />
+                <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5 text-grey-900" />
               </button>
               <button
                 onClick={(e) => {
                   e.stopPropagation();
                   goToNext();
                 }}
-                className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/90 backdrop-blur-sm p-3 rounded-full shadow-large opacity-100 z-10"
+                className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 bg-white/80 backdrop-blur-sm p-1.5 sm:p-2.5 rounded-full shadow-sm opacity-100 z-10"
                 aria-label="Next image"
               >
-                <ChevronRight className="w-6 h-6 text-grey-900" />
+                <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 text-grey-900" />
               </button>
             </>
           )}
@@ -290,10 +283,6 @@ export function ImageGallery({ images, title = 'Listing' }: ImageGalleryProps) {
                 <ChevronRight className="w-8 h-8" />
               </button>
 
-              {/* Image Counter */}
-              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/70 backdrop-blur-sm px-6 py-3 rounded-full text-white text-base font-semibold">
-                {selectedIndex + 1} of {images.length}
-              </div>
 
               {/* Thumbnail Navigation (Bottom) */}
               <div className="absolute bottom-16 left-1/2 -translate-x-1/2 max-w-4xl w-full px-4">
