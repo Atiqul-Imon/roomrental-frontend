@@ -67,7 +67,7 @@ function ListingCardComponent({ listing }: ListingCardProps) {
       >
       <article 
         ref={cardRef}
-        className={`bg-white border-refined border-accent-100 rounded-xl overflow-hidden card-hover-enhanced shadow-soft h-full flex flex-col group relative hover:border-accent-200 hover:shadow-medium transition-all duration-300 ${isNavigating ? 'opacity-75 pointer-events-none' : ''}`}
+        className={`bg-white border-refined border-accent-100 rounded-xl overflow-hidden shadow-soft h-full flex flex-col group relative ${isNavigating ? 'opacity-75 pointer-events-none' : ''}`}
       >
         {/* Loading Overlay */}
         {isNavigating && (
@@ -84,12 +84,11 @@ function ListingCardComponent({ listing }: ListingCardProps) {
             <img
               src={imageUrl}
               alt={listing.title}
-              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 ease-out"
+              className="w-full h-full object-cover"
               loading="lazy"
               decoding="async"
               fetchPriority="low"
               onError={() => setImageError(true)}
-              style={{ willChange: 'transform' }}
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center text-grey-400" role="img" aria-label="No image available">
@@ -141,22 +140,20 @@ function ListingCardComponent({ listing }: ListingCardProps) {
 
           {/* Price Badge */}
           <div className="absolute top-2 sm:top-3 right-2 sm:right-3">
-            <div className="bg-coral-500 text-white px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg shadow-medium backdrop-blur-sm">
-              <span className="text-lg sm:text-xl md:text-2xl font-bold" aria-label={`Price: $${listing.price} per month`}>
+            <div className="bg-gray-900/90 text-white px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-md shadow-sm backdrop-blur-sm">
+              <span className="text-sm sm:text-base font-semibold" aria-label={`Price: $${listing.price} per month`}>
                 ${listing.price}
               </span>
-              <span className="text-xs sm:text-sm text-white/95 font-semibold">/mo</span>
+              <span className="text-[10px] sm:text-xs text-white/80 font-medium">/mo</span>
             </div>
           </div>
 
-          {/* Gradient Overlay on Hover */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
         </div>
 
         {/* Content */}
         <div className="p-4 sm:p-5 md:p-6 flex-1 flex flex-col min-h-0">
           {/* Title */}
-          <h3 className="font-bold text-lg sm:text-xl md:text-2xl text-grey-900 line-clamp-2 mb-3 sm:mb-4 group-hover:text-accent-600 transition-colors duration-200 leading-snug flex-shrink-0">
+          <h3 className="font-bold text-lg sm:text-xl md:text-2xl text-grey-900 line-clamp-2 mb-3 sm:mb-4 group-hover:text-grey-700 transition-colors duration-200 leading-snug flex-shrink-0">
             {searchQuery ? (
               <span>{highlightSearchTermsReact(listing.title, searchQuery)}</span>
             ) : (
