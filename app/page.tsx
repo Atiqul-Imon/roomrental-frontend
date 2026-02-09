@@ -6,6 +6,7 @@ import { ListingList } from '@/components/listings/ListingList';
 import { ComparisonButton } from '@/components/listings/ComparisonButton';
 import { SearchBar } from '@/components/search/SearchBar';
 import { Suspense } from 'react';
+import Link from 'next/link';
 
 export const dynamic = 'force-dynamic';
 
@@ -43,36 +44,39 @@ export default function Home() {
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10 py-4 sm:py-5 md:py-6">
             <div className="max-w-5xl mx-auto">
               {/* Main Heading */}
-              <div className="text-center mb-3 sm:mb-4">
+              <div className="text-center mb-6 sm:mb-8">
                 <h1 className="font-heading text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-2 sm:mb-3 leading-tight tracking-tight">
                   <span className="text-white drop-shadow-[0_4px_12px_rgba(0,0,0,0.3)]">
                     Find Your Perfect
                   </span>
-                  <br />
-                  <span className="bg-gradient-to-r from-white via-pink-100 to-pink-50 bg-clip-text text-transparent drop-shadow-[0_4px_12px_rgba(0,0,0,0.2)]">
+                  <br className="md:hidden" />
+                  <span className="md:ml-2 bg-gradient-to-r from-white via-pink-100 to-pink-50 bg-clip-text text-transparent drop-shadow-[0_4px_12px_rgba(0,0,0,0.2)]">
                     Room Rental
                   </span>
                 </h1>
-                
-                <p className="text-base sm:text-lg md:text-xl text-white/90 max-w-3xl mx-auto leading-relaxed font-normal mb-4 sm:mb-5 drop-shadow-[0_2px_8px_rgba(0,0,0,0.2)]">
-                  Discover premium rooms for rent across the United States. 
-                  <span className="block mt-1 text-white/80">
-                    Safe, verified, and perfect for students and professionals.
-                  </span>
-                </p>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 mb-8 sm:mb-10 md:mb-12">
+                <Link
+                  href="/listings"
+                  className="w-full sm:w-auto bg-white text-gray-900 px-6 sm:px-8 py-3 sm:py-3.5 rounded-lg font-semibold text-sm sm:text-base shadow-lg hover:bg-gray-50 transition-colors duration-200 text-center"
+                >
+                  Find Your Room
+                </Link>
+                <Link
+                  href="/auth/register"
+                  className="w-full sm:w-auto bg-gray-900 text-white px-6 sm:px-8 py-3 sm:py-3.5 rounded-lg font-semibold text-sm sm:text-base shadow-lg hover:bg-gray-800 transition-colors duration-200 text-center"
+                >
+                  List Your Room
+                </Link>
               </div>
 
               {/* Integrated Search Bar */}
-              <div className="relative z-[100]">
-                <div className="max-w-4xl mx-auto">
-                  <div className="bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl p-2 sm:p-3 border border-white/20">
-                    <Suspense fallback={
-                      <div className="h-14 sm:h-16 bg-grey-100 rounded-xl animate-pulse" />
-                    }>
-                      <SearchBarContent />
-                    </Suspense>
-                  </div>
-                </div>
+              <div className="mb-6">
+                <Suspense fallback={<div className="h-12" />}>
+                  <SearchBarContent />
+                </Suspense>
               </div>
 
             </div>

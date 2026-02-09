@@ -102,6 +102,7 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
           amenities: Array.isArray(listing.amenities) ? listing.amenities : [],
           availabilityDate: listing.availabilityDate || new Date().toISOString(),
           status: listing.status || 'available',
+          propertyType: listing.propertyType || undefined,
           createdAt: listing.createdAt || new Date().toISOString(),
           updatedAt: listing.updatedAt || new Date().toISOString(),
         } as Listing;
@@ -240,241 +241,189 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
     <>
       <StructuredData data={structuredData} />
       <Header />
-      <main className="min-h-screen bg-gradient-comfort pb-32 md:pb-8">
-        <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-6 md:py-8 fade-in">
-          {/* Image Gallery - Enhanced with better shadow */}
-          <div className="mb-6 sm:mb-8 md:mb-10 bg-white rounded-2xl overflow-hidden shadow-xl border border-gray-100">
+      <main className="min-h-screen bg-gray-50 pb-32 md:pb-8">
+        <div className="w-full md:container md:mx-auto px-4 md:px-6 md:max-w-4xl py-4 md:py-6">
+          {/* Image Gallery */}
+          <div className="mb-4 md:mb-6">
             <ImageGallery images={data.images} title={data.title} />
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8 md:gap-10">
-            {/* Main Content */}
-            <div className="lg:col-span-2 space-y-6 sm:space-y-8">
-              {/* Title and Header Section - Enhanced */}
-              <div className="bg-white rounded-2xl p-6 sm:p-8 md:p-10 shadow-lg border border-gray-100 overflow-hidden relative">
-                {/* Decorative gradient background */}
-                <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-accent-100/30 to-transparent rounded-full blur-3xl -z-0"></div>
-                
-                <div className="relative z-10">
-                  <div className="flex items-start justify-between mb-8 sm:mb-10">
-                    <div className="flex-1 min-w-0 pr-6">
-                      <h1 className="font-heading text-xl sm:text-2xl md:text-3xl font-bold mb-6 text-gray-900 leading-tight tracking-tight">
-                        {data.title}
-                      </h1>
-                      <div className="flex items-center gap-4 text-gray-600 mb-8">
-                        <div className="flex items-center gap-3 min-w-0 bg-accent-50/80 backdrop-blur-sm px-4 py-2.5 rounded-xl border border-accent-200/50">
-                          <MapPin className="w-5 h-5 sm:w-6 sm:h-6 text-accent-600 flex-shrink-0" />
-                          <span className="font-semibold text-base sm:text-lg md:text-xl text-gray-800 truncate">
-                            {data.location.city}, {data.location.state}
-                            {data.location.zip && ` ${data.location.zip}`}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                    {isOwner && (
-                      <div className="flex items-center gap-3 flex-shrink-0 ml-6">
-                        <Link
-                          href={`/listings/${data._id}/edit`}
-                          className="p-3 border-2 border-gray-200 rounded-xl hover:bg-blue-50 hover:border-blue-300 transition-all duration-200 text-gray-600 hover:text-blue-600 shadow-sm hover:shadow-md"
-                          title="Edit listing"
-                        >
-                          <Edit className="w-5 h-5" />
-                        </Link>
-                        <button
-                          onClick={handleDelete}
-                          className="p-3 border-2 border-red-200 rounded-xl hover:bg-red-50 transition-all duration-200 text-red-600 hover:border-red-400 shadow-sm hover:shadow-md"
-                          title="Delete listing"
-                        >
-                          <Trash2 className="w-5 h-5" />
-                        </button>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Price Badge - Enhanced */}
-                  <div className="inline-flex items-center gap-3 px-6 py-4 bg-coral-500 text-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
-                    <div className="bg-white/20 p-2 rounded-lg">
-                      <DollarSign className="w-6 h-6" />
-                    </div>
-                    <div>
-                      <span className="text-4xl font-bold block leading-none">{data.price}</span>
-                      <span className="text-sm font-medium opacity-90">per month</span>
-                    </div>
-                  </div>
-
-                  {/* Quick Stats - New Section */}
-                  <div className="mt-8 grid grid-cols-3 gap-6 pt-8 border-t border-gray-200">
-                    <div className="flex items-center gap-4">
-                      <div className="p-3 bg-accent-100 rounded-xl flex-shrink-0">
-                        <Bed className="w-6 h-6 text-accent-600" />
-                      </div>
-                      <div>
-                        <p className="text-xs sm:text-sm text-gray-500 font-medium mb-1 uppercase tracking-wide">Bedrooms</p>
-                        <p className="text-xl sm:text-2xl font-bold text-gray-900 leading-none">{data.bedrooms}</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-4">
-                      <div className="p-3 bg-blue-100 rounded-xl flex-shrink-0">
-                        <Bath className="w-6 h-6 text-blue-600" />
-                      </div>
-                      <div>
-                        <p className="text-xs sm:text-sm text-gray-500 font-medium mb-1 uppercase tracking-wide">Bathrooms</p>
-                        <p className="text-xl sm:text-2xl font-bold text-gray-900 leading-none">{data.bathrooms}</p>
-                      </div>
-                    </div>
-                    {data.squareFeet && (
-                      <div className="flex items-center gap-4">
-                        <div className="p-3 bg-purple-100 rounded-xl flex-shrink-0">
-                          <Square className="w-6 h-6 text-purple-600" />
-                        </div>
-                        <div>
-                          <p className="text-xs sm:text-sm text-gray-500 font-medium mb-1 uppercase tracking-wide">Square Feet</p>
-                          <p className="text-xl sm:text-2xl font-bold text-gray-900 leading-none">{data.squareFeet.toLocaleString()}</p>
-                        </div>
-                      </div>
-                    )}
+          {/* Main Content Card */}
+          <div className="bg-white rounded-lg p-4 sm:p-6 md:p-8 shadow-sm">
+            {/* Header Section */}
+            <div className="mb-6 md:mb-8">
+              <div className="flex items-start justify-between mb-4 md:mb-5">
+                <div className="flex-1 min-w-0 pr-2 md:pr-4">
+                  <h1 className="text-2xl sm:text-3xl md:text-4xl font-semibold text-gray-900 mb-3 md:mb-4 leading-tight tracking-tight">
+                    {data.title}
+                  </h1>
+                  <div className="flex items-center gap-2 text-gray-600 text-sm md:text-base">
+                    <MapPin className="w-4 h-4 flex-shrink-0 text-gray-500" />
+                    <span>
+                      {data.location.city}, {data.location.state}
+                      {data.location.zip && ` ${data.location.zip}`}
+                    </span>
                   </div>
                 </div>
+                {isOwner && (
+                  <div className="flex items-center gap-2 flex-shrink-0">
+                    <Link
+                      href={`/listings/${data._id}/edit`}
+                      className="p-2 text-gray-600 hover:text-gray-900 transition-colors"
+                      title="Edit listing"
+                    >
+                      <Edit className="w-5 h-5" />
+                    </Link>
+                    <button
+                      onClick={handleDelete}
+                      className="p-2 text-gray-600 hover:text-red-600 transition-colors"
+                      title="Delete listing"
+                    >
+                      <Trash2 className="w-5 h-5" />
+                    </button>
+                  </div>
+                )}
               </div>
 
-              {/* Description - Enhanced */}
-              <div className="bg-white rounded-2xl p-8 sm:p-10 md:p-12 shadow-lg border border-gray-100">
-                <div className="flex items-center gap-3 mb-8">
-                  <h2 className="font-heading text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 leading-tight tracking-tight">
-                    Description
-                  </h2>
+              {/* Stats Row */}
+              <div className="flex items-center gap-6 md:gap-8 text-sm md:text-base text-gray-700 pt-3 border-t border-gray-100">
+                <div className="flex items-center gap-2">
+                  <span className="text-gray-900 font-semibold md:text-lg">{data.bathrooms}</span>
+                  <span className="text-gray-600">bathrooms</span>
                 </div>
-                <div className="prose prose-lg sm:prose-xl max-w-none">
-                  <p className="text-gray-700 whitespace-pre-line leading-[1.8] text-base sm:text-lg md:text-xl font-normal">
-                    {data.description}
-                  </p>
-                </div>
-              </div>
-
-              {/* Amenities - Enhanced for Students */}
-              {data.amenities.length > 0 && (
-                <div className="bg-white rounded-2xl p-8 sm:p-10 md:p-12 shadow-lg border border-gray-100">
-                  <div className="flex items-center gap-3 mb-8 sm:mb-10">
-                    <h2 className="font-heading text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 leading-tight tracking-tight">
-                      What's Included
-                    </h2>
-                  </div>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 sm:gap-5">
-                    {data.amenities.map((amenity, index) => {
-                      // Cycle through different color combinations for variety
-                      const colorVariants = [
-                        { bg: 'bg-accent-50', border: 'border-accent-200', text: 'text-accent-800', icon: 'text-accent-600', iconBg: 'bg-accent-100' },
-                        { bg: 'bg-coral-50', border: 'border-coral-200', text: 'text-coral-800', icon: 'text-coral-600', iconBg: 'bg-coral-100' },
-                        { bg: 'bg-primary-50', border: 'border-primary-200', text: 'text-primary-800', icon: 'text-primary-600', iconBg: 'bg-primary-100' },
-                        { bg: 'bg-amber-50', border: 'border-amber-200', text: 'text-amber-800', icon: 'text-amber-600', iconBg: 'bg-amber-100' },
-                        { bg: 'bg-purple-50', border: 'border-purple-200', text: 'text-purple-800', icon: 'text-purple-600', iconBg: 'bg-purple-100' },
-                        { bg: 'bg-pink-50', border: 'border-pink-200', text: 'text-pink-800', icon: 'text-pink-600', iconBg: 'bg-pink-100' },
-                      ];
-                      const colors = colorVariants[index % colorVariants.length];
-                      return (
-                        <div
-                          key={index}
-                          className={`group relative px-5 py-4 ${colors.bg} ${colors.text} rounded-2xl text-sm sm:text-base font-semibold border-2 ${colors.border} hover:border-opacity-80 hover:shadow-xl transition-all duration-300 hover:scale-105 hover:-translate-y-1 cursor-default flex flex-col items-center gap-3 text-center`}
-                        >
-                          <div className={`${colors.iconBg} p-2.5 rounded-xl group-hover:scale-110 transition-transform duration-300`}>
-                            <CheckCircle2 className={`w-5 h-5 sm:w-6 sm:h-6 ${colors.icon} flex-shrink-0`} />
-                          </div>
-                          <span className="leading-tight">{amenity}</span>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
-
-              {/* Availability - Enhanced */}
-              <div className="bg-gradient-to-br from-white to-accent-50/50 rounded-2xl p-8 sm:p-10 shadow-lg border-2 border-accent-100">
-                <div className="flex items-center gap-4">
-                  <div>
-                    <span className="text-sm sm:text-base text-gray-600 block mb-2 font-medium uppercase tracking-wide">Available from</span>
-                    <span className="font-bold text-2xl sm:text-3xl text-gray-900 leading-tight">{formattedDate}</span>
-                  </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-gray-900 font-semibold md:text-lg">{data.bedrooms}</span>
+                  <span className="text-gray-600">bedrooms</span>
                 </div>
               </div>
             </div>
 
-            {/* Sticky Sidebar - Enhanced for Students */}
-            <div className="lg:sticky lg:top-20 space-y-6 h-fit">
-              {/* Contact Card - Student-Friendly */}
-              <div className="bg-gradient-to-br from-white via-accent-50/40 to-white border-2 border-accent-200 rounded-2xl p-6 sm:p-8 shadow-xl overflow-hidden relative">
-                {/* Decorative element */}
-                <div className="absolute top-0 right-0 w-32 h-32 bg-accent-200/20 rounded-full blur-2xl"></div>
+            {/* Key Details - Two Column Format */}
+            <div className="mb-6 md:mb-8 pb-6 md:pb-8 border-b border-gray-200">
+              <div className="mb-4 md:mb-5">
+                <h2 className="text-lg md:text-xl font-semibold text-gray-900">Key Details</h2>
+              </div>
+              <div className="grid grid-cols-2 gap-y-3 md:gap-y-4 gap-x-4 md:gap-x-12 text-sm md:text-base">
+                <div className="text-gray-600 font-medium">Rent</div>
+                <div className="text-gray-900 font-semibold">${data.price.toLocaleString()} per month</div>
                 
-                <div className="relative z-10">
-                  <div className="flex items-center gap-4 mb-8">
-                    <div className="p-3 bg-accent-100 rounded-xl flex-shrink-0">
-                      <span className="text-2xl">👤</span>
+                {data.propertyType && (
+                  <>
+                    <div className="text-gray-600 font-medium">Property type</div>
+                    <div className="text-gray-900 font-semibold capitalize">{data.propertyType.replace('_', ' ')}</div>
+                  </>
+                )}
+                
+                {data.squareFeet && (
+                  <>
+                    <div className="text-gray-600 font-medium">Square feet</div>
+                    <div className="text-gray-900 font-semibold">{data.squareFeet.toLocaleString()}</div>
+                  </>
+                )}
+                
+                <div className="text-gray-600 font-medium">Available on</div>
+                <div className="text-gray-900 font-semibold">{formattedDate}</div>
+              </div>
+            </div>
+
+            {/* Amenities */}
+            {data.amenities.length > 0 && (
+              <div className="mb-6 md:mb-8 pb-6 md:pb-8 border-b border-gray-200">
+                <div className="mb-4 md:mb-5">
+                  <h2 className="text-lg md:text-xl font-semibold text-gray-900">Amenities</h2>
+                </div>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-4 md:gap-x-8 gap-y-3 md:gap-y-4">
+                  {data.amenities.map((amenity, index) => (
+                    <div
+                      key={index}
+                      className="flex items-center gap-2 md:gap-3 text-sm md:text-base"
+                    >
+                      <CheckCircle2 className="w-4 h-4 md:w-5 md:h-5 text-gray-500 flex-shrink-0" />
+                      <span className="text-gray-700 font-medium">{amenity}</span>
                     </div>
-                    <h2 className="font-heading text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 leading-tight tracking-tight">
-                      Meet Your Landlord
-                    </h2>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* About the room */}
+            <div className="mb-6 md:mb-8 pb-6 md:pb-8 border-b border-gray-200">
+              <div className="mb-5 md:mb-6">
+                <h2 className="text-lg md:text-xl font-semibold text-gray-900">About the room</h2>
+              </div>
+              <div className="prose prose-sm md:prose-base max-w-none">
+                <p className="text-gray-800 whitespace-pre-line leading-7 md:leading-8 text-base md:text-lg max-w-3xl">
+                  {data.description}
+                </p>
+              </div>
+            </div>
+
+            {/* About the roomies */}
+            <div className="mb-6 md:mb-8">
+              <div className="mb-4 md:mb-5">
+                <h2 className="text-lg md:text-xl font-semibold text-gray-900">About the roomies</h2>
+              </div>
+              <div className="flex items-start gap-3 md:gap-5">
+                {data.landlordId.profileImage ? (
+                  <div className="w-12 h-12 md:w-14 md:h-14 flex-shrink-0">
+                    <Image
+                      src={data.landlordId.profileImage}
+                      alt={data.landlordId.name}
+                      width={56}
+                      height={56}
+                      className="rounded-full border-2 border-gray-200 w-full h-full object-cover"
+                    />
                   </div>
-                  <div className="flex items-center gap-5 mb-6">
-                    {data.landlordId.profileImage ? (
-                      <Image
-                        src={data.landlordId.profileImage}
-                        alt={data.landlordId.name}
-                        width={80}
-                        height={80}
-                        className="rounded-full border-4 border-accent-300 shadow-lg flex-shrink-0"
-                      />
-                    ) : (
-                      <div className="w-20 h-20 bg-gradient-primary rounded-full flex items-center justify-center border-4 border-accent-300 shadow-lg flex-shrink-0">
-                        <span className="text-3xl font-bold text-white">
-                          {data.landlordId.name.charAt(0).toUpperCase()}
-                        </span>
-                      </div>
-                    )}
-                    <div className="flex-1 min-w-0">
-                      <Link
-                        href={`/profile/${data.landlordId._id}`}
-                        className="font-bold text-lg sm:text-xl text-gray-900 hover:text-accent-600 transition-colors block mb-2 truncate leading-tight"
-                      >
-                        {data.landlordId.name}
-                      </Link>
-                      <p className="text-sm sm:text-base text-gray-600 truncate leading-relaxed">{data.landlordId.email}</p>
-                    </div>
+                ) : (
+                  <div className="w-12 h-12 md:w-14 md:h-14 bg-gray-200 rounded-full flex items-center justify-center flex-shrink-0 border-2 border-gray-200">
+                    <span className="text-base md:text-lg font-semibold text-gray-600">
+                      {data.landlordId.name.charAt(0).toUpperCase()}
+                    </span>
                   </div>
-                  {(data.landlordId as any).bio && (
-                    <div className="mt-6 mb-6 p-5 bg-white/70 rounded-xl border border-accent-100">
-                      <p className="text-sm sm:text-base text-gray-700 leading-[1.75] font-normal">
-                        {(data.landlordId as any).bio}
-                      </p>
-                    </div>
-                  )}
-                  {!isOwner && (
-                    <div className="mt-6">
-                      <ContactButton
-                        landlordId={data.landlordId._id}
-                        landlordRole={data.landlordId.role}
-                        listingId={data._id}
-                        listingTitle={data.title}
-                      />
-                    </div>
+                )}
+                <div className="flex-1 min-w-0">
+                  <Link
+                    href={`/profile/${data.landlordId._id}`}
+                    className="font-semibold text-gray-900 hover:text-gray-700 transition-colors block mb-1.5 md:mb-2 text-base md:text-lg"
+                  >
+                    {data.landlordId.name}
+                  </Link>
+                  {(data.landlordId as any).bio ? (
+                    <p className="text-sm md:text-base text-gray-700 leading-6 md:leading-7">
+                      {(data.landlordId as any).bio}
+                    </p>
+                  ) : (
+                    <p className="text-sm md:text-base text-gray-600">{data.landlordId.email}</p>
                   )}
                 </div>
               </div>
             </div>
+
+            {/* Contact Section */}
+            {!isOwner && (
+              <div className="pt-4 md:pt-6 border-t border-gray-200">
+                <ContactButton
+                  landlordId={data.landlordId._id}
+                  landlordRole={data.landlordId.role}
+                  listingId={data._id}
+                  listingTitle={data.title}
+                />
+              </div>
+            )}
           </div>
-
-          {/* Mobile Contact Button - Sticky at bottom, above BottomNav */}
-          {!isOwner && (
-            <div className="fixed bottom-16 left-0 right-0 md:hidden bg-white border-t-2 border-accent-200 shadow-2xl p-4 z-40">
-              <ContactButton
-                landlordId={data.landlordId._id}
-                landlordRole={data.landlordId.role}
-                listingId={data._id}
-                listingTitle={data.title}
-              />
-            </div>
-          )}
         </div>
 
+        {/* Mobile Contact Button - Sticky at bottom, above BottomNav */}
+        {!isOwner && (
+          <div className="fixed bottom-16 left-0 right-0 md:hidden bg-white border-t border-gray-200 px-4 py-3 z-40">
+            <ContactButton
+              landlordId={data.landlordId._id}
+              landlordRole={data.landlordId.role}
+              listingId={data._id}
+              listingTitle={data.title}
+            />
+          </div>
+        )}
       </main>
       <Footer />
     </>

@@ -121,7 +121,7 @@ export function ImageGallery({ images, title = 'Listing' }: ImageGalleryProps) {
       <div className="relative w-full">
         {/* Main Image Display - Using aspect ratio for natural proportions */}
         <div
-          className="relative w-full aspect-[4/3] sm:aspect-[16/10] md:aspect-[16/9] bg-grey-100 cursor-pointer group overflow-hidden"
+          className="relative w-full aspect-[4/3] sm:aspect-[16/10] md:aspect-[16/9] bg-grey-100 cursor-pointer overflow-hidden"
           onClick={() => setIsLightboxOpen(true)}
           onTouchStart={onTouchStart}
           onTouchMove={onTouchMove}
@@ -139,18 +139,10 @@ export function ImageGallery({ images, title = 'Listing' }: ImageGalleryProps) {
           <img
             src={currentImage}
             alt={`${title} - Image ${selectedIndex + 1}`}
-            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+            className="w-full h-full object-cover"
             loading="eager"
             decoding="async"
           />
-          
-          {/* Overlay with controls hint */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-            <div className="flex items-center gap-3 text-white">
-              <Maximize2 className="w-6 h-6" />
-              <span className="font-semibold text-lg">Click to view full screen</span>
-            </div>
-          </div>
 
           {/* Image Counter */}
           {hasMultipleImages && (
@@ -167,7 +159,7 @@ export function ImageGallery({ images, title = 'Listing' }: ImageGalleryProps) {
                   e.stopPropagation();
                   goToPrevious();
                 }}
-                className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white backdrop-blur-sm p-3 rounded-full shadow-large opacity-0 group-hover:opacity-100 transition-all duration-300 hover:scale-110 z-10"
+                className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/90 backdrop-blur-sm p-3 rounded-full shadow-large opacity-100 z-10"
                 aria-label="Previous image"
               >
                 <ChevronLeft className="w-6 h-6 text-grey-900" />
@@ -177,7 +169,7 @@ export function ImageGallery({ images, title = 'Listing' }: ImageGalleryProps) {
                   e.stopPropagation();
                   goToNext();
                 }}
-                className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white backdrop-blur-sm p-3 rounded-full shadow-large opacity-0 group-hover:opacity-100 transition-all duration-300 hover:scale-110 z-10"
+                className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/90 backdrop-blur-sm p-3 rounded-full shadow-large opacity-100 z-10"
                 aria-label="Next image"
               >
                 <ChevronRight className="w-6 h-6 text-grey-900" />
@@ -195,10 +187,10 @@ export function ImageGallery({ images, title = 'Listing' }: ImageGalleryProps) {
                   key={index}
                   onClick={() => setSelectedIndex(index)}
                   className={cn(
-                    'relative flex-shrink-0 w-24 h-24 md:w-28 md:h-28 rounded-lg overflow-hidden border-2 transition-all duration-200',
+                    'relative flex-shrink-0 w-24 h-24 md:w-28 md:h-28 rounded-lg overflow-hidden border-2',
                     selectedIndex === index
                       ? 'border-primary-500 shadow-medium scale-105'
-                      : 'border-grey-200 hover:border-primary-300 hover:scale-105'
+                      : 'border-grey-200'
                   )}
                   aria-label={`View image ${index + 1}`}
                 >
@@ -233,7 +225,7 @@ export function ImageGallery({ images, title = 'Listing' }: ImageGalleryProps) {
               setIsLightboxOpen(false);
               setIsZoomed(false);
             }}
-            className="absolute top-4 right-4 z-50 bg-white/10 hover:bg-white/20 backdrop-blur-sm p-3 rounded-full text-white transition-all duration-200 hover:scale-110"
+            className="absolute top-4 right-4 z-50 bg-white/10 backdrop-blur-sm p-3 rounded-full text-white"
             aria-label="Close lightbox"
           >
             <X className="w-6 h-6" />
@@ -268,7 +260,7 @@ export function ImageGallery({ images, title = 'Listing' }: ImageGalleryProps) {
             </div>
 
             {/* Zoom Indicator */}
-            <div className="absolute bottom-20 left-1/2 -translate-x-1/2 bg-black/70 backdrop-blur-sm px-4 py-2 rounded-full text-white text-sm font-medium opacity-0 hover:opacity-100 transition-opacity">
+            <div className="absolute bottom-20 left-1/2 -translate-x-1/2 bg-black/70 backdrop-blur-sm px-4 py-2 rounded-full text-white text-sm font-medium">
               {isZoomed ? 'Click to zoom out' : 'Click to zoom in'}
               <ZoomIn className="w-4 h-4 inline-block ml-2" />
             </div>
@@ -282,7 +274,7 @@ export function ImageGallery({ images, title = 'Listing' }: ImageGalleryProps) {
                   e.stopPropagation();
                   goToPrevious();
                 }}
-                className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/10 hover:bg-white/20 backdrop-blur-sm p-4 rounded-full text-white transition-all duration-200 hover:scale-110 z-50"
+                className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/10 backdrop-blur-sm p-4 rounded-full text-white z-50"
                 aria-label="Previous image"
               >
                 <ChevronLeft className="w-8 h-8" />
@@ -292,7 +284,7 @@ export function ImageGallery({ images, title = 'Listing' }: ImageGalleryProps) {
                   e.stopPropagation();
                   goToNext();
                 }}
-                className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/10 hover:bg-white/20 backdrop-blur-sm p-4 rounded-full text-white transition-all duration-200 hover:scale-110 z-50"
+                className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/10 backdrop-blur-sm p-4 rounded-full text-white z-50"
                 aria-label="Next image"
               >
                 <ChevronRight className="w-8 h-8" />
@@ -315,10 +307,10 @@ export function ImageGallery({ images, title = 'Listing' }: ImageGalleryProps) {
                         setIsZoomed(false);
                       }}
                       className={cn(
-                        'relative flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden border-2 transition-all duration-200',
+                        'relative flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden border-2',
                         selectedIndex === index
                           ? 'border-white scale-110'
-                          : 'border-white/50 hover:border-white/80 hover:scale-105'
+                          : 'border-white/50'
                       )}
                       aria-label={`Go to image ${index + 1}`}
                     >
