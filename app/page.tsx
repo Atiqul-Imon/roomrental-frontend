@@ -60,13 +60,13 @@ export default function Home() {
               <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 mb-8 sm:mb-10 md:mb-12">
                 <Link
                   href="/listings"
-                  className="w-full sm:w-auto bg-white text-gray-900 px-6 sm:px-8 py-3 sm:py-3.5 rounded-lg font-semibold text-sm sm:text-base shadow-lg hover:bg-gray-50 transition-colors duration-200 text-center"
+                  className="w-auto min-w-[160px] sm:w-auto bg-white text-gray-900 px-6 sm:px-8 py-3 sm:py-3.5 rounded-lg font-semibold text-sm sm:text-base shadow-lg hover:bg-gray-50 transition-colors duration-200 text-center"
                 >
                   Find Your Room
                 </Link>
                 <Link
                   href="/auth/register"
-                  className="w-full sm:w-auto bg-gray-900 text-white px-6 sm:px-8 py-3 sm:py-3.5 rounded-lg font-semibold text-sm sm:text-base shadow-lg hover:bg-gray-800 transition-colors duration-200 text-center"
+                  className="w-auto min-w-[160px] sm:w-auto bg-gray-900 text-white px-6 sm:px-8 py-3 sm:py-3.5 rounded-lg font-semibold text-sm sm:text-base shadow-lg hover:bg-gray-800 transition-colors duration-200 text-center"
                 >
                   List Your Room
                 </Link>
