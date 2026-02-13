@@ -115,6 +115,13 @@ export interface Listing {
   nearbyTransit?: string[];
   viewCount?: number;
   distance?: number; // Distance in miles (for geospatial search)
+  // Additional listing details
+  billsIncluded?: boolean;
+  securityDeposit?: number;
+  roomFurnishing?: 'furnished' | 'unfurnished' | 'partially_furnished';
+  minStayMonths?: number;
+  maxStayMonths?: number;
+  currentRoomiesCount?: number;
 }
 
 export interface Conversation {

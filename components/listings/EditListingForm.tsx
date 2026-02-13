@@ -21,6 +21,13 @@ const listingSchema = z.object({
   address: z.string().optional(),
   amenities: z.array(z.string()).default([]),
   availabilityDate: z.string().min(1, 'Availability date is required'),
+  // Additional listing details
+  billsIncluded: z.boolean().optional(),
+  securityDeposit: z.number().min(0).optional(),
+  roomFurnishing: z.enum(['furnished', 'unfurnished', 'partially_furnished']).optional(),
+  minStayMonths: z.number().min(1).optional(),
+  maxStayMonths: z.number().min(1).optional(),
+  currentRoomiesCount: z.number().min(0).optional(),
 });
 
 type ListingFormData = z.infer<typeof listingSchema>;
@@ -56,6 +63,12 @@ export function EditListingForm({ listing, onSuccess }: EditListingFormProps) {
       address: listing.location.address || '',
       amenities: listing.amenities || [],
       availabilityDate: format(new Date(listing.availabilityDate), 'yyyy-MM-dd'),
+      billsIncluded: listing.billsIncluded ?? undefined,
+      securityDeposit: listing.securityDeposit ?? undefined,
+      roomFurnishing: listing.roomFurnishing || undefined,
+      minStayMonths: listing.minStayMonths ?? undefined,
+      maxStayMonths: listing.maxStayMonths ?? undefined,
+      currentRoomiesCount: listing.currentRoomiesCount ?? undefined,
     },
   });
 
@@ -230,6 +243,93 @@ export function EditListingForm({ listing, onSuccess }: EditListingFormProps) {
         {errors.price && (
           <p className="text-sm text-red-600 mt-1">{errors.price.message}</p>
         )}
+      </div>
+
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <label className="block text-sm font-medium mb-2">
+            Security Deposit ($)
+          </label>
+          <input
+            {...register('securityDeposit', { valueAsNumber: true })}
+            type="number"
+            min="0"
+            step="1"
+            className="w-full px-4 py-2 border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-ring"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium mb-2">
+            Bills Included
+          </label>
+          <select
+            {...register('billsIncluded', { setValueAs: (v) => v === 'true' || v === true })}
+            className="w-full px-4 py-2 border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-ring"
+          >
+            <option value="">Select</option>
+            <option value="true">Yes, bills included</option>
+            <option value="false">No, bills not included</option>
+          </select>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <label className="block text-sm font-medium mb-2">
+            Room Furnishing
+          </label>
+          <select
+            {...register('roomFurnishing')}
+            className="w-full px-4 py-2 border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-ring"
+          >
+            <option value="">Select</option>
+            <option value="furnished">Furnished</option>
+            <option value="unfurnished">Unfurnished</option>
+            <option value="partially_furnished">Partially Furnished</option>
+          </select>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium mb-2">
+            Current Roomies Count
+          </label>
+          <input
+            {...register('currentRoomiesCount', { valueAsNumber: true })}
+            type="number"
+            min="0"
+            step="1"
+            className="w-full px-4 py-2 border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-ring"
+          />
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <label className="block text-sm font-medium mb-2">
+            Minimum Stay (months)
+          </label>
+          <input
+            {...register('minStayMonths', { valueAsNumber: true })}
+            type="number"
+            min="1"
+            step="1"
+            className="w-full px-4 py-2 border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-ring"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium mb-2">
+            Maximum Stay (months)
+          </label>
+          <input
+            {...register('maxStayMonths', { valueAsNumber: true })}
+            type="number"
+            min="1"
+            step="1"
+            className="w-full px-4 py-2 border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-ring"
+          />
+        </div>
       </div>
 
       <div className="grid grid-cols-2 gap-4">

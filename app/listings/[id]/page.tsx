@@ -23,7 +23,7 @@ const ImageGallery = dynamic(() => import('@/components/listings/ImageGallery').
 import { ContactButton } from '@/components/listings/ContactButton';
 import { useAuth } from '@/lib/auth-context';
 import { format } from 'date-fns';
-import { MapPin, Calendar, DollarSign, Edit, Trash2, Bed, Bath, Square, CheckCircle2 } from 'lucide-react';
+import { MapPin, Calendar, DollarSign, Edit, Trash2, Bed, Bath, Square, CheckCircle2, Users, Wifi, Car, GraduationCap, Heart } from 'lucide-react';
 import Link from 'next/link';
 import { PageSkeleton } from '@/components/LoadingSkeleton';
 import { ErrorState } from '@/components/ui/ErrorState';
@@ -105,6 +105,13 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
           propertyType: listing.propertyType || undefined,
           createdAt: listing.createdAt || new Date().toISOString(),
           updatedAt: listing.updatedAt || new Date().toISOString(),
+          // Additional listing details
+          billsIncluded: listing.billsIncluded ?? undefined,
+          securityDeposit: listing.securityDeposit ?? undefined,
+          roomFurnishing: listing.roomFurnishing || undefined,
+          minStayMonths: listing.minStayMonths ?? undefined,
+          maxStayMonths: listing.maxStayMonths ?? undefined,
+          currentRoomiesCount: listing.currentRoomiesCount ?? undefined,
         } as Listing;
         
         console.log('Transformed listing:', transformedListing);
@@ -130,6 +137,72 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
         }
       })()
     : '';
+
+  // Calculate status tags
+  const statusTags = [];
+  if (data) {
+    const now = new Date();
+    const updatedAt = data.updatedAt ? new Date(data.updatedAt) : null;
+    const createdAt = data.createdAt ? new Date(data.createdAt) : null;
+    
+    // "Updated" tag if updated within last 7 days
+    if (updatedAt) {
+      const daysSinceUpdate = (now.getTime() - updatedAt.getTime()) / (1000 * 60 * 60 * 24);
+      if (daysSinceUpdate <= 7) {
+        statusTags.push({ label: 'Updated', color: 'bg-red-500' });
+      }
+    }
+    
+    // "Recently posted" tag if created within last 3 days
+    if (createdAt) {
+      const daysSinceCreation = (now.getTime() - createdAt.getTime()) / (1000 * 60 * 60 * 24);
+      if (daysSinceCreation <= 3) {
+        statusTags.push({ label: 'Recently posted', color: 'bg-blue-500' });
+      }
+    }
+    
+    // "Free to message" tag if listing is available
+    if (data.status === 'available') {
+      statusTags.push({ label: 'Free to message', color: 'bg-red-500' });
+    }
+  }
+
+  // Get room type subtitle
+  const getRoomTypeSubtitle = () => {
+    if (!data?.propertyType) return null;
+    const typeMap: Record<string, string> = {
+      'private_room': 'Private room',
+      'shared_room': 'Shared room',
+      'apartment': 'Apartment',
+      'house': 'House',
+      'studio': 'Studio',
+      'dorm': 'Dormitory',
+    };
+    const baseType = typeMap[data.propertyType] || data.propertyType.replace('_', ' ');
+    // Add bathroom info if available
+    if (data.bathrooms) {
+      return `${baseType}${data.bathrooms > 1 ? ' with shared bathroom' : ' with private bathroom'}`;
+    }
+    return baseType;
+  };
+
+  // Get amenity icon
+  const getAmenityIcon = (amenity: string) => {
+    const lowerAmenity = amenity.toLowerCase();
+    if (lowerAmenity.includes('parking') || lowerAmenity.includes('garage')) {
+      return <Car className="w-4 h-4 md:w-5 md:h-5 text-gray-500 flex-shrink-0" />;
+    }
+    if (lowerAmenity.includes('wifi') || lowerAmenity.includes('internet') || lowerAmenity.includes('wi-fi')) {
+      return <Wifi className="w-4 h-4 md:w-5 md:h-5 text-gray-500 flex-shrink-0" />;
+    }
+    if (lowerAmenity.includes('lgbtq') || lowerAmenity.includes('lgbt')) {
+      return <Heart className="w-4 h-4 md:w-5 md:h-5 text-gray-500 flex-shrink-0" />;
+    }
+    if (lowerAmenity.includes('student') || lowerAmenity.includes('university')) {
+      return <GraduationCap className="w-4 h-4 md:w-5 md:h-5 text-gray-500 flex-shrink-0" />;
+    }
+    return <CheckCircle2 className="w-4 h-4 md:w-5 md:h-5 text-gray-500 flex-shrink-0" />;
+  };
 
   const { success, error: showError } = useToast();
 
@@ -243,9 +316,38 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
       <Header />
       <main className="min-h-screen bg-gray-50 pb-32 md:pb-8">
         <div className="w-full md:container md:mx-auto px-4 md:px-6 md:max-w-4xl py-4 md:py-6">
-          {/* Image Gallery */}
-          <div className="mb-4 md:mb-6">
+          {/* Image Gallery with Profile Picture and Status Tags */}
+          <div className="mb-4 md:mb-6 relative">
             <ImageGallery images={data.images} title={data.title} />
+            
+            {/* Status Tags */}
+            {statusTags.length > 0 && (
+              <div className="absolute bottom-4 left-4 flex flex-wrap gap-2 z-10">
+                {statusTags.map((tag, index) => (
+                  <span
+                    key={index}
+                    className={`${tag.color} text-white text-xs font-semibold px-3 py-1 rounded-full shadow-md`}
+                  >
+                    {tag.label}
+                  </span>
+                ))}
+              </div>
+            )}
+            
+            {/* Profile Picture - Positioned top-right */}
+            {data.landlordId.profileImage && (
+              <div className="absolute top-4 right-4 z-10">
+                <div className="w-12 h-12 md:w-14 md:h-14 rounded-full border-4 border-white shadow-lg overflow-hidden bg-white">
+                  <Image
+                    src={data.landlordId.profileImage}
+                    alt={data.landlordId.name}
+                    width={56}
+                    height={56}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Main Content Card */}
@@ -254,9 +356,15 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
             <div className="mb-6 md:mb-8">
               <div className="flex items-start justify-between mb-4 md:mb-5">
                 <div className="flex-1 min-w-0 pr-2 md:pr-4">
-                  <h1 className="text-2xl sm:text-3xl md:text-4xl font-semibold text-gray-900 mb-3 md:mb-4 leading-tight tracking-tight">
+                  <h1 className="text-2xl sm:text-3xl md:text-4xl font-semibold text-gray-900 mb-2 md:mb-3 leading-tight tracking-tight">
                     {data.title}
                   </h1>
+                  {/* Room Type Subtitle */}
+                  {getRoomTypeSubtitle() && (
+                    <p className="text-sm md:text-base text-gray-600 mb-3 md:mb-4">
+                      {getRoomTypeSubtitle()}
+                    </p>
+                  )}
                   <div className="flex items-center gap-2 text-gray-600 text-sm md:text-base">
                     <MapPin className="w-4 h-4 flex-shrink-0 text-gray-500" />
                     <span>
@@ -285,13 +393,22 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
                 )}
               </div>
 
-              {/* Stats Row */}
+              {/* Stats Row with Icons */}
               <div className="flex items-center gap-6 md:gap-8 text-sm md:text-base text-gray-700 pt-3 border-t border-gray-100">
+                {data.currentRoomiesCount !== undefined && (
+                  <div className="flex items-center gap-2">
+                    <Users className="w-5 h-5 text-gray-500 flex-shrink-0" />
+                    <span className="text-gray-900 font-semibold md:text-lg">{data.currentRoomiesCount}</span>
+                    <span className="text-gray-600">roomies</span>
+                  </div>
+                )}
                 <div className="flex items-center gap-2">
+                  <Bath className="w-5 h-5 text-gray-500 flex-shrink-0" />
                   <span className="text-gray-900 font-semibold md:text-lg">{data.bathrooms}</span>
                   <span className="text-gray-600">bathrooms</span>
                 </div>
                 <div className="flex items-center gap-2">
+                  <Bed className="w-5 h-5 text-gray-500 flex-shrink-0" />
                   <span className="text-gray-900 font-semibold md:text-lg">{data.bedrooms}</span>
                   <span className="text-gray-600">bedrooms</span>
                 </div>
@@ -307,10 +424,31 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
                 <div className="text-gray-600 font-medium">Rent</div>
                 <div className="text-gray-900 font-semibold">${data.price.toLocaleString()} per month</div>
                 
+                {data.billsIncluded !== undefined && (
+                  <>
+                    <div className="text-gray-600 font-medium">Bills</div>
+                    <div className="text-gray-900 font-semibold">{data.billsIncluded ? 'Included' : 'Not included'}</div>
+                  </>
+                )}
+                
+                {data.securityDeposit !== undefined && data.securityDeposit > 0 && (
+                  <>
+                    <div className="text-gray-600 font-medium">Security deposit</div>
+                    <div className="text-gray-900 font-semibold">${data.securityDeposit.toLocaleString()}</div>
+                  </>
+                )}
+                
                 {data.propertyType && (
                   <>
                     <div className="text-gray-600 font-medium">Property type</div>
                     <div className="text-gray-900 font-semibold capitalize">{data.propertyType.replace('_', ' ')}</div>
+                  </>
+                )}
+                
+                {data.roomFurnishing && (
+                  <>
+                    <div className="text-gray-600 font-medium">Room furnishing</div>
+                    <div className="text-gray-900 font-semibold capitalize">{data.roomFurnishing.replace('_', ' ')}</div>
                   </>
                 )}
                 
@@ -323,6 +461,21 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
                 
                 <div className="text-gray-600 font-medium">Available on</div>
                 <div className="text-gray-900 font-semibold">{formattedDate}</div>
+                
+                {(data.minStayMonths !== undefined || data.maxStayMonths !== undefined) && (
+                  <>
+                    <div className="text-gray-600 font-medium">Stay length</div>
+                    <div className="text-gray-900 font-semibold">
+                      {data.minStayMonths !== undefined && data.maxStayMonths !== undefined
+                        ? `${data.minStayMonths} - ${data.maxStayMonths} months`
+                        : data.minStayMonths !== undefined
+                        ? `${data.minStayMonths}+ months`
+                        : data.maxStayMonths !== undefined
+                        ? `Up to ${data.maxStayMonths} months`
+                        : ''}
+                    </div>
+                  </>
+                )}
               </div>
             </div>
 
@@ -338,7 +491,7 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
                       key={index}
                       className="flex items-center gap-2 md:gap-3 text-sm md:text-base"
                     >
-                      <CheckCircle2 className="w-4 h-4 md:w-5 md:h-5 text-gray-500 flex-shrink-0" />
+                      {getAmenityIcon(amenity)}
                       <span className="text-gray-700 font-medium">{amenity}</span>
                     </div>
                   ))}
