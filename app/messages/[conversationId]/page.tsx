@@ -6,6 +6,7 @@ import { Suspense, useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { Header } from '@/components/layout/Header';
+import { Footer } from '@/components/layout/Footer';
 import { DashboardSidebar } from '@/components/layout/DashboardSidebar';
 import { ChatSidebarContent } from '@/components/chat/ChatSidebarContent';
 import { ChatWindow } from '@/components/chat/ChatWindow';
@@ -72,6 +73,9 @@ function ChatContent() {
           </div>
         </div>
       </div>
+      
+      {/* Footer */}
+      <Footer />
     </div>
   );
 }

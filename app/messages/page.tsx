@@ -6,6 +6,7 @@ import { Suspense, useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { Header } from '@/components/layout/Header';
+import { Footer } from '@/components/layout/Footer';
 import { DashboardSidebar } from '@/components/layout/DashboardSidebar';
 import { ChatWindow } from '@/components/chat/ChatWindow';
 import { ConversationList } from '@/components/chat/ConversationList';
@@ -153,6 +154,9 @@ function MessagesContent() {
           </div>
         </div>
       </div>
+      
+      {/* Footer */}
+      <Footer />
     </div>
   );
 }

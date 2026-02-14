@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { MobileBottomNav } from './MobileBottomNav';
 import { Header } from '@/components/layout/Header';
+import { Footer } from '@/components/layout/Footer';
 
 interface LandlordLayoutProps {
   children: ReactNode;
@@ -147,6 +148,9 @@ export function LandlordLayout({ children }: LandlordLayoutProps) {
         <main className="p-4 sm:p-6 bg-grey-50 min-h-screen pb-20 lg:pb-6">
           {children}
         </main>
+        
+        {/* Footer */}
+        <Footer />
       </div>
 
       {/* Mobile Bottom Navigation */}
