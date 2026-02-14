@@ -24,7 +24,6 @@ import {
 } from 'lucide-react';
 import { CommandPalette } from './CommandPalette';
 import { useCommandPalette } from '@/hooks/useCommandPalette';
-import { Footer } from '@/components/layout/Footer';
 
 interface AdminLayoutProps {
   children: ReactNode;
@@ -324,9 +323,6 @@ export function AdminLayout({ children }: AdminLayoutProps) {
 
         {/* Page Content */}
         <main className="p-6 min-h-screen">{children}</main>
-        
-        {/* Footer */}
-        <Footer />
       </div>
 
       {/* Command Palette */}
