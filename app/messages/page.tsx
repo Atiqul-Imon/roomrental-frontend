@@ -125,9 +125,11 @@ function MessagesContent() {
       <div className="h-[calc(100vh-8rem)] md:h-[calc(100vh-4rem)] overflow-hidden flex flex-col">
         {tab === 'chat' ? (
           <>
-            {/* Desktop: Show ChatWindow with side-by-side layout */}
+            {/* Desktop: Show ChatWindow with side-by-side layout - constrained container */}
             <div className="hidden md:block h-full">
-              <ChatWindow initialConversationId={conversationId || undefined} />
+              <div className="max-w-7xl mx-auto h-full">
+                <ChatWindow initialConversationId={conversationId || undefined} />
+              </div>
             </div>
             {/* Mobile: Show only conversation list, navigate to separate page for chat */}
             <div className="md:hidden flex-1 min-h-0 overflow-hidden">

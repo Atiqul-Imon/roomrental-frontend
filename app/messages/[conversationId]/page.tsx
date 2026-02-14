@@ -38,9 +38,11 @@ function ChatContent() {
 
   return (
     <main className="min-h-screen bg-white">
-      {/* Desktop: Show ChatWindow with side-by-side layout */}
+      {/* Desktop: Show ChatWindow with side-by-side layout - constrained container */}
       <div className="hidden md:block h-[calc(100vh-4rem)]">
-        <ChatWindow initialConversationId={conversationId} />
+        <div className="max-w-7xl mx-auto h-full">
+          <ChatWindow initialConversationId={conversationId} />
+        </div>
       </div>
       {/* Mobile: Show ChatSidebarContent with back button */}
       <div className="md:hidden h-[calc(100vh-4rem)] bg-white overflow-hidden flex flex-col">
