@@ -6,7 +6,6 @@ import { Suspense, useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { Header } from '@/components/layout/Header';
-import { Footer } from '@/components/layout/Footer';
 import { DashboardSidebar } from '@/components/layout/DashboardSidebar';
 import { ChatWindow } from '@/components/chat/ChatWindow';
 import { ConversationList } from '@/components/chat/ConversationList';
@@ -105,7 +104,7 @@ function MessagesContent() {
         <div className="flex-1 lg:pl-64 flex flex-col overflow-hidden">
           {/* Tabs Bar */}
           <div className="border-b border-grey-200 bg-white flex-shrink-0">
-            <div className="px-4 sm:px-6">
+            <div className="px-0">
               <div className="flex gap-1">
                 <button
                   onClick={() => handleTabChange('chat')}
@@ -137,9 +136,11 @@ function MessagesContent() {
           <div className="flex-1 overflow-hidden">
             {tab === 'chat' ? (
               <>
-                {/* Desktop: Show ChatWindow with side-by-side layout */}
+                {/* Desktop: Show ChatWindow constrained to 50% viewport width */}
                 <div className="hidden md:block h-full">
-                  <ChatWindow initialConversationId={conversationId || undefined} />
+                  <div className="w-[50vw] h-full mx-auto">
+                    <ChatWindow initialConversationId={conversationId || undefined} />
+                  </div>
                 </div>
                 {/* Mobile: Show only conversation list */}
                 <div className="md:hidden h-full overflow-hidden">
@@ -154,9 +155,6 @@ function MessagesContent() {
           </div>
         </div>
       </div>
-      
-      {/* Footer */}
-      <Footer />
     </div>
   );
 }

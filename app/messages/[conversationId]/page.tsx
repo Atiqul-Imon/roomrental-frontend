@@ -6,7 +6,6 @@ import { Suspense, useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { Header } from '@/components/layout/Header';
-import { Footer } from '@/components/layout/Footer';
 import { DashboardSidebar } from '@/components/layout/DashboardSidebar';
 import { ChatSidebarContent } from '@/components/chat/ChatSidebarContent';
 import { ChatWindow } from '@/components/chat/ChatWindow';
@@ -50,9 +49,11 @@ function ChatContent() {
         
         {/* Main Content Area */}
         <div className="flex-1 lg:pl-64 flex flex-col overflow-hidden">
-          {/* Desktop: Show ChatWindow with side-by-side layout */}
+          {/* Desktop: Show ChatWindow constrained to 50% viewport width */}
           <div className="hidden md:block h-full">
-            <ChatWindow initialConversationId={conversationId} />
+            <div className="w-[50vw] h-full mx-auto">
+              <ChatWindow initialConversationId={conversationId} />
+            </div>
           </div>
           
           {/* Mobile: Show ChatSidebarContent with back button */}
@@ -73,9 +74,6 @@ function ChatContent() {
           </div>
         </div>
       </div>
-      
-      {/* Footer */}
-      <Footer />
     </div>
   );
 }

@@ -5,7 +5,6 @@ import { api } from '@/lib/api';
 import { queryConfig } from '@/lib/query-config';
 import { chatApi } from '@/lib/chat-api';
 import { Header } from '@/components/layout/Header';
-import { Footer } from '@/components/layout/Footer';
 import { 
   Heart, 
   Search, 
@@ -324,7 +323,6 @@ export function StudentDashboard() {
           )}
         </div>
       </main>
-      <Footer />
     </>
   );
 }
