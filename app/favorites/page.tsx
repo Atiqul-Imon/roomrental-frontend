@@ -10,6 +10,7 @@ import { useEffect } from 'react';
 import { useAuth } from '@/lib/auth-context';
 import { api } from '@/lib/api';
 import { Header } from '@/components/layout/Header';
+import { Footer } from '@/components/layout/Footer';
 import { ListingCard } from '@/components/listings/ListingCard';
 import { Listing } from '@/types';
 import { Pagination } from '@/components/listings/Pagination';
@@ -96,6 +97,7 @@ export default function FavoritesPage() {
             </div>
           </div>
         </main>
+        <Footer />
       </>
     );
   }
@@ -138,6 +140,7 @@ export default function FavoritesPage() {
           )}
         </div>
       </main>
+      <Footer />
     </>
   );
 }
