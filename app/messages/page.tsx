@@ -91,70 +91,73 @@ function MessagesContent() {
   };
 
   return (
-    <DashboardSidebar>
-      <main className="min-h-screen bg-white">
-        {/* Tabs */}
-        <div className="border-b border-grey-200 bg-white sticky top-16 md:top-0 z-[50]">
-          <div className="container mx-auto px-3 sm:px-4">
-            <div className="flex gap-1">
-              <button
-                onClick={() => handleTabChange('chat')}
-                className={`px-6 py-4 font-semibold text-sm flex items-center gap-2 border-b-2 transition-colors ${
-                  tab === 'chat'
-                    ? 'border-accent-500 text-accent-600'
-                    : 'border-transparent text-grey-600 hover:text-grey-900'
-                }`}
-              >
-                <MessageCircle className="w-5 h-5" />
-                Chat
-              </button>
-              <button
-                onClick={() => handleTabChange('notifications')}
-                className={`px-6 py-4 font-semibold text-sm flex items-center gap-2 border-b-2 transition-colors ${
-                  tab === 'notifications'
-                    ? 'border-accent-500 text-accent-600'
-                    : 'border-transparent text-grey-600 hover:text-grey-900'
-                }`}
-              >
-                <Bell className="w-5 h-5" />
-                Notifications
-              </button>
+    <div className="min-h-screen bg-grey-50 flex flex-col">
+      {/* Header - Fixed at top */}
+      <Header />
+      
+      {/* Main Layout with Sidebar */}
+      <div className="flex flex-1 overflow-hidden">
+        {/* Dashboard Sidebar */}
+        <DashboardSidebar />
+        
+        {/* Main Content Area */}
+        <div className="flex-1 lg:pl-64 flex flex-col overflow-hidden">
+          {/* Tabs Bar */}
+          <div className="border-b border-grey-200 bg-white flex-shrink-0">
+            <div className="px-4 sm:px-6">
+              <div className="flex gap-1">
+                <button
+                  onClick={() => handleTabChange('chat')}
+                  className={`px-6 py-4 font-semibold text-sm flex items-center gap-2 border-b-2 transition-colors ${
+                    tab === 'chat'
+                      ? 'border-primary-500 text-primary-600'
+                      : 'border-transparent text-grey-600 hover:text-grey-900'
+                  }`}
+                >
+                  <MessageCircle className="w-5 h-5" />
+                  Chat
+                </button>
+                <button
+                  onClick={() => handleTabChange('notifications')}
+                  className={`px-6 py-4 font-semibold text-sm flex items-center gap-2 border-b-2 transition-colors ${
+                    tab === 'notifications'
+                      ? 'border-primary-500 text-primary-600'
+                      : 'border-transparent text-grey-600 hover:text-grey-900'
+                  }`}
+                >
+                  <Bell className="w-5 h-5" />
+                  Notifications
+                </button>
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Content */}
-        <div className="h-[calc(100vh-8rem)] md:h-[calc(100vh-4rem)] overflow-hidden flex flex-col">
-          {tab === 'chat' ? (
-            <>
-              {/* Desktop: Show ChatWindow with side-by-side layout - constrained container */}
-              <div className="hidden md:block h-full">
-                <div className="max-w-7xl mx-auto h-full">
+          {/* Content Area */}
+          <div className="flex-1 overflow-hidden">
+            {tab === 'chat' ? (
+              <>
+                {/* Desktop: Show ChatWindow with side-by-side layout */}
+                <div className="hidden md:block h-full">
                   <ChatWindow initialConversationId={conversationId || undefined} />
                 </div>
+                {/* Mobile: Show only conversation list */}
+                <div className="md:hidden h-full overflow-hidden">
+                  <ConversationListMobile conversationId={conversationId || undefined} />
+                </div>
+              </>
+            ) : (
+              <div className="h-full overflow-auto">
+                <NotificationList />
               </div>
-              {/* Mobile: Show only conversation list, navigate to separate page for chat */}
-              <div className="md:hidden flex-1 min-h-0 overflow-hidden">
-                <ConversationListMobile conversationId={conversationId || undefined} />
-              </div>
-            </>
-          ) : (
-            <div className="flex-1 min-h-0 overflow-hidden">
-              <NotificationList />
-            </div>
-          )}
+            )}
+          </div>
         </div>
-      </main>
-    </DashboardSidebar>
+      </div>
+    </div>
   );
 }
 
 export default function MessagesPage() {
-  return (
-    <>
-      <Header />
-      <MessagesContentWrapper />
-    </>
-  );
+  return <MessagesContentWrapper />;
 }
 

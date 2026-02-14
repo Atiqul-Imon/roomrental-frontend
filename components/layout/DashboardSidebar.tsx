@@ -1,6 +1,5 @@
 'use client';
 
-import { ReactNode } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
@@ -17,11 +16,7 @@ import {
   Heart,
 } from 'lucide-react';
 
-interface DashboardSidebarProps {
-  children?: ReactNode;
-}
-
-export function DashboardSidebar({ children }: DashboardSidebarProps) {
+export function DashboardSidebar() {
   const pathname = usePathname();
   const router = useRouter();
   const { user, logout } = useAuth();
@@ -131,10 +126,10 @@ export function DashboardSidebar({ children }: DashboardSidebarProps) {
   return (
     <>
       {/* Sidebar - Hidden on mobile, shown on desktop */}
-      <aside className="hidden lg:block fixed left-0 top-0 h-full w-64 bg-white border-r border-grey-200 z-[60]">
-        <div className="flex flex-col h-full pb-20 lg:pb-0">
+      <aside className="hidden lg:block fixed left-0 top-16 h-[calc(100vh-4rem)] w-64 bg-white border-r border-grey-200 z-50 overflow-y-auto">
+        <div className="flex flex-col h-full">
           {/* Header */}
-          <div className="p-6 border-b border-grey-200">
+          <div className="p-6 border-b border-grey-200 flex-shrink-0">
             <div className="flex items-center justify-between mb-4">
               <h1 className="text-2xl font-bold text-grey-900">Dashboard</h1>
             </div>
@@ -178,7 +173,7 @@ export function DashboardSidebar({ children }: DashboardSidebarProps) {
           </nav>
 
           {/* Footer */}
-          <div className="p-4 border-t border-grey-200 bg-white">
+          <div className="p-4 border-t border-grey-200 bg-white flex-shrink-0">
             <button
               onClick={handleLogout}
               className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-grey-700 hover:bg-red-50 hover:text-red-600 transition-all duration-200"
@@ -189,13 +184,6 @@ export function DashboardSidebar({ children }: DashboardSidebarProps) {
           </div>
         </div>
       </aside>
-
-      {/* Main Content with sidebar offset */}
-      {children && (
-        <div className="lg:pl-64">
-          {children}
-        </div>
-      )}
     </>
   );
 }
