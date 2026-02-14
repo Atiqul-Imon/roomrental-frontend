@@ -7,6 +7,7 @@ import { ComparisonButton } from '@/components/listings/ComparisonButton';
 import { SearchBar } from '@/components/search/SearchBar';
 import { Suspense } from 'react';
 import Link from 'next/link';
+import { Search, Plus } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
 
@@ -57,18 +58,51 @@ export default function Home() {
               </div>
 
               {/* Action Buttons */}
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 mb-8 sm:mb-10 md:mb-12">
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-5 mb-8 sm:mb-10 md:mb-12">
                 <Link
                   href="/listings"
-                  className="w-auto min-w-[160px] sm:w-auto bg-white text-gray-900 px-6 sm:px-8 py-3 sm:py-3.5 rounded-lg font-semibold text-sm sm:text-base shadow-lg hover:bg-gray-50 transition-colors duration-200 text-center"
+                  className="group relative w-auto min-w-[200px] sm:min-w-[240px] overflow-hidden bg-white text-gray-900 px-8 sm:px-10 py-4.5 sm:py-5 rounded-2xl font-semibold text-base sm:text-lg shadow-[0_8px_30px_rgba(0,0,0,0.12),0_2px_8px_rgba(0,0,0,0.08)] hover:shadow-[0_12px_40px_rgba(0,0,0,0.18),0_4px_12px_rgba(0,0,0,0.12)] hover:scale-[1.03] active:scale-[0.97] transition-all duration-300 ease-out text-center border border-gray-200/60 backdrop-blur-sm"
                 >
-                  Find Your Room
+                  {/* Shine effect */}
+                  <div className="absolute inset-0 -top-1/2 -left-1/2 w-[200%] h-[200%] bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-0 group-hover:opacity-100 group-hover:translate-x-[100%] transition-all duration-700 ease-in-out" />
+                  
+                  {/* Background gradient */}
+                  <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-white via-gray-50/50 to-white opacity-100 group-hover:opacity-0 transition-opacity duration-300" />
+                  <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-gray-50 to-white opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  
+                  {/* Content */}
+                  <span className="relative z-10 flex items-center justify-center gap-3">
+                    <div className="p-1.5 rounded-lg bg-gray-100/80 group-hover:bg-gray-200/90 transition-all duration-300 group-hover:scale-110">
+                      <Search className="w-4.5 h-4.5 text-gray-700 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-12" />
+                    </div>
+                    <span className="tracking-tight font-semibold">Find Your Room</span>
+                  </span>
+                  
+                  {/* Border glow on hover */}
+                  <div className="absolute inset-0 rounded-2xl border-2 border-gray-300/0 group-hover:border-gray-300/30 transition-all duration-300" />
                 </Link>
+                
                 <Link
                   href="/auth/register"
-                  className="w-auto min-w-[160px] sm:w-auto bg-gray-900 text-white px-6 sm:px-8 py-3 sm:py-3.5 rounded-lg font-semibold text-sm sm:text-base shadow-lg hover:bg-gray-800 transition-colors duration-200 text-center"
+                  className="group relative w-auto min-w-[200px] sm:min-w-[240px] overflow-hidden bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white px-8 sm:px-10 py-4.5 sm:py-5 rounded-2xl font-semibold text-base sm:text-lg shadow-[0_8px_30px_rgba(0,0,0,0.35),0_2px_8px_rgba(0,0,0,0.2)] hover:shadow-[0_12px_40px_rgba(0,0,0,0.45),0_4px_12px_rgba(0,0,0,0.25)] hover:scale-[1.03] active:scale-[0.97] transition-all duration-300 ease-out text-center border border-gray-700/40"
                 >
-                  List Your Room
+                  {/* Shine effect */}
+                  <div className="absolute inset-0 -top-1/2 -left-1/2 w-[200%] h-[200%] bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-0 group-hover:opacity-100 group-hover:translate-x-[100%] transition-all duration-700 ease-in-out" />
+                  
+                  {/* Background gradient */}
+                  <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-gray-800 via-gray-900 to-gray-800 opacity-100 group-hover:opacity-0 transition-opacity duration-300" />
+                  <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-gray-700 via-gray-900 to-gray-800 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  
+                  {/* Content */}
+                  <span className="relative z-10 flex items-center justify-center gap-3">
+                    <div className="p-1.5 rounded-lg bg-white/10 group-hover:bg-white/15 backdrop-blur-sm transition-all duration-300 group-hover:scale-110">
+                      <Plus className="w-4.5 h-4.5 text-white transition-transform duration-300 group-hover:rotate-90" />
+                    </div>
+                    <span className="tracking-tight font-semibold">List Your Room</span>
+                  </span>
+                  
+                  {/* Border glow on hover */}
+                  <div className="absolute inset-0 rounded-2xl border-2 border-white/0 group-hover:border-white/10 transition-all duration-300" />
                 </Link>
               </div>
 
