@@ -492,7 +492,7 @@ export function ChatWindow({ initialConversationId }: ChatWindowProps) {
             )}
 
             {/* Message Input - Fixed above bottom nav on mobile */}
-            <div className="flex-shrink-0 sticky bottom-0 lg:static bg-white z-10 safe-area-bottom">
+            <div className="flex-shrink-0 sticky bottom-0 lg:static bg-white z-10 safe-area-bottom pb-4 lg:pb-6">
               <MessageInput
                 onSendMessage={handleSendMessage}
                 onTyping={handleTyping}
