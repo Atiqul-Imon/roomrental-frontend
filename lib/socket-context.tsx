@@ -3,6 +3,7 @@
 import { createContext, useContext, useEffect, useState, useRef, ReactNode } from 'react';
 import { io, Socket } from 'socket.io-client';
 import { useAuth } from './auth-context';
+import { logger } from './logger';
 
 interface SocketContextType {
   socket: Socket | null;
@@ -55,16 +56,16 @@ export function SocketProvider({ children }: { children: ReactNode }) {
 
     newSocket.on('connect', () => {
       setIsConnected(true);
-      console.log('Socket connected');
+      logger.log('Socket connected');
     });
 
     newSocket.on('disconnect', () => {
       setIsConnected(false);
-      console.log('Socket disconnected');
+      logger.log('Socket disconnected');
     });
 
     newSocket.on('connect_error', (error) => {
-      console.error('Socket connection error:', error);
+      logger.error('Socket connection error:', error);
       setIsConnected(false);
     });
 

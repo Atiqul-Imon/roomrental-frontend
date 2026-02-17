@@ -1,6 +1,7 @@
 'use client';
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { logger } from './logger';
 
 interface User {
   id: string;
@@ -45,7 +46,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       try {
         setUser(JSON.parse(storedUser));
       } catch (error) {
-        console.error('Error parsing stored user:', error);
+        logger.error('Error parsing stored user:', error);
         localStorage.removeItem('user');
       }
     }
@@ -110,7 +111,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           localStorage.setItem('refreshToken', tokens.refreshToken);
           localStorage.setItem('user', JSON.stringify(userData));
         } catch (storageError) {
-          console.error('Failed to store authentication data:', storageError);
+          logger.error('Failed to store authentication data:', storageError);
           throw new Error('Failed to save authentication data. Please try again.');
         }
 
