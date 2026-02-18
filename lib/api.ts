@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { ErrorHandler } from './error-handler';
+import { trackApiCall } from './performance';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
 
@@ -10,7 +11,7 @@ export const api = axios.create({
   },
 });
 
-// Request interceptor to add auth token
+// Request interceptor to add auth token and track performance
 api.interceptors.request.use(
   (config) => {
     if (typeof window !== 'undefined') {
@@ -18,6 +19,9 @@ api.interceptors.request.use(
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       }
+
+      // Add start time for performance tracking
+      (config as any).__startTime = performance.now();
     }
     
     // Don't set Content-Type for FormData - let browser set it with boundary
@@ -32,11 +36,38 @@ api.interceptors.request.use(
   }
 );
 
-// Response interceptor for token refresh and error tracking
+// Response interceptor for token refresh, error tracking, and performance monitoring
 api.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    // Track API call performance
+    const config = response.config as any;
+    if (config.__startTime && typeof window !== 'undefined') {
+      const duration = performance.now() - config.__startTime;
+      trackApiCall(
+        config.method?.toUpperCase() || 'GET',
+        config.url || '',
+        duration,
+        response.status
+      );
+    }
+    return response;
+  },
   async (error) => {
     const originalRequest = error.config;
+
+    // Track API call performance even for errors
+    if (originalRequest && typeof window !== 'undefined') {
+      const config = originalRequest as any;
+      if (config.__startTime) {
+        const duration = performance.now() - config.__startTime;
+        trackApiCall(
+          config.method?.toUpperCase() || 'GET',
+          config.url || '',
+          duration,
+          error.response?.status
+        );
+      }
+    }
 
     // Track API errors (except 401 which is handled separately)
     if (error.response?.status !== 401) {
