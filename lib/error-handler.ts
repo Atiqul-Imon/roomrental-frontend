@@ -2,7 +2,8 @@
  * Centralized Error Handling Utility
  * 
  * Provides consistent error handling, logging, and user-friendly error messages
- * across the application.
+ * across the application. Includes extensible error reporting for future integration
+ * with services like Sentry.
  */
 
 import { logger } from './logger';
@@ -13,6 +14,140 @@ export interface AppError {
   statusCode?: number;
   details?: unknown;
   timestamp: string;
+  context?: ErrorContext;
+}
+
+export interface ErrorContext {
+  user?: {
+    id?: string;
+    email?: string;
+    role?: string;
+  };
+  route?: string;
+  url?: string;
+  userAgent?: string;
+  referrer?: string;
+  screenResolution?: string;
+  viewport?: string;
+  [key: string]: unknown;
+}
+
+export interface ErrorReporter {
+  reportError(error: AppError, context?: ErrorContext): void | Promise<void>;
+}
+
+/**
+ * Error reporting service with extensible architecture
+ * Can be extended to integrate with Sentry, LogRocket, etc.
+ */
+class ErrorReportingService {
+  private reporters: ErrorReporter[] = [];
+
+  /**
+   * Register an error reporter (e.g., Sentry)
+   */
+  registerReporter(reporter: ErrorReporter): void {
+    this.reporters.push(reporter);
+  }
+
+  /**
+   * Report error to all registered reporters
+   */
+  async reportError(error: AppError, context?: ErrorContext): Promise<void> {
+    // Always log to console
+    this.logToConsole(error, context);
+
+    // Report to external services
+    for (const reporter of this.reporters) {
+      try {
+        await reporter.reportError(error, context);
+      } catch (reportError) {
+        // Don't let reporter errors break the app
+        logger.error('Error reporter failed:', reportError);
+      }
+    }
+  }
+
+  /**
+   * Log error to console with structured format
+   */
+  private logToConsole(error: AppError, context?: ErrorContext): void {
+    const logData: Record<string, unknown> = {
+      message: error.message,
+      code: error.code,
+      status: error.statusCode,
+      timestamp: error.timestamp,
+    };
+
+    if (error.details) {
+      logData.details = error.details;
+    }
+
+    if (context) {
+      logData.context = context;
+    }
+
+    logger.error('🚨 Error tracked:', logData);
+  }
+}
+
+// Singleton instance
+const errorReportingService = new ErrorReportingService();
+
+/**
+ * Get browser context information
+ * Safe for SSR - returns empty object if browser APIs are not available
+ */
+function getBrowserContext(): Partial<ErrorContext> {
+  if (typeof window === 'undefined' || typeof document === 'undefined' || typeof navigator === 'undefined') {
+    return {};
+  }
+
+  try {
+    const location = window.location;
+    const screen = window.screen;
+    
+    if (!location) {
+      return {};
+    }
+
+    return {
+      url: location.href,
+      route: location.pathname,
+      referrer: document.referrer || undefined,
+      userAgent: navigator.userAgent,
+      screenResolution: screen ? `${screen.width}x${screen.height}` : undefined,
+      viewport: `${window.innerWidth}x${window.innerHeight}`,
+    };
+  } catch (error) {
+    // Fallback if any property access fails (e.g., during SSR)
+    return {};
+  }
+}
+
+/**
+ * Get user context from localStorage
+ */
+function getUserContext(): ErrorContext['user'] {
+  if (typeof window === 'undefined') {
+    return undefined;
+  }
+
+  try {
+    const userStr = localStorage.getItem('user');
+    if (userStr) {
+      const user = JSON.parse(userStr);
+      return {
+        id: user.id,
+        email: user.email,
+        role: user.role,
+      };
+    }
+  } catch (error) {
+    // Ignore parsing errors
+  }
+
+  return undefined;
 }
 
 export class ErrorHandler {
@@ -116,20 +251,43 @@ export class ErrorHandler {
   }
 
   /**
-   * Log error for debugging (only in development)
+   * Log error with context tracking
+   * Always logs errors (not just in development) for production debugging
    */
-  static logError(error: unknown, context?: string): void {
-    if (process.env.NODE_ENV !== 'production') {
-      const normalized = this.normalizeError(error);
-      const contextStr = context ? ` in ${context}` : '';
-      logger.error(`🚨 Error${contextStr}`, {
-        message: normalized.message,
-        code: normalized.code,
-        status: normalized.statusCode,
-        details: normalized.details,
-        timestamp: normalized.timestamp,
-      });
+  static async logError(error: unknown, context?: string | ErrorContext): Promise<void> {
+    const normalized = this.normalizeError(error);
+    
+    // Build error context
+    const browserContext = getBrowserContext();
+    const userContext = getUserContext();
+    const errorContext: ErrorContext = {
+      ...browserContext,
+    };
+
+    if (userContext) {
+      errorContext.user = userContext;
     }
+
+    // Add custom context if provided
+    if (context) {
+      if (typeof context === 'string') {
+        errorContext.customContext = context;
+      } else {
+        Object.assign(errorContext, context);
+      }
+    }
+
+    normalized.context = errorContext;
+
+    // Report error through the reporting service
+    await errorReportingService.reportError(normalized, errorContext);
+  }
+
+  /**
+   * Register an error reporter (e.g., Sentry)
+   */
+  static registerReporter(reporter: ErrorReporter): void {
+    errorReportingService.registerReporter(reporter);
   }
 
   /**
@@ -181,8 +339,8 @@ export class ErrorHandler {
  */
 export function useErrorHandler() {
   return {
-    handleError: (error: unknown, context?: string) => {
-      ErrorHandler.logError(error, context);
+    handleError: async (error: unknown, context?: string | ErrorContext) => {
+      await ErrorHandler.logError(error, context);
       return ErrorHandler.getUserMessage(error);
     },
     normalizeError: (error: unknown) => ErrorHandler.normalizeError(error),
@@ -190,6 +348,39 @@ export function useErrorHandler() {
     isRetryable: (error: unknown) => ErrorHandler.isRetryable(error),
     isNetworkError: (error: unknown) => ErrorHandler.isNetworkError(error),
   };
+}
+
+/**
+ * Initialize global error handlers
+ * Call this once in your app initialization (e.g., in layout.tsx or _app.tsx)
+ */
+export function initializeErrorTracking(): void {
+  if (typeof window === 'undefined') {
+    return;
+  }
+
+  // Handle unhandled errors
+  window.addEventListener('error', (event) => {
+    const error = event.error || new Error(event.message || 'Unknown error');
+    ErrorHandler.logError(error, {
+      source: 'window.onerror',
+      filename: event.filename,
+      lineno: event.lineno,
+      colno: event.colno,
+    });
+  });
+
+  // Handle unhandled promise rejections
+  window.addEventListener('unhandledrejection', (event) => {
+    const error = event.reason instanceof Error 
+      ? event.reason 
+      : new Error(String(event.reason || 'Unhandled promise rejection'));
+    
+    ErrorHandler.logError(error, {
+      source: 'unhandledrejection',
+      promise: true,
+    });
+  });
 }
 
 

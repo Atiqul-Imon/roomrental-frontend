@@ -32,13 +32,11 @@ export class ErrorBoundary extends Component<Props, State> {
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
     // Use centralized error handler for consistent logging
-    ErrorHandler.logError(error, 'ErrorBoundary');
-    
-    // Log additional error info using logger
-    logger.error('Error caught by boundary:', {
-      error: error.message,
-      stack: error.stack,
+    ErrorHandler.logError(error, {
+      source: 'ErrorBoundary',
       componentStack: errorInfo.componentStack,
+    }).catch(() => {
+      // Don't let error tracking break the app
     });
     
     // Handle chunk loading errors with retry

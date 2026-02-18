@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { ErrorHandler } from './error-handler';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
 
@@ -31,11 +32,23 @@ api.interceptors.request.use(
   }
 );
 
-// Response interceptor for token refresh
+// Response interceptor for token refresh and error tracking
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
+
+    // Track API errors (except 401 which is handled separately)
+    if (error.response?.status !== 401) {
+      ErrorHandler.logError(error, {
+        source: 'api.interceptor',
+        method: originalRequest?.method,
+        url: originalRequest?.url,
+        endpoint: originalRequest?.url?.replace(originalRequest?.baseURL || '', ''),
+      }).catch(() => {
+        // Don't let error tracking break the app
+      });
+    }
 
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
@@ -54,6 +67,14 @@ api.interceptors.response.use(
           return api(originalRequest);
         }
       } catch (refreshError) {
+        // Track refresh token errors
+        ErrorHandler.logError(refreshError, {
+          source: 'api.interceptor',
+          context: 'token_refresh_failed',
+        }).catch(() => {
+          // Don't let error tracking break the app
+        });
+
         localStorage.removeItem('accessToken');
         localStorage.removeItem('refreshToken');
         localStorage.removeItem('user');
