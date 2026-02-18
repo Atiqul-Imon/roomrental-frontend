@@ -314,8 +314,8 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
     <>
       <StructuredData data={structuredData} />
       <Header />
-      <main className="min-h-screen bg-gray-50 pb-32 md:pb-8">
-        <div className="w-full md:container md:mx-auto px-4 md:px-6 md:max-w-4xl py-4 md:py-6">
+      <main className="min-h-screen bg-gray-50 pb-32 md:pb-8 overflow-x-hidden">
+        <div className="w-full md:container md:mx-auto px-4 md:px-6 md:max-w-4xl py-4 md:py-6 max-w-full">
           {/* Image Gallery with Profile Picture and Status Tags */}
           <div className="mb-4 md:mb-6 relative">
             <ImageGallery images={data.images} title={data.title} />
@@ -351,7 +351,7 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
           </div>
 
           {/* Main Content Card */}
-          <div className="bg-white rounded-lg p-4 sm:p-6 md:p-8 shadow-sm">
+          <div className="bg-white rounded-lg p-4 sm:p-6 md:p-8 shadow-sm overflow-x-hidden">
             {/* Header Section */}
             <div className="mb-6 md:mb-8">
               <div className="flex items-start justify-between mb-4 md:mb-5">
@@ -394,23 +394,23 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
               </div>
 
               {/* Stats Row with Icons */}
-              <div className="flex items-center gap-6 md:gap-8 text-sm md:text-base text-gray-700 pt-3 border-t border-gray-100">
+              <div className="flex items-center flex-wrap gap-3 md:gap-8 text-sm md:text-base text-gray-700 pt-3 border-t border-gray-100">
                 {data.currentRoomiesCount !== undefined && (
-                  <div className="flex items-center gap-2">
-                    <Users className="w-5 h-5 text-gray-500 flex-shrink-0" />
-                    <span className="text-gray-900 font-semibold md:text-lg">{data.currentRoomiesCount}</span>
-                    <span className="text-gray-600">roomies</span>
+                  <div className="flex items-center gap-1.5 md:gap-2 flex-shrink-0">
+                    <Users className="w-4 h-4 md:w-5 md:h-5 text-gray-500 flex-shrink-0" />
+                    <span className="text-gray-900 font-semibold text-base md:text-lg whitespace-nowrap">{data.currentRoomiesCount}</span>
+                    <span className="text-gray-600 whitespace-nowrap">roomies</span>
                   </div>
                 )}
-                <div className="flex items-center gap-2">
-                  <Bath className="w-5 h-5 text-gray-500 flex-shrink-0" />
-                  <span className="text-gray-900 font-semibold md:text-lg">{data.bathrooms}</span>
-                  <span className="text-gray-600">bathrooms</span>
+                <div className="flex items-center gap-1.5 md:gap-2 flex-shrink-0">
+                  <Bath className="w-4 h-4 md:w-5 md:h-5 text-gray-500 flex-shrink-0" />
+                  <span className="text-gray-900 font-semibold text-base md:text-lg whitespace-nowrap">{data.bathrooms}</span>
+                  <span className="text-gray-600 whitespace-nowrap">bathrooms</span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <Bed className="w-5 h-5 text-gray-500 flex-shrink-0" />
-                  <span className="text-gray-900 font-semibold md:text-lg">{data.bedrooms}</span>
-                  <span className="text-gray-600">bedrooms</span>
+                <div className="flex items-center gap-1.5 md:gap-2 flex-shrink-0">
+                  <Bed className="w-4 h-4 md:w-5 md:h-5 text-gray-500 flex-shrink-0" />
+                  <span className="text-gray-900 font-semibold text-base md:text-lg whitespace-nowrap">{data.bedrooms}</span>
+                  <span className="text-gray-600 whitespace-nowrap">bedrooms</span>
                 </div>
               </div>
             </div>
