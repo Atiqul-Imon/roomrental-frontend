@@ -5,6 +5,8 @@
  * across the application.
  */
 
+import { logger } from './logger';
+
 export interface AppError {
   message: string;
   code?: string;
@@ -119,13 +121,14 @@ export class ErrorHandler {
   static logError(error: unknown, context?: string): void {
     if (process.env.NODE_ENV !== 'production') {
       const normalized = this.normalizeError(error);
-      console.group(`🚨 Error${context ? ` in ${context}` : ''}`);
-      console.error('Message:', normalized.message);
-      console.error('Code:', normalized.code);
-      console.error('Status:', normalized.statusCode);
-      console.error('Details:', normalized.details);
-      console.error('Timestamp:', normalized.timestamp);
-      console.groupEnd();
+      const contextStr = context ? ` in ${context}` : '';
+      logger.error(`🚨 Error${contextStr}`, {
+        message: normalized.message,
+        code: normalized.code,
+        status: normalized.statusCode,
+        details: normalized.details,
+        timestamp: normalized.timestamp,
+      });
     }
   }
 
