@@ -11,6 +11,7 @@ import { PageViewTracker } from '@/components/analytics/PageViewTracker';
 import { CookieConsent } from '@/components/gdpr/CookieConsent';
 import { ChunkErrorHandler } from './chunk-error-handler';
 import { ErrorTrackingInitializer } from '@/components/ErrorTrackingInitializer';
+import { PerformanceMonitoringInitializer } from '@/components/PerformanceMonitoringInitializer';
 import {
   generateOrganizationSchema,
   generateWebSiteSchema,
@@ -177,6 +178,7 @@ export default function RootLayout({
         <ErrorBoundary>
           <Providers>
             <ErrorTrackingInitializer />
+            <PerformanceMonitoringInitializer />
             <ChunkErrorHandler />
             <PageViewTracker />
             <div className="fade-in">
