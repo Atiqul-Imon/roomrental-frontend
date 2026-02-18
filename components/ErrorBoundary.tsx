@@ -4,6 +4,8 @@ import { Component, ReactNode } from 'react';
 import { AlertCircle } from 'lucide-react';
 import Link from 'next/link';
 import { isChunkLoadError, handleChunkLoadError } from '@/lib/chunk-retry';
+import { logger } from '@/lib/logger';
+import { ErrorHandler } from '@/lib/error-handler';
 
 interface Props {
   children: ReactNode;
@@ -29,7 +31,15 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    console.error('Error caught by boundary:', error, errorInfo);
+    // Use centralized error handler for consistent logging
+    ErrorHandler.logError(error, 'ErrorBoundary');
+    
+    // Log additional error info using logger
+    logger.error('Error caught by boundary:', {
+      error: error.message,
+      stack: error.stack,
+      componentStack: errorInfo.componentStack,
+    });
     
     // Handle chunk loading errors with retry
     if (isChunkLoadError(error)) {
@@ -72,7 +82,9 @@ export class ErrorBoundary extends Component<Props, State> {
             <p className="text-muted-foreground mb-6">
               {this.state.isChunkError
                 ? 'Failed to load required files. This usually happens due to network issues.'
-                : this.state.error?.message || 'An unexpected error occurred'}
+                : this.state.error
+                  ? ErrorHandler.getUserMessage(this.state.error)
+                  : 'An unexpected error occurred'}
             </p>
             <div className="flex gap-4 justify-center">
               <button
