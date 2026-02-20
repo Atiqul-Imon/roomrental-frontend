@@ -219,6 +219,30 @@ export function StudentDashboard() {
               </div>
             </Link>
 
+            {/* Become a Landlord CTA */}
+            <div className="bg-gradient-to-r from-coral-500 to-coral-600 rounded-xl p-6 text-white shadow-medium hover:shadow-lg transition-all duration-200 relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2" />
+              <div className="relative z-10">
+                <div className="flex items-center gap-4">
+                  <div className="p-3 bg-white/20 rounded-lg">
+                    <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-lg mb-1">Have a Room?</h3>
+                    <p className="text-sm text-white/90">Switch to Landlord mode</p>
+                  </div>
+                </div>
+                <div className="mt-4 flex items-center gap-2 text-sm font-medium">
+                  <span>Start listing your property</span>
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                  </svg>
+                </div>
+              </div>
+            </div>
+
             <Link
               href="/chat"
               className="bg-white rounded-xl p-6 border border-grey-200 shadow-medium hover:shadow-lg transition-all duration-200 relative"

@@ -31,6 +31,7 @@ interface AuthContextType {
   isAuthenticated: boolean;
   isAdmin: () => boolean;
   hasPermission: (permission: string) => boolean;
+  switchRole: (newRole: 'student' | 'landlord') => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -198,6 +199,41 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return false;
   };
 
+  const switchRole = async (newRole: 'student' | 'landlord') => {
+    const api = (await import('./api')).default;
+    
+    try {
+      const response = await api.post('/profile/switch-role', { newRole });
+      
+      if (response.data.success) {
+        const { user: updatedUser, tokens } = response.data.data;
+        
+        // Update tokens
+        localStorage.setItem('accessToken', tokens.accessToken);
+        localStorage.setItem('refreshToken', tokens.refreshToken);
+        
+        // Update user data
+        localStorage.setItem('user', JSON.stringify(updatedUser));
+        setUser(updatedUser);
+        
+        logger.log(`Role switched to ${newRole}`, { userId: updatedUser.id });
+      } else {
+        throw new Error(response.data.error || 'Failed to switch role');
+      }
+    } catch (error: any) {
+      logger.error('Role switch error:', error);
+      
+      // Throw error with proper message for UI to display
+      if (error.response?.data?.error) {
+        throw new Error(error.response.data.error);
+      }
+      if (error.response?.data?.message) {
+        throw new Error(error.response.data.message);
+      }
+      throw new Error(error.message || 'Failed to switch role. Please try again.');
+    }
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -209,6 +245,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         isAuthenticated: !!user,
         isAdmin,
         hasPermission,
+        switchRole,
       }}
     >
       {children}
