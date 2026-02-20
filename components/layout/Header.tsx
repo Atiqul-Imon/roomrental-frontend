@@ -27,6 +27,7 @@ import { NotificationDropdown } from '@/components/notifications/NotificationDro
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { chatApi } from '@/lib/chat-api';
 import { useSocket } from '@/lib/socket-context';
+import { RoleSwitcher } from '@/components/RoleSwitcher';
 
 export function Header() {
   const { user, isAuthenticated, logout } = useAuth();
@@ -217,6 +218,14 @@ export function Header() {
                     )}
                   </div>
                 </button>
+
+                {/* Role Switcher - Show for students and landlords */}
+                {(user?.role === 'student' || user?.role === 'landlord') && (
+                  <>
+                    <div className="h-6 w-px bg-grey-200 mx-1" />
+                    <RoleSwitcher variant="compact" />
+                  </>
+                )}
 
                 {user?.role === 'landlord' && (
                   <>
@@ -435,6 +444,17 @@ export function Header() {
                       </Link>
                     </>
                   )}
+                  
+                  {/* Role Switcher for Mobile */}
+                  {(user?.role === 'student' || user?.role === 'landlord') && (
+                    <div className="px-4 py-2">
+                      <RoleSwitcher 
+                        variant="full" 
+                        onSwitchComplete={() => setIsMobileMenuOpen(false)}
+                      />
+                    </div>
+                  )}
+                  
                   <button
                     onClick={() => {
                       handleChatClick();
