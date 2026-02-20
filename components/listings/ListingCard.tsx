@@ -1,9 +1,8 @@
 import Link from 'next/link';
 import { Listing } from '@/types';
-import { format } from 'date-fns';
 import { useState, useRef, useEffect, memo } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { MapPin, Calendar, Sparkles, Navigation, Check, Loader2 } from 'lucide-react';
+import { MapPin, Navigation, Check, Loader2 } from 'lucide-react';
 import { imageKitPresets } from '@/lib/imagekit';
 import { highlightSearchTermsReact } from '@/lib/search-highlight';
 import { useComparisonStore } from '@/lib/comparison-store';
@@ -20,7 +19,6 @@ function ListingCardComponent({ listing }: ListingCardProps) {
   const imageUrl = originalImageUrl.includes('ik.imagekit.io')
     ? imageKitPresets.card(originalImageUrl)
     : originalImageUrl;
-  const formattedDate = format(new Date(listing.availabilityDate), 'MMM dd, yyyy');
   const [imageError, setImageError] = useState(false);
   const [isNavigating, setIsNavigating] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
@@ -185,27 +183,13 @@ function ListingCardComponent({ listing }: ListingCardProps) {
           </div>
 
           {/* Description */}
-          <p className="text-sm sm:text-base text-grey-700 line-clamp-2 mb-4 sm:mb-5 flex-1 leading-relaxed font-normal min-h-[3rem]">
+          <p className="text-sm sm:text-base text-grey-700 line-clamp-2 flex-1 leading-relaxed font-normal min-h-[3rem]">
             {searchQuery ? (
               <span>{highlightSearchTermsReact(listing.description, searchQuery)}</span>
             ) : (
               listing.description
             )}
           </p>
-
-          {/* Footer Info */}
-          <div className="flex items-center justify-between pt-4 sm:pt-5 border-t border-accent-200 flex-shrink-0 mt-auto">
-            <div className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm text-grey-700">
-              <Calendar className="w-4 h-4 sm:w-4 sm:h-4 text-accent-600" />
-              <span className="font-semibold">{formattedDate}</span>
-            </div>
-            {listing.amenities.length > 0 && (
-              <div className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm text-coral-600" aria-label={`${listing.amenities.length} amenities`}>
-                <Sparkles className="w-4 h-4 sm:w-4 sm:h-4" />
-                <span className="font-semibold">{listing.amenities.length} amenities</span>
-              </div>
-            )}
-          </div>
         </div>
       </article>
       </div>

@@ -158,18 +158,22 @@ export function ProfileHero({ profile, ratingData, isOwnProfile }: ProfileHeroPr
               )}
 
               {/* Contact Info */}
-              <div className="flex flex-wrap justify-center md:justify-start gap-3 sm:gap-4 text-xs sm:text-sm">
-                <div className="flex items-center gap-1.5 sm:gap-2 text-grey-600">
-                  <Mail className="w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0" />
-                  <span className="break-all">{profile.email}</span>
+              {(isOwnProfile || profile.phone) && (
+                <div className="flex flex-wrap justify-center md:justify-start gap-3 sm:gap-4 text-xs sm:text-sm">
+                  {isOwnProfile && (
+                    <div className="flex items-center gap-1.5 sm:gap-2 text-grey-600">
+                      <Mail className="w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0" />
+                      <span className="break-all">{profile.email}</span>
+                    </div>
+                  )}
+                  {profile.phone && (
+                    <div className="flex items-center gap-1.5 sm:gap-2 text-grey-600">
+                      <Phone className="w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0" />
+                      <span>{profile.phone}</span>
+                    </div>
+                  )}
                 </div>
-                {profile.phone && (
-                  <div className="flex items-center gap-1.5 sm:gap-2 text-grey-600">
-                    <Phone className="w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0" />
-                    <span>{profile.phone}</span>
-                  </div>
-                )}
-              </div>
+              )}
             </div>
           </div>
 
