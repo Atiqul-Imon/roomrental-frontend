@@ -45,12 +45,16 @@ export function RoleSwitcher({ className = '', variant = 'full', onSwitchComplet
       await switchRole(targetRole);
       setShowModal(false);
       
-      // Navigate to appropriate dashboard
-      const redirectPath = targetRole === 'landlord' 
-        ? '/landlord/dashboard' 
-        : `/profile/${user.id}`;
+      // Small delay to ensure localStorage and state are updated
+      await new Promise(resolve => setTimeout(resolve, 300));
       
-      router.push(redirectPath);
+      // Navigate to appropriate dashboard after successful switch
+      // Use window.location for full page reload to prevent stale state issues
+      if (targetRole === 'landlord') {
+        window.location.href = '/landlord/dashboard';
+      } else {
+        window.location.href = `/profile/${user.id}`;
+      }
       
       if (onSwitchComplete) {
         onSwitchComplete();
@@ -58,7 +62,6 @@ export function RoleSwitcher({ className = '', variant = 'full', onSwitchComplet
     } catch (err: any) {
       console.error('Role switch error:', err);
       setError(err.response?.data?.error || err.message || 'Failed to switch role. Please try again.');
-    } finally {
       setIsSwitching(false);
     }
   };
