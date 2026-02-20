@@ -541,12 +541,10 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
                   >
                     {data.landlordId.name}
                   </Link>
-                  {(data.landlordId as any).bio ? (
+                  {(data.landlordId as any).bio && (
                     <p className="text-sm md:text-base text-gray-700 leading-6 md:leading-7">
                       {(data.landlordId as any).bio}
                     </p>
-                  ) : (
-                    <p className="text-sm md:text-base text-gray-600">{data.landlordId.email}</p>
                   )}
                 </div>
               </div>
