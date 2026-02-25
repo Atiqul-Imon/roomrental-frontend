@@ -138,35 +138,6 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
       })()
     : '';
 
-  // Calculate status tags
-  const statusTags = [];
-  if (data) {
-    const now = new Date();
-    const updatedAt = data.updatedAt ? new Date(data.updatedAt) : null;
-    const createdAt = data.createdAt ? new Date(data.createdAt) : null;
-    
-    // "Updated" tag if updated within last 7 days
-    if (updatedAt) {
-      const daysSinceUpdate = (now.getTime() - updatedAt.getTime()) / (1000 * 60 * 60 * 24);
-      if (daysSinceUpdate <= 7) {
-        statusTags.push({ label: 'Updated', color: 'bg-red-500' });
-      }
-    }
-    
-    // "Recently posted" tag if created within last 3 days
-    if (createdAt) {
-      const daysSinceCreation = (now.getTime() - createdAt.getTime()) / (1000 * 60 * 60 * 24);
-      if (daysSinceCreation <= 3) {
-        statusTags.push({ label: 'Recently posted', color: 'bg-blue-500' });
-      }
-    }
-    
-    // "Free to message" tag if listing is available
-    if (data.status === 'available') {
-      statusTags.push({ label: 'Free to message', color: 'bg-red-500' });
-    }
-  }
-
   // Get room type subtitle
   const getRoomTypeSubtitle = () => {
     if (!data?.propertyType) return null;
@@ -319,20 +290,6 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
           {/* Image Gallery with Profile Picture and Status Tags */}
           <div className="mb-4 md:mb-6 relative">
             <ImageGallery images={data.images} title={data.title} />
-            
-            {/* Status Tags */}
-            {statusTags.length > 0 && (
-              <div className="absolute bottom-4 left-4 flex flex-wrap gap-2 z-10">
-                {statusTags.map((tag, index) => (
-                  <span
-                    key={index}
-                    className={`${tag.color} text-white text-xs font-semibold px-3 py-1 rounded-full shadow-md`}
-                  >
-                    {tag.label}
-                  </span>
-                ))}
-              </div>
-            )}
             
             {/* Profile Picture - Positioned top-right */}
             {data.landlordId.profileImage && (
