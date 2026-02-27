@@ -287,24 +287,9 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
       <Header />
       <main className="min-h-screen bg-gray-50 pb-32 md:pb-8 overflow-x-hidden">
         <div className="w-full md:container md:mx-auto px-4 md:px-6 md:max-w-4xl py-4 md:py-6 max-w-full">
-          {/* Image Gallery with Profile Picture and Status Tags */}
+          {/* Image Gallery */}
           <div className="mb-4 md:mb-6 relative">
             <ImageGallery images={data.images} title={data.title} />
-            
-            {/* Profile Picture - Positioned top-right */}
-            {data.landlordId.profileImage && (
-              <div className="absolute top-4 right-4 z-10">
-                <div className="w-12 h-12 md:w-14 md:h-14 rounded-full border-4 border-white shadow-lg overflow-hidden bg-white">
-                  <Image
-                    src={data.landlordId.profileImage}
-                    alt={data.landlordId.name}
-                    width={56}
-                    height={56}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-              </div>
-            )}
           </div>
 
           {/* Main Content Card */}
