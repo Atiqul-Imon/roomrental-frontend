@@ -6,6 +6,7 @@
  */
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { BodySmall, Caption } from '@/components/ui/Typography';
 
 export function Footer() {
@@ -38,13 +39,14 @@ export function Footer() {
           {/* Brand */}
           <div>
             <Link href="/" className="inline-block mb-4">
-              <img 
-                src="/logo/rrlogo-optimized.png" 
-                alt="RoomRentalUSA" 
+              <Image
+                src="/logo/rrlogo-optimized.png"
+                alt="RoomRentalUSA"
                 width={48}
                 height={62}
+                quality={90}
+                sizes="(max-width: 640px) 48px, (max-width: 768px) 56px, 64px"
                 className="h-12 w-auto sm:h-14 md:h-16"
-                style={{ aspectRatio: '48/62' }}
               />
             </Link>
             <BodySmall className="text-gray-300 mb-4">
