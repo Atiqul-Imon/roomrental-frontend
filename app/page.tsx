@@ -32,16 +32,12 @@ export default function Home() {
     <>
       <Header />
       <main id="main-content" className="min-h-screen bg-gradient-comfort" role="main">
-        {/* Enterprise Hero Section - Optimized for Performance */}
-        <section className="relative z-40 min-h-[30vh] sm:min-h-[32vh] md:min-h-[35vh] flex items-center justify-center overflow-visible bg-gradient-to-br from-pink-400 via-pink-500 to-rose-500">
-          {/* Background Elements - Simplified for better performance */}
-          <div className="absolute inset-0 overflow-hidden pointer-events-none">
-            {/* Reduced gradient orbs - lighter blur for better performance */}
-            <div className="absolute -top-40 -left-40 w-96 h-96 bg-gradient-to-br from-pink-300 to-pink-400 rounded-full mix-blend-multiply blur-xl opacity-30" />
-            <div className="absolute -top-40 -right-40 w-96 h-96 bg-gradient-to-br from-rose-300 to-pink-400 rounded-full mix-blend-multiply blur-xl opacity-30" />
-            
-            {/* Simplified grid pattern - lighter effect */}
-            <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff06_1px,transparent_1px),linear-gradient(to_bottom,#ffffff06_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_0%,#000_70%,transparent_110%)]" />
+        {/* Enterprise Hero Section - Maximum Performance Optimized */}
+        <section className="relative z-40 min-h-[30vh] sm:min-h-[32vh] md:min-h-[35vh] flex items-center justify-center overflow-hidden bg-gradient-to-br from-pink-400 via-pink-500 to-rose-500">
+          {/* Minimal background effects for better LCP */}
+          <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
+            {/* Single optimized gradient orb */}
+            <div className="absolute -top-20 left-1/2 -translate-x-1/2 w-96 h-96 bg-gradient-to-br from-pink-300/20 to-rose-400/20 rounded-full blur-3xl" />
           </div>
 
           {/* Content Container */}
