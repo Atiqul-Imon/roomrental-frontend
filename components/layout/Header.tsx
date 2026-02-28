@@ -152,13 +152,15 @@ export function Header() {
             aria-label="Go to homepage"
           >
             <div className="relative">
-              <img 
-                src="/logo/rrlogo-optimized.png" 
-                alt="RoomRentalUSA" 
+              <Image
+                src="/logo/rrlogo-optimized.png"
+                alt="RoomRentalUSA"
                 width={48}
                 height={62}
+                priority
+                quality={90}
+                sizes="(max-width: 640px) 40px, (max-width: 768px) 48px, 56px"
                 className="h-10 w-auto sm:h-12 md:h-14 transition-transform duration-200 group-hover:scale-105 drop-shadow-sm"
-                style={{ aspectRatio: '48/62' }}
               />
             </div>
             <span className="hidden sm:block font-heading text-lg md:text-xl font-bold bg-gradient-to-r from-pink-600 to-rose-600 bg-clip-text text-transparent">
