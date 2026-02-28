@@ -35,24 +35,44 @@ const nextConfig: NextConfig = {
   compress: true,
   poweredByHeader: false,
   reactStrictMode: true,
+  
   // Performance optimizations
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production' ? {
       exclude: ['error', 'warn'],
     } : false,
   },
+  
+  // Modern browser targeting - removes legacy polyfills
+  transpilePackages: [],
+  
+  // Critical: Inline small CSS to reduce render-blocking
+  experimental: {
+    optimizePackageImports: ['lucide-react', '@tanstack/react-query', 'recharts'],
+    optimizeCss: true,
+    // Modern output reduces bundle size
+    optimizeServerReact: true,
+  },
   // Turbopack configuration (Next.js 16 default)
   turbopack: {
     // Turbopack handles optimization automatically
     // Package imports optimization is now built-in
   },
+  
   // Bundle optimization (for webpack fallback if needed)
   webpack: (config, { isServer }) => {
     if (!isServer) {
+      // Modern JS output - no legacy polyfills
+      config.resolve.alias = {
+        ...config.resolve.alias,
+      };
+      
       config.optimization = {
         ...config.optimization,
         moduleIds: 'deterministic',
         runtimeChunk: 'single',
+        usedExports: true, // Tree shaking
+        minimize: true,
           splitChunks: {
           chunks: 'all',
           // CRITICAL FIX: Reduced from 10 to 5 to prevent chunk loading timeouts
@@ -134,11 +154,6 @@ const nextConfig: NextConfig = {
       };
     }
     return config;
-  },
-  // Experimental features (some moved to stable in Next.js 16)
-  experimental: {
-    optimizePackageImports: ['lucide-react', '@tanstack/react-query', 'recharts'],
-    optimizeCss: true,
   },
 };
 
