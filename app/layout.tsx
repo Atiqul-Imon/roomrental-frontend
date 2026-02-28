@@ -4,14 +4,11 @@ import './globals.css';
 import { Providers } from './providers';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { BottomNav } from '@/components/layout/BottomNav';
-import { ChatWidgetWrapper } from '@/components/chat/ChatWidgetWrapper';
 import { StructuredData } from '@/components/seo/StructuredData';
 import { GoogleAnalytics } from '@/components/analytics/GoogleAnalytics';
 import { PageViewTracker } from '@/components/analytics/PageViewTracker';
-import { CookieConsent } from '@/components/gdpr/CookieConsent';
 import { ChunkErrorHandler } from './chunk-error-handler';
-import { ErrorTrackingInitializer } from '@/components/ErrorTrackingInitializer';
-import { PerformanceMonitoringInitializer } from '@/components/PerformanceMonitoringInitializer';
+import { ClientComponents } from '@/components/ClientComponents';
 import {
   generateOrganizationSchema,
   generateWebSiteSchema,
@@ -23,14 +20,21 @@ const inter = Inter({
   subsets: ['latin'],
   variable: '--font-body',
   display: 'swap',
+  preload: true,
+  fallback: ['system-ui', 'arial'],
+  adjustFontFallback: true,
 });
 
 // Heading font - Plus Jakarta Sans (for headings)
+// Optimized: Reduced from 8 weights to 2 for better performance
 const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ['latin'],
   variable: '--font-heading',
   display: 'swap',
-  weight: ['200', '300', '400', '500', '600', '700', '800'],
+  weight: ['600', '700'],
+  preload: true,
+  fallback: ['system-ui', 'arial'],
+  adjustFontFallback: true,
 });
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://roomrentalusa.com';
@@ -168,6 +172,13 @@ export default function RootLayout({
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        
+        {/* Performance: Resource hints for external resources */}
+        <link rel="preconnect" href="https://ik.imagekit.io" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="https://ik.imagekit.io" />
+        <link rel="preconnect" href="https://www.googletagmanager.com" />
+        <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
+        
         <StructuredData data={[organizationSchema, websiteSchema]} />
         <GoogleAnalytics measurementId={process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || ''} />
       </head>
@@ -177,16 +188,13 @@ export default function RootLayout({
         </a>
         <ErrorBoundary>
           <Providers>
-            <ErrorTrackingInitializer />
-            <PerformanceMonitoringInitializer />
             <ChunkErrorHandler />
             <PageViewTracker />
+            <ClientComponents />
             <div className="fade-in">
               {children}
             </div>
-            <ChatWidgetWrapper />
             <BottomNav />
-            <CookieConsent />
           </Providers>
         </ErrorBoundary>
       </body>

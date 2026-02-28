@@ -3,13 +3,17 @@
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { ListingList } from '@/components/listings/ListingList';
-import { ComparisonButton } from '@/components/listings/ComparisonButton';
 import { SearchBar } from '@/components/search/SearchBar';
 import { Suspense } from 'react';
 import Link from 'next/link';
 import { Search, Plus } from 'lucide-react';
+import dynamic from 'next/dynamic';
 
-export const dynamic = 'force-dynamic';
+// Dynamic import for non-critical comparison feature
+const ComparisonButton = dynamic(
+  () => import('@/components/listings/ComparisonButton').then(mod => ({ default: mod.ComparisonButton })),
+  { ssr: false }
+);
 
 function ListingListContent() {
   return (
@@ -28,17 +32,16 @@ export default function Home() {
     <>
       <Header />
       <main id="main-content" className="min-h-screen bg-gradient-comfort" role="main">
-        {/* Enterprise Hero Section */}
+        {/* Enterprise Hero Section - Optimized for Performance */}
         <section className="relative z-40 min-h-[30vh] sm:min-h-[32vh] md:min-h-[35vh] flex items-center justify-center overflow-visible bg-gradient-to-br from-pink-400 via-pink-500 to-rose-500">
-          {/* Background Elements */}
+          {/* Background Elements - Simplified for better performance */}
           <div className="absolute inset-0 overflow-hidden pointer-events-none">
-            {/* Large gradient orbs */}
-            <div className="absolute -top-40 -left-40 w-96 h-96 bg-gradient-to-br from-pink-300 to-pink-400 rounded-full mix-blend-multiply blur-3xl opacity-40" />
-            <div className="absolute -top-40 -right-40 w-96 h-96 bg-gradient-to-br from-rose-300 to-pink-400 rounded-full mix-blend-multiply blur-3xl opacity-40" />
-            <div className="absolute -bottom-40 left-1/2 w-96 h-96 bg-gradient-to-br from-pink-500 to-rose-500 rounded-full mix-blend-multiply blur-3xl opacity-40" />
+            {/* Reduced gradient orbs - lighter blur for better performance */}
+            <div className="absolute -top-40 -left-40 w-96 h-96 bg-gradient-to-br from-pink-300 to-pink-400 rounded-full mix-blend-multiply blur-xl opacity-30" />
+            <div className="absolute -top-40 -right-40 w-96 h-96 bg-gradient-to-br from-rose-300 to-pink-400 rounded-full mix-blend-multiply blur-xl opacity-30" />
             
-            {/* Grid pattern overlay */}
-            <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff08_1px,transparent_1px),linear-gradient(to_bottom,#ffffff08_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_0%,#000_70%,transparent_110%)]" />
+            {/* Simplified grid pattern - lighter effect */}
+            <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff06_1px,transparent_1px),linear-gradient(to_bottom,#ffffff06_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_0%,#000_70%,transparent_110%)]" />
           </div>
 
           {/* Content Container */}

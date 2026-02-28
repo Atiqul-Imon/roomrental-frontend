@@ -18,13 +18,14 @@ export function GoogleAnalytics({ measurementId }: GoogleAnalyticsProps) {
   return (
     <>
       {/* Google Analytics 4 - Global Site Tag (gtag.js) */}
+      {/* Performance: Load after page is interactive (lazyOnload) */}
       <Script
-        strategy="afterInteractive"
+        strategy="lazyOnload"
         src={`https://www.googletagmanager.com/gtag/js?id=${measurementId}`}
       />
       <Script
         id="google-analytics"
-        strategy="afterInteractive"
+        strategy="lazyOnload"
         dangerouslySetInnerHTML={{
           __html: `
             window.dataLayer = window.dataLayer || [];
