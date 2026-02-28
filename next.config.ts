@@ -7,14 +7,17 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
 
 const nextConfig: NextConfig = {
   images: {
-    // ImageKit handles all image optimization and transformations
-    // Keeping unoptimized: true is intentional - ImageKit provides:
-    // - On-the-fly resizing and cropping
-    // - Format conversion (WebP/AVIF)
-    // - Quality optimization
-    // - CDN delivery
-    // Next.js image optimization would be redundant
-    unoptimized: true,
+    // Next.js Image Optimization: Enabled for better performance
+    // ImageKit still handles CDN delivery, but Next.js provides:
+    // - Automatic WebP/AVIF conversion
+    // - Responsive image sizing
+    // - Lazy loading by default
+    // - Better caching strategy
+    unoptimized: false,
+    formats: ['image/avif', 'image/webp'],
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920],
+    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
+    minimumCacheTTL: 86400, // 24 hours
     remotePatterns: [
       {
         protocol: 'https',
@@ -50,13 +53,13 @@ const nextConfig: NextConfig = {
         ...config.optimization,
         moduleIds: 'deterministic',
         runtimeChunk: 'single',
-        splitChunks: {
+          splitChunks: {
           chunks: 'all',
-          // CRITICAL FIX: Reduced from 25 to 10 to prevent chunk loading timeouts
-          // Too many initial requests cause network congestion and timeouts
-          maxInitialRequests: 10,
+          // CRITICAL FIX: Reduced from 10 to 5 to prevent chunk loading timeouts
+          // Fewer initial requests = faster page load, less network congestion
+          maxInitialRequests: 5,
           // Increased minSize to reduce number of small chunks
-          minSize: 50000, // 50KB minimum (increased from 20KB)
+          minSize: 100000, // 100KB minimum (increased from 50KB for better performance)
           maxSize: 244000, // 244KB maximum to prevent huge chunks
           cacheGroups: {
             // React and React DOM - separate chunk (critical, always needed)
