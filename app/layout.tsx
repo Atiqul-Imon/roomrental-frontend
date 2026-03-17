@@ -88,11 +88,12 @@ export const metadata: Metadata = {
     description: defaultDescription,
     images: [
       {
-        url: `${siteUrl}/og-image.jpg`,
+        // Use existing optimized logo asset for social sharing
+        url: `${siteUrl}/logo/rrlogo-optimized.png`,
         width: 1200,
         height: 630,
         alt: `${siteName} - Room Rental Platform`,
-        type: 'image/jpeg',
+        type: 'image/png',
       },
     ],
   },
@@ -102,7 +103,8 @@ export const metadata: Metadata = {
     creator: '@roomrentalusa',
     title: `${siteName} - Find Your Perfect Room Rental`,
     description: defaultDescription,
-    images: [`${siteUrl}/og-image.jpg`],
+    // Align Twitter image with Open Graph image
+    images: [`${siteUrl}/logo/rrlogo-optimized.png`],
   },
   robots: {
     index: true,
