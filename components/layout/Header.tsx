@@ -145,25 +145,13 @@ export function Header() {
     <header className="sticky top-0 z-50 border-b border-pink-100 bg-white/95 backdrop-blur-md shadow-sm transition-all duration-300">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 md:h-18">
-          {/* Logo */}
+          {/* Text-only logo for both mobile and desktop */}
           <Link
             href="/"
             className="flex items-center gap-2 transition-all duration-200 hover:opacity-90 group"
             aria-label="Go to homepage"
           >
-            <div className="relative">
-              <Image
-                src="/logo/rrlogo-optimized.png"
-                alt="RoomRentalUSA"
-                width={48}
-                height={62}
-                priority
-                quality={90}
-                sizes="(max-width: 640px) 40px, (max-width: 768px) 48px, 56px"
-                className="h-10 w-auto sm:h-12 md:h-14 transition-transform duration-200 group-hover:scale-105 drop-shadow-sm"
-              />
-            </div>
-            <span className="hidden sm:block font-heading text-lg md:text-xl font-bold bg-gradient-to-r from-pink-600 to-rose-600 bg-clip-text text-transparent">
+            <span className="font-heading text-xl sm:text-2xl md:text-3xl font-bold bg-gradient-to-r from-pink-600 to-rose-600 bg-clip-text text-transparent tracking-tight">
               RoomRentalUSA
             </span>
           </Link>
