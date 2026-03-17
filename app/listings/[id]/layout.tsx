@@ -41,7 +41,8 @@ export async function generateMetadata({
 
     // Use first image for social preview - must be absolute URL
     // Facebook/Open Graph recommends 1200x630 for best display
-    let ogImageUrl = `${siteUrl}/og-image.jpg`;
+    // Fallback to existing optimized logo asset if no listing images are available
+    let ogImageUrl = `${siteUrl}/logo/rrlogo-optimized.png`;
     if (listing.images && listing.images.length > 0) {
       const firstImage = listing.images[0];
       // Ensure absolute URL and add OG-optimized size for ImageKit

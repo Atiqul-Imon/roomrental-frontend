@@ -51,7 +51,8 @@ export async function generateMetadata({
       type: 'website',
       images: [
         {
-          url: `${siteUrl}/og-image.jpg`,
+          // Use existing logo asset as default social image; listing pages may override via per-listing metadata
+          url: `${siteUrl}/logo/rrlogo-optimized.png`,
           width: 1200,
           height: 630,
           alt: title,
@@ -62,7 +63,7 @@ export async function generateMetadata({
       card: 'summary_large_image',
       title,
       description,
-      images: [`${siteUrl}/og-image.jpg`],
+      images: [`${siteUrl}/logo/rrlogo-optimized.png`],
     },
   };
 }

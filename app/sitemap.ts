@@ -51,23 +51,30 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: 'hourly',
       priority: 0.9,
     },
+    // High-value static content pages
     {
-      url: `${baseUrl}/auth/login`,
+      url: `${baseUrl}/help`,
       lastModified: new Date(),
       changeFrequency: 'monthly',
+      priority: 0.6,
+    },
+    {
+      url: `${baseUrl}/compare`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly',
+      priority: 0.7,
+    },
+    {
+      url: `${baseUrl}/privacy`,
+      lastModified: new Date(),
+      changeFrequency: 'yearly',
       priority: 0.3,
     },
     {
-      url: `${baseUrl}/auth/register`,
+      url: `${baseUrl}/terms`,
       lastModified: new Date(),
-      changeFrequency: 'monthly',
+      changeFrequency: 'yearly',
       priority: 0.3,
-    },
-    {
-      url: `${baseUrl}/auth/forgot-password`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.2,
     },
   ];
 
