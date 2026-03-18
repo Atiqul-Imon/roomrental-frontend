@@ -33,7 +33,7 @@ export default function Home() {
       <Header />
       <main id="main-content" className="min-h-screen bg-gradient-comfort" role="main">
         {/* Enterprise Hero Section - Maximum Performance Optimized */}
-        <section className="relative z-40 min-h-[30vh] sm:min-h-[32vh] md:min-h-[35vh] flex items-center justify-center overflow-hidden bg-gradient-to-br from-pink-400 via-pink-500 to-rose-500">
+        <section className="relative z-40 min-h-[30vh] sm:min-h-[32vh] md:min-h-[35vh] flex items-center justify-center overflow-x-hidden overflow-y-visible bg-gradient-to-br from-pink-400 via-pink-500 to-rose-500">
           {/* Minimal background effects for better LCP */}
           <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
             {/* Single optimized gradient orb */}
