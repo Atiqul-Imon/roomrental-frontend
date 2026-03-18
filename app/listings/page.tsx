@@ -53,7 +53,7 @@ export default function ListingsPage() {
       <Header />
       <main className="min-h-screen bg-gradient-comfort">
         {/* Hero Section */}
-        <section className="bg-gradient-to-br from-pink-400 via-pink-500 to-rose-500 text-white py-8 sm:py-10 md:py-12 relative overflow-hidden">
+        <section className="bg-gradient-to-br from-pink-400 via-pink-500 to-rose-500 text-white py-8 sm:py-10 md:py-12 relative z-40 overflow-x-hidden overflow-y-visible">
           {/* Decorative Background Elements */}
           <div className="absolute inset-0 opacity-20">
             <div className="absolute top-10 right-10 w-64 h-64 bg-gradient-to-br from-pink-300 to-pink-400 rounded-full blur-3xl animate-pulse" />
