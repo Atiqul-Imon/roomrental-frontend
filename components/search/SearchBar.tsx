@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { api } from '@/lib/api';
 import { Search, X, Clock, TrendingUp } from 'lucide-react';
@@ -27,7 +28,16 @@ export function SearchBar() {
     'San Francisco, CA',
   ]);
   const searchRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
   const debounceRef = useRef<NodeJS.Timeout | null>(null);
+
+  // For the portal-rendered dropdown: keep it aligned to the input.
+  const [dropdownPosition, setDropdownPosition] = useState<{ top: number; left: number; width: number }>({
+    top: 0,
+    left: 0,
+    width: 0,
+  });
 
   // Load recent searches from localStorage
   useEffect(() => {
@@ -43,9 +53,11 @@ export function SearchBar() {
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
-        setShowSuggestions(false);
-      }
+      const target = event.target as Node;
+      const clickedInsideSearch = !!searchRef.current && searchRef.current.contains(target);
+      const clickedInsideDropdown = !!dropdownRef.current && dropdownRef.current.contains(target);
+
+      if (!clickedInsideSearch && !clickedInsideDropdown) setShowSuggestions(false);
     };
 
     document.addEventListener('mousedown', handleClickOutside);
@@ -100,6 +112,36 @@ export function SearchBar() {
     };
   }, [searchTerm, recentSearches.length, popularSearches.length]);
 
+  useEffect(() => {
+    if (!showSuggestions) return;
+    if (typeof window === 'undefined') return;
+
+    const updatePosition = () => {
+      if (!inputRef.current) return;
+      const rect = inputRef.current.getBoundingClientRect();
+
+      // Tailwind mt-2 (8px) and sm:mt-3 (12px). Approximate based on sm breakpoint.
+      const isSm = window.matchMedia('(min-width: 640px)').matches;
+      const offset = isSm ? 12 : 8;
+
+      setDropdownPosition({
+        top: rect.bottom + offset,
+        left: rect.left,
+        width: rect.width,
+      });
+    };
+
+    updatePosition();
+    window.addEventListener('resize', updatePosition);
+    // Capture scroll on any ancestor to keep dropdown aligned.
+    window.addEventListener('scroll', updatePosition, true);
+
+    return () => {
+      window.removeEventListener('resize', updatePosition);
+      window.removeEventListener('scroll', updatePosition, true);
+    };
+  }, [showSuggestions, isLoading, searchTerm, recentSearches.length, popularSearches.length, suggestions.cities.length, suggestions.states.length]);
+
   const handleSearch = (value?: string) => {
     const term = value || searchTerm;
     const params = new URLSearchParams(searchParams.toString());
@@ -147,6 +189,7 @@ export function SearchBar() {
           <Search className="w-4 h-4 sm:w-5 sm:h-5 text-grey-400" />
         </div>
         <input
+          ref={inputRef}
           type="text"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
@@ -184,116 +227,127 @@ export function SearchBar() {
         )}
       </div>
 
-      {showSuggestions && (isLoading || allSuggestions.length > 0 || (searchTerm.length === 0 && (recentSearches.length > 0 || popularSearches.length > 0))) && (
-        <div 
-          id="search-suggestions"
-          className="absolute z-[100000] w-full mt-2 sm:mt-3 bg-white border border-grey-200 rounded-xl shadow-large max-h-[60vh] sm:max-h-96 overflow-y-auto"
-          role="listbox"
-          aria-label="Search suggestions"
-        >
-          {isLoading ? (
-            <div className="p-6 text-center text-grey-500" role="status" aria-live="polite">
-              <div className="inline-block animate-spin rounded-full h-6 w-6 border-2 border-primary-500 border-t-transparent"></div>
-              <p className="mt-2 text-sm">Searching...</p>
-            </div>
-          ) : (
-            <>
-              {/* Location Suggestions */}
-              {allSuggestions.length > 0 && (
-                <div className="py-2">
-                  <div className="px-5 py-2">
-                    <BodySmall className="text-grey-500 font-medium uppercase tracking-wider">
-                      Locations
-                    </BodySmall>
+      {showSuggestions &&
+        (isLoading ||
+          allSuggestions.length > 0 ||
+          (searchTerm.length === 0 && (recentSearches.length > 0 || popularSearches.length > 0))) &&
+        (typeof document !== 'undefined'
+          ? createPortal(
+              <div
+                ref={dropdownRef}
+                id="search-suggestions"
+                className="bg-white border border-grey-200 rounded-xl shadow-large max-h-[60vh] sm:max-h-96 overflow-y-auto"
+                role="listbox"
+                aria-label="Search suggestions"
+                style={{
+                  position: 'fixed',
+                  top: dropdownPosition.top,
+                  left: dropdownPosition.left,
+                  width: dropdownPosition.width,
+                  zIndex: 100000,
+                }}
+              >
+                {isLoading ? (
+                  <div className="p-6 text-center text-grey-500" role="status" aria-live="polite">
+                    <div className="inline-block animate-spin rounded-full h-6 w-6 border-2 border-primary-500 border-t-transparent"></div>
+                    <p className="mt-2 text-sm">Searching...</p>
                   </div>
-                  <ul>
-                    {allSuggestions.map((suggestion, index) => (
-                      <li key={index} role="option">
-                        <button
-                          onClick={() => handleSuggestionClick(suggestion.type, suggestion.value)}
-                          className="w-full text-left px-4 sm:px-5 py-2.5 sm:py-3 hover:bg-primary-50 transition-colors duration-200 focus:bg-primary-50 focus:outline-none group min-h-[44px] flex items-center"
-                          aria-label={`Select ${suggestion.value} (${suggestion.type})`}
-                        >
-                          <div className="flex items-center justify-between">
-                            <span className="text-sm font-semibold text-grey-900 group-hover:text-primary-600">
-                              {suggestion.value}
-                            </span>
-                            <span className="text-xs font-medium px-2 py-1 rounded-full bg-grey-100 text-grey-600 group-hover:bg-primary-100 group-hover:text-primary-600">
-                              {suggestion.type === 'city' ? 'City' : 'State'}
-                            </span>
-                          </div>
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
+                ) : (
+                  <>
+                    {/* Location Suggestions */}
+                    {allSuggestions.length > 0 && (
+                      <div className="py-2">
+                        <div className="px-5 py-2">
+                          <BodySmall className="text-grey-500 font-medium uppercase tracking-wider">
+                            Locations
+                          </BodySmall>
+                        </div>
+                        <ul>
+                          {allSuggestions.map((suggestion, index) => (
+                            <li key={index} role="option">
+                              <button
+                                onClick={() => handleSuggestionClick(suggestion.type, suggestion.value)}
+                                className="w-full text-left px-4 sm:px-5 py-2.5 sm:py-3 hover:bg-primary-50 transition-colors duration-200 focus:bg-primary-50 focus:outline-none group min-h-[44px] flex items-center"
+                                aria-label={`Select ${suggestion.value} (${suggestion.type})`}
+                              >
+                                <div className="flex items-center justify-between">
+                                  <span className="text-sm font-semibold text-grey-900 group-hover:text-primary-600">
+                                    {suggestion.value}
+                                  </span>
+                                  <span className="text-xs font-medium px-2 py-1 rounded-full bg-grey-100 text-grey-600 group-hover:bg-primary-100 group-hover:text-primary-600">
+                                    {suggestion.type === 'city' ? 'City' : 'State'}
+                                  </span>
+                                </div>
+                              </button>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
 
-              {/* Recent Searches */}
-              {recentSearches.length > 0 && searchTerm.length === 0 && (
-                <div className="py-2 border-t border-grey-200">
-                  <div className="px-5 py-2 flex items-center gap-2">
-                    <Clock className="w-4 h-4 text-grey-400" />
-                    <BodySmall className="text-grey-500 font-medium">
-                      Recent Searches
-                    </BodySmall>
-                  </div>
-                  <ul>
-                    {recentSearches.map((search, index) => (
-                      <li key={index} role="option">
-                        <button
-                          onClick={() => {
-                            setSearchTerm(search);
-                            handleSearch(search);
-                          }}
-                          className="w-full text-left px-5 py-2.5 hover:bg-grey-50 transition-colors duration-200 focus:bg-grey-50 focus:outline-none text-sm text-grey-700"
-                        >
-                          {search}
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
+                    {/* Recent Searches */}
+                    {recentSearches.length > 0 && searchTerm.length === 0 && (
+                      <div className="py-2 border-t border-grey-200">
+                        <div className="px-5 py-2 flex items-center gap-2">
+                          <Clock className="w-4 h-4 text-grey-400" />
+                          <BodySmall className="text-grey-500 font-medium">Recent Searches</BodySmall>
+                        </div>
+                        <ul>
+                          {recentSearches.map((search, index) => (
+                            <li key={index} role="option">
+                              <button
+                                onClick={() => {
+                                  setSearchTerm(search);
+                                  handleSearch(search);
+                                }}
+                                className="w-full text-left px-5 py-2.5 hover:bg-grey-50 transition-colors duration-200 focus:bg-grey-50 focus:outline-none text-sm text-grey-700"
+                              >
+                                {search}
+                              </button>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
 
-              {/* Popular Searches */}
-              {searchTerm.length === 0 && allSuggestions.length === 0 && recentSearches.length === 0 && (
-                <div className="py-2">
-                  <div className="px-5 py-2 flex items-center gap-2">
-                    <TrendingUp className="w-4 h-4 text-grey-400" />
-                    <BodySmall className="text-grey-500 font-medium">
-                      Popular Searches
-                    </BodySmall>
-                  </div>
-                  <ul>
-                    {popularSearches.map((search, index) => (
-                      <li key={index} role="option">
-                        <button
-                          onClick={() => {
-                            setSearchTerm(search);
-                            handleSearch(search);
-                          }}
-                          className="w-full text-left px-5 py-2.5 hover:bg-grey-50 transition-colors duration-200 focus:bg-grey-50 focus:outline-none text-sm text-grey-700"
-                        >
-                          {search}
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
+                    {/* Popular Searches */}
+                    {searchTerm.length === 0 && allSuggestions.length === 0 && recentSearches.length === 0 && (
+                      <div className="py-2">
+                        <div className="px-5 py-2 flex items-center gap-2">
+                          <TrendingUp className="w-4 h-4 text-grey-400" />
+                          <BodySmall className="text-grey-500 font-medium">Popular Searches</BodySmall>
+                        </div>
+                        <ul>
+                          {popularSearches.map((search, index) => (
+                            <li key={index} role="option">
+                              <button
+                                onClick={() => {
+                                  setSearchTerm(search);
+                                  handleSearch(search);
+                                }}
+                                className="w-full text-left px-5 py-2.5 hover:bg-grey-50 transition-colors duration-200 focus:bg-grey-50 focus:outline-none text-sm text-grey-700"
+                              >
+                                {search}
+                              </button>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
 
-              {/* No Results Message */}
-              {searchTerm.length >= 2 && allSuggestions.length === 0 && !isLoading && (
-                <div className="p-6 text-center text-grey-500">
-                  <p className="text-sm">No location suggestions found for "{searchTerm}"</p>
-                  <p className="text-xs mt-1 text-grey-400">Try a different search term</p>
-                </div>
-              )}
-            </>
-          )}
-        </div>
-      )}
+                    {/* No Results Message */}
+                    {searchTerm.length >= 2 && allSuggestions.length === 0 && !isLoading && (
+                      <div className="p-6 text-center text-grey-500">
+                        <p className="text-sm">No location suggestions found for "{searchTerm}"</p>
+                        <p className="text-xs mt-1 text-grey-400">Try a different search term</p>
+                      </div>
+                    )}
+                  </>
+                )}
+              </div>,
+              document.body
+            )
+          : null)}
     </div>
   );
 }
