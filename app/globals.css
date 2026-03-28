@@ -863,3 +863,137 @@ p {
   }
 }
 
+/* Public blog: rendered CMS HTML */
+.blog-content {
+  font-family: var(--font-body), system-ui, sans-serif;
+  font-size: 1.125rem;
+  line-height: 1.75;
+  color: rgb(31 41 55);
+  max-width: 65ch;
+}
+.blog-content > * + * {
+  margin-top: 1.25em;
+}
+.blog-content h2 {
+  font-family: var(--font-heading), system-ui, sans-serif;
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin-top: 2.25rem;
+  margin-bottom: 0.75rem;
+  letter-spacing: -0.02em;
+  color: rgb(17 24 39);
+}
+.blog-content h3 {
+  font-family: var(--font-heading), system-ui, sans-serif;
+  font-size: 1.375rem;
+  font-weight: 700;
+  margin-top: 1.75rem;
+  margin-bottom: 0.5rem;
+  color: rgb(31 41 55);
+}
+.blog-content h4 {
+  font-family: var(--font-heading), system-ui, sans-serif;
+  font-size: 1.15rem;
+  font-weight: 600;
+  margin-top: 1.5rem;
+}
+.blog-content p {
+  margin-bottom: 1.25rem;
+}
+.blog-content a {
+  color: rgb(5 150 105);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.blog-content a:hover {
+  color: rgb(4 120 87);
+}
+.blog-content ul,
+.blog-content ol {
+  padding-left: 1.5rem;
+  margin: 1rem 0;
+}
+.blog-content li {
+  margin: 0.35rem 0;
+}
+.blog-content blockquote {
+  border-left: 4px solid rgb(16 185 129);
+  padding-left: 1rem;
+  margin: 1.5rem 0;
+  color: rgb(75 85 99);
+  font-style: italic;
+}
+.blog-content img {
+  border-radius: 0.75rem;
+  max-width: 100%;
+  height: auto;
+  margin: 1.5rem 0;
+}
+.blog-content code {
+  font-size: 0.9em;
+  background: rgb(243 244 246);
+  padding: 0.15em 0.4em;
+  border-radius: 0.25rem;
+}
+.blog-content pre {
+  background: rgb(17 24 39);
+  color: rgb(243 244 246);
+  padding: 1rem 1.25rem;
+  border-radius: 0.75rem;
+  overflow-x: auto;
+  font-size: 0.9rem;
+  margin: 1.5rem 0;
+}
+.blog-content pre code {
+  background: transparent;
+  padding: 0;
+  color: inherit;
+}
+.blog-content hr {
+  border: 0;
+  border-top: 1px solid rgb(229 231 235);
+  margin: 2.5rem 0;
+}
+@media (min-width: 768px) {
+  .blog-content {
+    font-size: 1.1875rem;
+    line-height: 1.8;
+  }
+}
+
+/* TipTap admin editor surface */
+.tiptap-editor .ProseMirror {
+  min-height: 320px;
+  outline: none;
+  padding: 1rem 1.25rem;
+  font-size: 1rem;
+  line-height: 1.65;
+}
+.tiptap-editor .ProseMirror p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: left;
+  color: rgb(156 163 175);
+  pointer-events: none;
+  height: 0;
+}
+.tiptap-editor .ProseMirror h2 {
+  font-size: 1.35rem;
+  font-weight: 700;
+  margin: 1.25rem 0 0.5rem;
+}
+.tiptap-editor .ProseMirror h3 {
+  font-size: 1.15rem;
+  font-weight: 600;
+  margin: 1rem 0 0.35rem;
+}
+.tiptap-editor .ProseMirror ul,
+.tiptap-editor .ProseMirror ol {
+  padding-left: 1.35rem;
+  margin: 0.75rem 0;
+}
+.tiptap-editor .ProseMirror img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 0.5rem;
+}
+

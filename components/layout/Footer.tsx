@@ -15,6 +15,7 @@ export function Footer() {
   const footerLinks = {
     platform: [
       { href: '/listings', label: 'Browse Listings' },
+      { href: '/blog', label: 'Blog' },
       { href: '/listings/create', label: 'Create Listing' },
       { href: '/favorites', label: 'My Favorites' },
     ],

@@ -248,6 +248,56 @@ export function generateWebSiteSchema(siteUrl: string, searchUrl: string): objec
   };
 }
 
+export interface BlogPostingSchemaInput {
+  headline: string;
+  description: string;
+  url: string;
+  datePublished: string;
+  dateModified: string;
+  imageUrls?: string[];
+  authorName?: string;
+  keywords?: string[];
+  publisherName?: string;
+  publisherLogoUrl?: string;
+}
+
+/**
+ * BlogPosting JSON-LD for article pages (Google News / Discover friendly)
+ */
+export function generateBlogPostingSchema(input: BlogPostingSchemaInput): object {
+  const images =
+    input.imageUrls?.filter(Boolean).map((url) => ({ '@type': 'ImageObject', url })) ?? undefined;
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    headline: input.headline,
+    description: input.description,
+    url: input.url,
+    mainEntityOfPage: { '@type': 'WebPage', '@id': input.url },
+    datePublished: input.datePublished,
+    dateModified: input.dateModified,
+    ...(input.authorName && {
+      author: {
+        '@type': 'Person',
+        name: input.authorName,
+      },
+    }),
+    publisher: {
+      '@type': 'Organization',
+      name: input.publisherName ?? 'RoomRentalUSA',
+      ...(input.publisherLogoUrl && {
+        logo: {
+          '@type': 'ImageObject',
+          url: input.publisherLogoUrl,
+        },
+      }),
+    },
+    ...(images && images.length > 0 && { image: images }),
+    ...(input.keywords?.length && { keywords: input.keywords.join(', ') }),
+  };
+}
+
 
 
 
