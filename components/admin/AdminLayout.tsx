@@ -19,6 +19,8 @@ import {
   FileText,
   Search,
   Home,
+  BookOpen,
+  FolderOpen,
   ChevronDown,
   ChevronRight,
 } from 'lucide-react';
@@ -85,6 +87,26 @@ export function AdminLayout({ children }: AdminLayoutProps) {
       permission: 'view_reviews',
     },
     {
+      icon: BookOpen,
+      label: 'Blog',
+      href: '/admin/blog',
+      permission: 'manage_blog',
+      submenu: [
+        {
+          icon: BookOpen,
+          label: 'Articles',
+          href: '/admin/blog',
+          permission: 'manage_blog',
+        },
+        {
+          icon: FolderOpen,
+          label: 'Categories',
+          href: '/admin/blog/categories',
+          permission: 'manage_blog',
+        },
+      ],
+    },
+    {
       icon: BarChart3,
       label: 'Analytics',
       href: '/admin/analytics',
@@ -125,6 +147,9 @@ export function AdminLayout({ children }: AdminLayoutProps) {
     // Check if current path matches any submenu item
     if (pathname?.startsWith('/admin/admins')) {
       setExpandedMenus((prev) => new Set(prev).add('/admin/settings'));
+    }
+    if (pathname?.startsWith('/admin/blog')) {
+      setExpandedMenus((prev) => new Set(prev).add('/admin/blog'));
     }
   }, [pathname]);
 
@@ -205,7 +230,11 @@ export function AdminLayout({ children }: AdminLayoutProps) {
                 if (subItem.permission && !hasPermission(subItem.permission)) {
                   return false;
                 }
-                if (subItem.superAdminOnly && user?.role !== 'super_admin') {
+                if (
+                  'superAdminOnly' in subItem &&
+                  subItem.superAdminOnly &&
+                  user?.role !== 'super_admin'
+                ) {
                   return false;
                 }
                 return true;

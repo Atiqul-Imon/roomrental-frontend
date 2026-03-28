@@ -6,6 +6,32 @@ const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://roomrentalusa.com';
 const apiUrl = process.env.NEXT_PUBLIC_API_URL || 
   (process.env.NODE_ENV === 'production' ? 'https://api.roomrentalusa.com' : 'http://localhost:5000');
 
+async function getBlogSlugs(): Promise<Array<{ slug: string; updatedAt: string }>> {
+  try {
+    const all: Array<{ slug: string; updatedAt: string }> = [];
+    let page = 1;
+    while (page <= 50) {
+      const response = await fetch(`${apiUrl}/api/blog/posts?limit=100&page=${page}`, {
+        next: { revalidate: 3600 },
+        headers: { Accept: 'application/json' },
+      });
+      if (!response.ok) break;
+      const data = await response.json();
+      const posts = data?.data?.posts;
+      if (!Array.isArray(posts) || posts.length === 0) break;
+      for (const p of posts) {
+        if (p?.slug) all.push({ slug: p.slug, updatedAt: p.updatedAt || p.createdAt });
+      }
+      const totalPages = data?.data?.pagination?.totalPages ?? 1;
+      if (page >= totalPages) break;
+      page += 1;
+    }
+    return all;
+  } catch {
+    return [];
+  }
+}
+
 async function getAllListings(): Promise<Array<{ id: string; updatedAt: string }>> {
   try {
     // Use absolute URL for API calls in sitemap generation
@@ -76,10 +102,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: 'yearly',
       priority: 0.3,
     },
+    {
+      url: `${baseUrl}/blog`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly',
+      priority: 0.75,
+    },
   ];
 
   // Dynamic listing pages
-  const listings = await getAllListings();
+  const [listings, blogPosts] = await Promise.all([getAllListings(), getBlogSlugs()]);
+
   const listingPages: MetadataRoute.Sitemap = listings.map((listing) => ({
     url: `${baseUrl}/listings/${listing.id}`,
     lastModified: new Date(listing.updatedAt),
@@ -87,6 +120,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.8,
   }));
 
-  return [...staticPages, ...listingPages];
+  const blogPages: MetadataRoute.Sitemap = blogPosts.map((post) => ({
+    url: `${baseUrl}/blog/${post.slug}`,
+    lastModified: new Date(post.updatedAt),
+    changeFrequency: 'weekly',
+    priority: 0.72,
+  }));
+
+  return [...staticPages, ...listingPages, ...blogPages];
 }
 
