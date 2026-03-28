@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { JSONContent } from '@tiptap/core';
+import axios from 'axios';
 import { api } from '@/lib/api';
 import { BlogRichTextEditor } from '@/components/blog/editor/BlogRichTextEditor';
 import { emptyDoc } from '@/lib/blog/default-doc';
@@ -22,6 +23,16 @@ import {
   LayoutList,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+
+function formatSaveError(err: unknown): string {
+  if (axios.isAxiosError(err) && err.response?.data) {
+    const msg = (err.response.data as { message?: string | string[] }).message;
+    if (Array.isArray(msg)) return msg.filter(Boolean).join(' ');
+    if (typeof msg === 'string' && msg.trim()) return msg;
+  }
+  if (err instanceof Error) return err.message;
+  return 'Save failed. Try again.';
+}
 
 type ComposerTab = 'content' | 'media' | 'seo';
 
@@ -249,7 +260,7 @@ export function BlogPostForm({ postId }: { postId?: string }) {
 
       {saveMutation.isError && (
         <div className="mb-6 rounded-xl border border-red-200 bg-red-50/90 px-4 py-3 text-sm text-red-800">
-          {(saveMutation.error as Error)?.message || 'Save failed. Try again.'}
+          {formatSaveError(saveMutation.error)}
         </div>
       )}
 

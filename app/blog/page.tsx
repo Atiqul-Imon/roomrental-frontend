@@ -9,18 +9,41 @@ import { format } from 'date-fns';
 
 export const revalidate = 120;
 
+function blogListHref(opts: {
+  page?: number;
+  category?: string;
+  tag?: string;
+  featured?: boolean;
+}): string {
+  const p = new URLSearchParams();
+  if (opts.page != null && opts.page > 1) p.set('page', String(opts.page));
+  if (opts.category) p.set('category', opts.category);
+  if (opts.tag) p.set('tag', opts.tag);
+  if (opts.featured) p.set('featured', '1');
+  const q = p.toString();
+  return q ? `/blog?${q}` : '/blog';
+}
+
 export default async function BlogIndexPage({
   searchParams,
 }: {
-  searchParams: Promise<{ page?: string; category?: string; tag?: string }>;
+  searchParams: Promise<{ page?: string; category?: string; tag?: string; featured?: string }>;
 }) {
   const sp = await searchParams;
   const page = Math.max(1, parseInt(sp.page || '1', 10) || 1);
   const category = sp.category;
   const tag = sp.tag;
+  const featuredOnly =
+    sp.featured === '1' || sp.featured === 'true' || sp.featured === 'yes';
 
   const [postsPayload, categoriesPayload] = await Promise.all([
-    serverFetchBlogPosts({ page, limit: 12, category, tag }),
+    serverFetchBlogPosts({
+      page,
+      limit: 12,
+      category,
+      tag,
+      featured: featuredOnly || undefined,
+    }),
     serverFetchBlogCategories(),
   ]);
 
@@ -54,19 +77,29 @@ export default async function BlogIndexPage({
               aria-label="Blog categories"
             >
               <Link
-                href="/blog"
+                href={blogListHref({})}
                 className={`px-3 py-1.5 rounded-full text-sm font-medium border transition-colors ${
-                  !category
+                  !category && !tag && !featuredOnly
                     ? 'bg-emerald-600 text-white border-emerald-600'
                     : 'bg-white text-stone-700 border-stone-200 hover:border-emerald-300'
                 }`}
               >
                 All
               </Link>
+              <Link
+                href={blogListHref({ featured: true })}
+                className={`px-3 py-1.5 rounded-full text-sm font-medium border transition-colors ${
+                  featuredOnly && !category && !tag
+                    ? 'bg-amber-500 text-white border-amber-500'
+                    : 'bg-white text-stone-700 border-stone-200 hover:border-amber-300'
+                }`}
+              >
+                Featured
+              </Link>
               {categories.map((c) => (
                 <Link
                   key={c.id}
-                  href={`/blog?category=${encodeURIComponent(c.slug)}`}
+                  href={blogListHref({ category: c.slug, featured: featuredOnly })}
                   className={`px-3 py-1.5 rounded-full text-sm font-medium border transition-colors ${
                     category === c.slug
                       ? 'bg-emerald-600 text-white border-emerald-600'
@@ -103,6 +136,11 @@ export default async function BlogIndexPage({
                   ) : null}
                   <div className="min-w-0 flex-1 flex flex-col">
                     <div className="flex flex-wrap items-center gap-2 text-sm text-stone-500 mb-2">
+                      {post.isFeatured ? (
+                        <span className="text-amber-700 font-semibold uppercase tracking-wide text-xs">
+                          Featured
+                        </span>
+                      ) : null}
                       {post.category && (
                         <span className="text-emerald-700 font-medium">{post.category.name}</span>
                       )}
@@ -128,7 +166,7 @@ export default async function BlogIndexPage({
                         {post.tags.map((t) => (
                           <li key={t.slug}>
                             <Link
-                              href={`/blog?tag=${encodeURIComponent(t.slug)}`}
+                              href={blogListHref({ tag: t.slug, category, featured: featuredOnly })}
                               className="text-xs font-medium px-2 py-1 rounded-md bg-stone-100 text-stone-700 hover:bg-emerald-50 hover:text-emerald-800"
                             >
                               {t.name}
@@ -162,7 +200,12 @@ export default async function BlogIndexPage({
             <div className="flex justify-center gap-4 mt-12">
               {page > 1 ? (
                 <Link
-                  href={`/blog?page=${page - 1}${category ? `&category=${encodeURIComponent(category)}` : ''}${tag ? `&tag=${encodeURIComponent(tag)}` : ''}`}
+                  href={blogListHref({
+                    page: page - 1,
+                    category,
+                    tag,
+                    featured: featuredOnly,
+                  })}
                   className="px-4 py-2 rounded-lg border border-stone-200 bg-white hover:border-emerald-300 text-stone-800"
                 >
                   Previous
@@ -177,7 +220,12 @@ export default async function BlogIndexPage({
               </span>
               {page < pagination.totalPages ? (
                 <Link
-                  href={`/blog?page=${page + 1}${category ? `&category=${encodeURIComponent(category)}` : ''}${tag ? `&tag=${encodeURIComponent(tag)}` : ''}`}
+                  href={blogListHref({
+                    page: page + 1,
+                    category,
+                    tag,
+                    featured: featuredOnly,
+                  })}
                   className="px-4 py-2 rounded-lg border border-stone-200 bg-white hover:border-emerald-300 text-stone-800"
                 >
                   Next
