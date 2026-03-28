@@ -57,11 +57,11 @@ function ToolbarButton({
       disabled={disabled}
       onMouseDown={(e) => e.preventDefault()}
       onClick={onClick}
-      className={`p-2 rounded-lg border text-sm transition-colors ${
+      className={`rounded-lg border p-2 text-sm transition-colors ${
         active
-          ? 'bg-emerald-100 border-emerald-300 text-emerald-800'
-          : 'bg-white border-gray-200 text-gray-700 hover:bg-gray-50'
-      } ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
+          ? 'border-emerald-300 bg-emerald-100 text-emerald-900'
+          : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-white'
+      } ${disabled ? 'cursor-not-allowed opacity-50' : ''}`}
     >
       {children}
     </button>
@@ -162,8 +162,10 @@ export function BlogRichTextEditor({
   }
 
   return (
-    <div className={`border border-gray-200 rounded-xl overflow-hidden bg-white shadow-sm ${className}`}>
-      <div className="flex flex-wrap gap-1 p-2 border-b border-gray-100 bg-gray-50/80">
+    <div
+      className={`overflow-hidden rounded-xl border border-slate-200/90 bg-white shadow-sm ring-1 ring-slate-900/[0.03] ${className}`}
+    >
+      <div className="flex flex-wrap gap-1 border-b border-slate-100 bg-slate-50/90 p-2">
         <ToolbarButton
           label="Heading 2"
           active={editor.isActive('heading', { level: 2 })}
