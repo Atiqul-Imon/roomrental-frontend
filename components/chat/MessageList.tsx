@@ -5,7 +5,7 @@ import { Message } from '@/types';
 import { format, isToday, isYesterday, formatDistanceToNow } from 'date-fns';
 import Image from 'next/image';
 import { Paperclip } from 'lucide-react';
-import { useAuth } from '@/lib/auth-context';
+import { UserAvatar } from '@/components/ui/UserAvatar';
 
 interface MessageListProps {
   messages: Message[];
@@ -170,19 +170,12 @@ export function MessageList({
                   {!isOwnMessage && (
                     <div className="flex-shrink-0">
                       {showAvatar ? (
-                        message.sender.profileImage ? (
-                          <Image
-                            src={message.sender.profileImage}
-                            alt={message.sender.name}
-                            width={32}
-                            height={32}
-                            className="rounded-full object-cover"
-                          />
-                        ) : (
-                          <div className="w-8 h-8 rounded-full bg-gradient-primary text-white flex items-center justify-center text-xs font-semibold">
-                            {message.sender.name.charAt(0).toUpperCase()}
-                          </div>
-                        )
+                        <UserAvatar
+                          name={message.sender.name}
+                          profileImage={message.sender.profileImage}
+                          seed={message.sender.id}
+                          size="sm"
+                        />
                       ) : (
                         <div className="w-8" />
                       )}
@@ -306,7 +299,12 @@ export function MessageList({
                   {isOwnMessage && (
                     <div className="flex-shrink-0">
                       {showAvatar ? (
-                        <div className="w-8" />
+                        <UserAvatar
+                          name={message.sender.name}
+                          profileImage={message.sender.profileImage}
+                          seed={message.sender.id}
+                          size="sm"
+                        />
                       ) : (
                         <div className="w-8" />
                       )}

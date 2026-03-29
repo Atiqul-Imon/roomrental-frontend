@@ -15,6 +15,7 @@ import {
   Search,
   Heart,
 } from 'lucide-react';
+import { UserAvatar } from '@/components/ui/UserAvatar';
 
 export function DashboardSidebar() {
   const pathname = usePathname();
@@ -134,9 +135,7 @@ export function DashboardSidebar() {
               <h1 className="text-2xl font-bold text-grey-900">Dashboard</h1>
             </div>
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-primary-500 rounded-full flex items-center justify-center text-white font-bold">
-                {user?.name.charAt(0).toUpperCase()}
-              </div>
+              <UserAvatar name={user.name} profileImage={user.profileImage} seed={user.id} size="md" />
               <div className="flex-1 min-w-0">
                 <p className="font-semibold text-sm text-grey-900 truncate">{user?.name}</p>
                 <span className="inline-block px-2 py-0.5 rounded-full text-xs font-medium bg-primary-100 text-primary-700 mt-1">

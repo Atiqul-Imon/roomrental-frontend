@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import Image from 'next/image';
 import { User as UserIcon, CheckCircle, Mail, Phone, Calendar, Loader2, MessageCircle } from 'lucide-react';
+import { UserAvatar } from '@/components/ui/UserAvatar';
 import { User as UserType } from '@/types';
 import { format } from 'date-fns';
 import { RatingDisplay } from '@/components/reviews/RatingDisplay';
@@ -64,22 +64,15 @@ export function ProfileHero({ profile, ratingData, isOwnProfile }: ProfileHeroPr
           <div className="flex flex-col md:flex-row md:items-start gap-4 sm:gap-6">
             {/* Avatar */}
             <div className="relative mx-auto md:mx-0">
-              {profile.profileImage ? (
-                <div className="relative w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 rounded-full border-4 border-accent-200 shadow-medium overflow-hidden">
-                  <Image
-                    src={profile.profileImage}
-                    alt={profile.name}
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-              ) : (
-                <div className="w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 rounded-full border-4 border-accent-200 shadow-medium bg-gradient-primary flex items-center justify-center">
-                  <span className="text-4xl sm:text-5xl font-bold text-white">
-                    {profile.name.charAt(0).toUpperCase()}
-                  </span>
-                </div>
-              )}
+              <div className="rounded-full border-4 border-accent-200 shadow-medium overflow-hidden inline-flex">
+                <UserAvatar
+                  name={profile.name}
+                  profileImage={profile.profileImage}
+                  seed={profile.id}
+                  size="hero"
+                  className="border-0 shadow-none ring-0"
+                />
+              </div>
               {/* Verification Badge */}
               {profile.verification?.emailVerified && (
                 <div className="absolute -bottom-1 -right-1 sm:-bottom-2 sm:-right-2 bg-white rounded-full p-1.5 sm:p-2 shadow-medium border-2 border-accent-200 hover:border-accent-300 transition-colors" title="Email Verified">

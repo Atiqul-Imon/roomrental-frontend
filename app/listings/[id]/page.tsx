@@ -27,6 +27,7 @@ import { MapPin, Calendar, DollarSign, Edit, Trash2, Bed, Bath, Square, CheckCir
 import Link from 'next/link';
 import { PageSkeleton } from '@/components/LoadingSkeleton';
 import { ErrorState } from '@/components/ui/ErrorState';
+import { UserAvatar } from '@/components/ui/UserAvatar';
 import { useToast } from '@/components/ui/ToastProvider';
 import { StructuredData } from '@/components/seo/StructuredData';
 import {
@@ -459,23 +460,13 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
                 <h2 className="text-lg md:text-xl font-semibold text-gray-900">About the roomies</h2>
               </div>
               <div className="flex items-start gap-3 md:gap-5">
-                {data.landlordId.profileImage ? (
-                  <div className="w-12 h-12 md:w-14 md:h-14 flex-shrink-0">
-                    <Image
-                      src={data.landlordId.profileImage}
-                      alt={data.landlordId.name}
-                      width={56}
-                      height={56}
-                      className="rounded-full border-2 border-gray-200 w-full h-full object-cover"
-                    />
-                  </div>
-                ) : (
-                  <div className="w-12 h-12 md:w-14 md:h-14 bg-gray-200 rounded-full flex items-center justify-center flex-shrink-0 border-2 border-gray-200">
-                    <span className="text-base md:text-lg font-semibold text-gray-600">
-                      {data.landlordId.name.charAt(0).toUpperCase()}
-                    </span>
-                  </div>
-                )}
+                <UserAvatar
+                  name={data.landlordId.name}
+                  profileImage={data.landlordId.profileImage}
+                  seed={data.landlordId._id}
+                  size="xl"
+                  className="border-2 border-gray-200"
+                />
                 <div className="flex-1 min-w-0">
                   <Link
                     href={`/profile/${data.landlordId._id}`}

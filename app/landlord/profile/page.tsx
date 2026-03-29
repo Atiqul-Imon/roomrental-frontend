@@ -7,10 +7,10 @@ import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
 import { useAuth } from '@/lib/auth-context';
 import { api } from '@/lib/api';
 import { User, Mail, Phone, MapPin, Save, Camera, MessageCircle } from 'lucide-react';
-import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { chatApi } from '@/lib/chat-api';
+import { UserAvatar } from '@/components/ui/UserAvatar';
 
 export default function LandlordProfilePage() {
   const { user } = useAuth();
@@ -116,21 +116,14 @@ export default function LandlordProfilePage() {
           <div className="bg-gradient-to-br from-primary-500 to-primary-600 rounded-xl p-4 sm:p-6 shadow-lg border border-primary-400">
             <div className="text-center">
               <div className="relative inline-block mb-3 sm:mb-4">
-                {profileImage ? (
-                  <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full overflow-hidden border-4 border-white/30 shadow-xl">
-                    <Image
-                      src={profileImage}
-                      alt={user?.name || 'Profile'}
-                      width={128}
-                      height={128}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                ) : (
-                  <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center border-4 border-white/30 shadow-xl">
-                    <User className="w-12 h-12 sm:w-16 sm:h-16 text-white" />
-                  </div>
-                )}
+                <UserAvatar
+                  name={user?.name}
+                  profileImage={profileImage || null}
+                  seed={user?.id}
+                  size="profileCard"
+                  tone={profileImage ? 'default' : 'glass-on-blue'}
+                  className="border-4 border-white/30 shadow-xl"
+                />
                 <label className="absolute bottom-0 right-0 p-2 sm:p-2.5 bg-white text-primary-600 rounded-full cursor-pointer hover:bg-grey-50 active:scale-95 transition-all shadow-lg">
                   <Camera className="w-4 h-4 sm:w-5 sm:h-5" />
                   <input

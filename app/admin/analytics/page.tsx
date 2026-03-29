@@ -11,6 +11,7 @@ import { BarChart } from '@/components/charts/BarChart';
 import { PieChart } from '@/components/charts/PieChart';
 import { AreaChart } from '@/components/charts/AreaChart';
 import { ChartCard } from '@/components/charts/ChartCard';
+import { UserAvatar } from '@/components/ui/UserAvatar';
 import { exportChartAsPNG } from '@/lib/chartExport';
 
 interface AnalyticsData {
@@ -267,9 +268,12 @@ export default function AnalyticsPage() {
             {analytics?.recentUsers && analytics.recentUsers.length > 0 ? (
               analytics.recentUsers.map((user, index) => (
                 <div key={index} className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
-                  <div className="w-10 h-10 bg-emerald-600 rounded-full flex items-center justify-center text-white font-bold shadow-md">
-                    {user.name.charAt(0).toUpperCase()}
-                  </div>
+                  <UserAvatar
+                    name={user.name}
+                    seed={`${user.name}|${user.email}`}
+                    size="md"
+                    className="shadow-md ring-1 ring-gray-200"
+                  />
                   <div className="flex-1">
                     <p className="font-medium text-gray-900">{user.name}</p>
                     <p className="text-sm text-gray-500">{user.email}</p>

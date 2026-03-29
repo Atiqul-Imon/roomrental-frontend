@@ -28,6 +28,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { chatApi } from '@/lib/chat-api';
 import { useSocket } from '@/lib/socket-context';
 import { RoleSwitcher } from '@/components/RoleSwitcher';
+import { UserAvatar } from '@/components/ui/UserAvatar';
 
 export function Header() {
   const { user, isAuthenticated, logout } = useAuth();
@@ -262,21 +263,13 @@ export function Header() {
                     }`}
                     aria-label="User menu"
                   >
-                    {user?.profileImage ? (
-                      <div className="relative w-8 h-8 rounded-full overflow-hidden ring-2 ring-pink-200">
-                        <Image
-                          src={user.profileImage}
-                          alt={user.name || 'User'}
-                          width={32}
-                          height={32}
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-                    ) : (
-                      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-pink-400 to-rose-500 flex items-center justify-center text-white font-semibold text-sm ring-2 ring-pink-200">
-                        {user?.name?.charAt(0).toUpperCase() || 'U'}
-                      </div>
-                    )}
+                    <UserAvatar
+                      name={user?.name}
+                      profileImage={user?.profileImage}
+                      seed={user?.id}
+                      size="sm"
+                      className="ring-2 ring-pink-200"
+                    />
                     <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${isUserMenuOpen ? 'rotate-180' : ''}`} />
                   </button>
 
