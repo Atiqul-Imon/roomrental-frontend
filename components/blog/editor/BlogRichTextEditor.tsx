@@ -25,7 +25,8 @@ import { api } from '@/lib/api';
 
 const extensions = [
   StarterKit.configure({
-    heading: { levels: [2, 3] },
+    // Match backend blog-html.util (levels 2–4) so paste/JSON stays consistent with server render
+    heading: { levels: [2, 3, 4] },
     // StarterKit v3 includes link & underline; disable so standalone extensions are authoritative
     link: false,
     underline: false,
