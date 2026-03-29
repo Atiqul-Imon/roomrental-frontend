@@ -256,45 +256,140 @@ export interface BlogPostingSchemaInput {
   dateModified: string;
   imageUrls?: string[];
   authorName?: string;
+  /** Public profile URL for the author (same origin recommended) */
+  authorUrl?: string;
   keywords?: string[];
   publisherName?: string;
   publisherLogoUrl?: string;
+  /** Blog category name → articleSection */
+  articleSection?: string;
+  /** BCP 47 */
+  inLanguage?: string;
+  wordCount?: number;
+}
+
+const DEFAULT_OG_DIM = { width: 1200, height: 630 } as const;
+
+function imageObjects(urls: string[]): object[] {
+  return urls.filter(Boolean).map((url) => ({
+    '@type': 'ImageObject',
+    url,
+    width: DEFAULT_OG_DIM.width,
+    height: DEFAULT_OG_DIM.height,
+  }));
 }
 
 /**
- * BlogPosting JSON-LD for article pages (Google News / Discover friendly)
+ * BlogPosting JSON-LD — aligned with Google Article/Blog guidelines (dates ISO 8601, publisher logo, images).
  */
 export function generateBlogPostingSchema(input: BlogPostingSchemaInput): object {
-  const images =
-    input.imageUrls?.filter(Boolean).map((url) => ({ '@type': 'ImageObject', url })) ?? undefined;
+  const images = input.imageUrls?.filter(Boolean) ?? [];
+  const imageField = images.length > 0 ? imageObjects(images) : undefined;
+
+  const author =
+    input.authorName != null && input.authorName !== ''
+      ? {
+          '@type': 'Person',
+          name: input.authorName,
+          ...(input.authorUrl && { url: input.authorUrl }),
+        }
+      : undefined;
 
   return {
     '@context': 'https://schema.org',
     '@type': 'BlogPosting',
+    '@id': `${input.url}#article`,
     headline: input.headline,
     description: input.description,
     url: input.url,
-    mainEntityOfPage: { '@type': 'WebPage', '@id': input.url },
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': `${input.url}#webpage`,
+    },
     datePublished: input.datePublished,
     dateModified: input.dateModified,
-    ...(input.authorName && {
-      author: {
-        '@type': 'Person',
-        name: input.authorName,
-      },
-    }),
+    inLanguage: input.inLanguage ?? 'en-US',
+    isAccessibleForFree: true,
+    ...(author && { author }),
     publisher: {
       '@type': 'Organization',
       name: input.publisherName ?? 'RoomRentalUSA',
+      url: (() => {
+        try {
+          return new URL(input.url).origin;
+        } catch {
+          return undefined;
+        }
+      })(),
       ...(input.publisherLogoUrl && {
         logo: {
           '@type': 'ImageObject',
           url: input.publisherLogoUrl,
+          width: 512,
+          height: 512,
         },
       }),
     },
-    ...(images && images.length > 0 && { image: images }),
+    ...(imageField && imageField.length > 0 && { image: imageField }),
     ...(input.keywords?.length && { keywords: input.keywords.join(', ') }),
+    ...(input.articleSection && { articleSection: input.articleSection }),
+    ...(input.wordCount != null && input.wordCount > 0 && { wordCount: input.wordCount }),
+    speakable: {
+      '@type': 'SpeakableSpecification',
+      cssSelector: ['.blog-content'],
+    },
+  };
+}
+
+/** Single JSON-LD script: BlogPosting + BreadcrumbList (recommended @graph pattern). */
+export function generateBlogArticleJsonLdGraph(blogPosting: object, breadcrumbList: object): object {
+  return {
+    '@context': 'https://schema.org',
+    '@graph': [blogPosting, breadcrumbList],
+  };
+}
+
+export interface BlogIndexItemListInput {
+  pageUrl: string;
+  siteUrl: string;
+  name: string;
+  description: string;
+  items: Array<{ url: string; name: string }>;
+}
+
+/**
+ * Collection / listing page: WebPage + ItemList for post URLs (crawlable discovery).
+ */
+export function generateBlogIndexJsonLd(input: BlogIndexItemListInput): object {
+  const websiteId = `${input.siteUrl.replace(/\/$/, '')}/#website`;
+  return {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'WebSite',
+        '@id': websiteId,
+        url: input.siteUrl.replace(/\/$/, ''),
+        name: 'RoomRentalUSA',
+      },
+      {
+        '@type': 'CollectionPage',
+        '@id': `${input.pageUrl}#collection`,
+        url: input.pageUrl,
+        name: input.name,
+        description: input.description,
+        isPartOf: { '@id': websiteId },
+        mainEntity: {
+          '@type': 'ItemList',
+          numberOfItems: input.items.length,
+          itemListElement: input.items.map((item, index) => ({
+            '@type': 'ListItem',
+            position: index + 1,
+            name: item.name,
+            url: item.url,
+          })),
+        },
+      },
+    ],
   };
 }
 

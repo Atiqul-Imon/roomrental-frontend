@@ -30,12 +30,18 @@ function formatSaveError(err: unknown): string {
       message?: string | string[];
       prismaCode?: string;
       statusCode?: number;
+      errorRef?: string;
+      errorName?: string;
     };
     const msg = d.message;
     if (Array.isArray(msg)) return msg.filter(Boolean).join(' ');
     if (typeof msg === 'string' && msg.trim()) {
-      const extra = d.prismaCode ? ` (${d.prismaCode})` : '';
-      return msg.trim() + extra;
+      const bits: string[] = [];
+      if (d.prismaCode) bits.push(d.prismaCode);
+      if (d.errorName) bits.push(d.errorName);
+      if (d.errorRef) bits.push(`ref ${d.errorRef}`);
+      const suffix = bits.length ? ` (${bits.join(' · ')})` : '';
+      return msg.trim() + suffix;
     }
   }
   if (err instanceof Error) return err.message;

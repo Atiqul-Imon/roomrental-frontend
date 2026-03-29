@@ -124,7 +124,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     url: `${baseUrl}/blog/${post.slug}`,
     lastModified: new Date(post.updatedAt),
     changeFrequency: 'weekly',
-    priority: 0.72,
+    priority: 0.85,
   }));
 
   return [...staticPages, ...listingPages, ...blogPages];
