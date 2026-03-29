@@ -51,7 +51,20 @@ export default function AdminBlogListPage() {
     mutationFn: async (id: string) => {
       await api.delete(`/admin/blog/posts/${id}`);
     },
-    onSuccess: () => qc.invalidateQueries({ queryKey: ['admin-blog-posts'] }),
+    onSuccess: async (_, deletedId) => {
+      qc.setQueriesData<{ posts: AdminPostRow[]; pagination: { total: number; totalPages: number; page: number } }>(
+        { queryKey: ['admin-blog-posts'] },
+        (old) => {
+          if (!old?.posts) return old;
+          const posts = old.posts.filter((p) => p.id !== deletedId);
+          const total = Math.max(0, old.pagination.total - 1);
+          const limit = 20;
+          const totalPages = Math.max(1, Math.ceil(total / limit));
+          return { ...old, posts, pagination: { ...old.pagination, total, totalPages } };
+        },
+      );
+      await qc.invalidateQueries({ queryKey: ['admin-blog-posts'], refetchType: 'active' });
+    },
   });
 
   if (!canManage) {
