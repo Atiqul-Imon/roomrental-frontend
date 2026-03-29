@@ -26,6 +26,9 @@ import { api } from '@/lib/api';
 const extensions = [
   StarterKit.configure({
     heading: { levels: [2, 3] },
+    // StarterKit v3 includes link & underline; disable so standalone extensions are authoritative
+    link: false,
+    underline: false,
   }),
   Underline,
   Link.configure({
