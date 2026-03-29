@@ -26,12 +26,36 @@ import { cn } from '@/lib/utils';
 
 function formatSaveError(err: unknown): string {
   if (axios.isAxiosError(err) && err.response?.data) {
-    const msg = (err.response.data as { message?: string | string[] }).message;
+    const d = err.response.data as {
+      message?: string | string[];
+      prismaCode?: string;
+      statusCode?: number;
+    };
+    const msg = d.message;
     if (Array.isArray(msg)) return msg.filter(Boolean).join(' ');
-    if (typeof msg === 'string' && msg.trim()) return msg;
+    if (typeof msg === 'string' && msg.trim()) {
+      const extra = d.prismaCode ? ` (${d.prismaCode})` : '';
+      return msg.trim() + extra;
+    }
   }
   if (err instanceof Error) return err.message;
   return 'Save failed. Try again.';
+}
+
+function saveActionLabel(isEdit: boolean, status: BlogPostStatus): string {
+  if (isEdit) return 'Save changes';
+  switch (status) {
+    case 'draft':
+      return 'Save draft';
+    case 'published':
+      return 'Publish now';
+    case 'scheduled':
+      return 'Schedule post';
+    case 'archived':
+      return 'Save as archived';
+    default:
+      return 'Save';
+  }
 }
 
 type ComposerTab = 'content' | 'media' | 'seo';
@@ -152,8 +176,16 @@ export function BlogPostForm({ postId }: { postId?: string }) {
         excerpt: excerpt.trim() || undefined,
         contentJson,
         status,
-        publishedAt: publishedAt ? new Date(publishedAt).toISOString() : undefined,
-        scheduledFor: scheduledFor ? new Date(scheduledFor).toISOString() : undefined,
+        publishedAt:
+          status === 'published' || status === 'archived'
+            ? publishedAt
+              ? new Date(publishedAt).toISOString()
+              : undefined
+            : undefined,
+        scheduledFor:
+          status === 'scheduled' && scheduledFor
+            ? new Date(scheduledFor).toISOString()
+            : undefined,
         categoryId: categoryId || null,
         coverImageUrl: coverImageUrl.trim() || null,
         metaTitle: metaTitle.trim() || null,
@@ -172,10 +204,7 @@ export function BlogPostForm({ postId }: { postId?: string }) {
         const res = await api.patch(`/admin/blog/posts/${postId}`, payload);
         return res.data.data.post as AdminPost;
       }
-      const res = await api.post('/admin/blog/posts', {
-        ...payload,
-        publishedAt: publishedAt ? new Date(publishedAt).toISOString() : undefined,
-      });
+      const res = await api.post('/admin/blog/posts', payload);
       return res.data.data.post as AdminPost;
     },
     onSuccess: (post) => {
@@ -300,8 +329,11 @@ export function BlogPostForm({ postId }: { postId?: string }) {
                   01
                 </span>
                 <div>
-                  <h2 className="font-heading text-lg font-semibold text-slate-900">Story & workflow</h2>
-                  <p className="text-xs text-slate-500">Headline, URL, scheduling, and body copy</p>
+                  <h2 className="font-heading text-lg font-semibold text-slate-900">Story & publication</h2>
+                  <p className="text-xs text-slate-500">
+                    Headline, URL, body, and how this post goes live—use Publication below (one place,
+                    not the sidebar).
+                  </p>
                 </div>
               </div>
 
@@ -347,42 +379,53 @@ export function BlogPostForm({ postId }: { postId?: string }) {
                 </div>
               </div>
 
-              <div className="grid gap-5 sm:grid-cols-2">
-                <div>
-                  <label className={labelBase}>Workflow status</label>
-                  <select
-                    className={inputBase}
-                    value={status}
-                    onChange={(e) => setStatus(e.target.value as BlogPostStatus)}
-                  >
-                    {BLOG_POST_STATUSES.map((s) => (
-                      <option key={s.value} value={s.value}>
-                        {s.label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                {status === 'scheduled' && (
+              <div className="rounded-xl border border-slate-200/90 bg-slate-50/60 p-5">
+                <label className={labelBase}>Publication</label>
+                <p className="mb-3 text-xs text-slate-600">
+                  Pick how this post should behave when you save. The green button in the rail matches
+                  this choice (e.g. <strong>Published</strong> → “Publish now”, not “Create draft”).
+                </p>
+                <div className="grid gap-5 sm:grid-cols-2">
                   <div>
-                    <label className={labelBase}>Go live at</label>
+                    <label className="mb-1 block text-xs font-medium text-slate-600">Visibility</label>
+                    <select
+                      className={inputBase}
+                      value={status}
+                      onChange={(e) => setStatus(e.target.value as BlogPostStatus)}
+                    >
+                      {BLOG_POST_STATUSES.map((s) => (
+                        <option key={s.value} value={s.value}>
+                          {s.label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  {status === 'scheduled' && (
+                    <div>
+                      <label className={labelBase}>Go live at</label>
+                      <input
+                        type="datetime-local"
+                        className={inputBase}
+                        value={scheduledFor}
+                        onChange={(e) => setScheduledFor(e.target.value)}
+                      />
+                    </div>
+                  )}
+                </div>
+                {(status === 'published' || status === 'archived') && (
+                  <div className="mt-4">
+                    <label className={labelBase}>Shown “published” time (optional override)</label>
                     <input
                       type="datetime-local"
                       className={inputBase}
-                      value={scheduledFor}
-                      onChange={(e) => setScheduledFor(e.target.value)}
+                      value={publishedAt}
+                      onChange={(e) => setPublishedAt(e.target.value)}
                     />
+                    <p className="mt-1 text-[11px] text-slate-500">
+                      Leave empty to use “now” when publishing, or set a backdated display time.
+                    </p>
                   </div>
                 )}
-              </div>
-
-              <div>
-                <label className={labelBase}>Publish timestamp (override)</label>
-                <input
-                  type="datetime-local"
-                  className={inputBase}
-                  value={publishedAt}
-                  onChange={(e) => setPublishedAt(e.target.value)}
-                />
               </div>
 
               <div>
@@ -616,38 +659,18 @@ export function BlogPostForm({ postId }: { postId?: string }) {
         <aside className="w-full shrink-0 lg:w-[300px]">
           <div className="lg:sticky lg:top-4 space-y-4">
             <div className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-md ring-1 ring-slate-900/[0.03]">
-              <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Publishing</p>
-              <div className="mt-4 space-y-3">
-                <div>
-                  <label className="mb-1 block text-xs font-medium text-slate-600">Status</label>
-                  <select
-                    className={inputBase}
-                    value={status}
-                    onChange={(e) => setStatus(e.target.value as BlogPostStatus)}
-                  >
-                    {BLOG_POST_STATUSES.map((s) => (
-                      <option key={s.value} value={s.value}>
-                        {s.label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div>
-                  <label className="mb-1 block text-xs font-medium text-slate-600">Section</label>
-                  <select
-                    className={inputBase}
-                    value={categoryId}
-                    onChange={(e) => setCategoryId(e.target.value)}
-                  >
-                    <option value="">Uncategorized</option>
-                    {(categoriesRes || []).map((c) => (
-                      <option key={c.id} value={c.id}>
-                        {c.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
+              <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Save</p>
+              <div className="mt-3 rounded-lg border border-slate-100 bg-slate-50 px-3 py-2 text-xs text-slate-700">
+                <span className="font-medium text-slate-900">Next step: </span>
+                {BLOG_POST_STATUSES.find((s) => s.value === status)?.label ?? status}
+                {status === 'scheduled' && scheduledFor
+                  ? ` · ${new Date(scheduledFor).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })}`
+                  : null}
               </div>
+              <p className="mt-2 text-[11px] leading-snug text-slate-500">
+                Change visibility under <strong>Story → Publication</strong>. This button only saves—no
+                second “mode”.
+              </p>
               <Button
                 type="button"
                 className="mt-5 w-full gap-2 shadow-md"
@@ -659,7 +682,7 @@ export function BlogPostForm({ postId }: { postId?: string }) {
                 ) : (
                   <Save className="h-4 w-4" />
                 )}
-                {isEdit ? 'Save changes' : 'Create draft'}
+                {saveActionLabel(isEdit, status)}
               </Button>
               <p className="mt-3 text-center text-[11px] leading-snug text-slate-400">
                 Autosave isn&apos;t enabled—tap save before you leave this page.
@@ -692,7 +715,7 @@ export function BlogPostForm({ postId }: { postId?: string }) {
             disabled={saveMutation.isPending || !title.trim()}
           >
             {saveMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
-            Save
+            {saveActionLabel(isEdit, status)}
           </Button>
         </div>
       </div>
