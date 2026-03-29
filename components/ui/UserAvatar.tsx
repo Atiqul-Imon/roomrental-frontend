@@ -1,8 +1,15 @@
 'use client';
 
 import Image from 'next/image';
+import { useEffect, useMemo, useState } from 'react';
 import { cn } from '@/lib/utils';
-import { getAvatarInitial, warmAvatarGradientClass } from '@/lib/user-avatar';
+import {
+  getAvatarInitial,
+  normalizeProfileImageUrl,
+  warmAvatarGradientClass,
+} from '@/lib/user-avatar';
+
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || '';
 
 export type UserAvatarSize =
   | 'xs'
@@ -91,6 +98,16 @@ export function UserAvatar({
   const seedValue = (seed ?? name ?? '').trim() || 'user';
   const displayAlt = alt ?? (name ? `${name}` : 'User');
 
+  const resolvedSrc = useMemo(
+    () => normalizeProfileImageUrl(profileImage, API_BASE),
+    [profileImage],
+  );
+
+  const [imageBroken, setImageBroken] = useState(false);
+  useEffect(() => {
+    setImageBroken(false);
+  }, [resolvedSrc]);
+
   const fallbackBase =
     tone === 'default'
       ? cn(
@@ -99,27 +116,33 @@ export function UserAvatar({
         )
       : TONE_FALLBACK[tone];
 
-  if (profileImage) {
+  const showImage = Boolean(resolvedSrc) && !imageBroken;
   const isHero = size === 'hero' || size === 'profileCard';
-  return (
+
+  if (showImage) {
+    return (
       <div className={cn('relative rounded-full overflow-hidden flex-shrink-0', box, className)}>
         {isHero ? (
           <Image
-            src={profileImage}
+            src={resolvedSrc!}
             alt={displayAlt}
             fill
             className={cn('object-cover', imageClassName)}
             sizes="128px"
             priority={priority}
+            unoptimized
+            onError={() => setImageBroken(true)}
           />
         ) : (
           <Image
-            src={profileImage}
+            src={resolvedSrc!}
             alt={displayAlt}
             width={img}
             height={img}
             className={cn('w-full h-full object-cover', imageClassName)}
             priority={priority}
+            unoptimized
+            onError={() => setImageBroken(true)}
           />
         )}
       </div>
