@@ -11,8 +11,8 @@ import { useAuth } from '@/lib/auth-context';
 import { useNotifications } from '@/hooks/useNotifications';
 import { useQuery, useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { ArrowLeft, User } from 'lucide-react';
-import Image from 'next/image';
 import Link from 'next/link';
+import { UserAvatar } from '@/components/ui/UserAvatar';
 
 interface ChatWindowProps {
   initialConversationId?: string;
@@ -436,19 +436,12 @@ export function ChatWindow({ initialConversationId }: ChatWindowProps) {
                   return (
                     <>
                       <div className="relative">
-                        {otherParticipant.profileImage ? (
-                          <Image
-                            src={otherParticipant.profileImage}
-                            alt={otherParticipant.name}
-                            width={40}
-                            height={40}
-                            className="rounded-full object-cover"
-                          />
-                        ) : (
-                          <div className="w-10 h-10 rounded-full bg-gradient-primary text-white flex items-center justify-center font-semibold text-sm">
-                            {otherParticipant.name.charAt(0).toUpperCase()}
-                          </div>
-                        )}
+                        <UserAvatar
+                          name={otherParticipant.name}
+                          profileImage={otherParticipant.profileImage}
+                          seed={otherParticipant.id}
+                          size="md"
+                        />
                         {isUserOnline(otherParticipant.id) && (
                           <span className="absolute bottom-0 right-0 w-3 h-3 bg-accent-500 border-2 border-white rounded-full"></span>
                         )}

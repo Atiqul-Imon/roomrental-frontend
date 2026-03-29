@@ -8,8 +8,8 @@ import { useAuth } from '@/lib/auth-context';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/lib/api';
 import { Header } from '@/components/layout/Header';
+import { UserAvatar } from '@/components/ui/UserAvatar';
 import { Upload, X, AlertCircle, CheckCircle, Loader2 } from 'lucide-react';
-import Image from 'next/image';
 
 interface UploadError {
   message: string;
@@ -236,15 +236,15 @@ export default function EditProfilePage() {
               <div>
                 <label className="block text-sm font-medium mb-2 text-grey-900">Profile Image</label>
                 <div className="flex items-center gap-4">
-                  {formData.profileImage ? (
-                    <div className="relative">
-                      <Image
-                        src={formData.profileImage}
-                        alt="Profile"
-                        width={128}
-                        height={128}
-                        className="rounded-full border-4 border-white shadow-medium"
-                      />
+                  <div className="relative">
+                    <UserAvatar
+                      name={formData.name}
+                      profileImage={formData.profileImage || null}
+                      seed={user?.id}
+                      size="edit"
+                      className="border-4 border-white shadow-medium"
+                    />
+                    {formData.profileImage ? (
                       <button
                         type="button"
                         onClick={() => {
@@ -257,14 +257,8 @@ export default function EditProfilePage() {
                       >
                         <X className="w-4 h-4" />
                       </button>
-                    </div>
-                  ) : (
-                    <div className="w-32 h-32 bg-gradient-primary rounded-full flex items-center justify-center border-4 border-white shadow-medium">
-                      <span className="text-5xl font-bold text-white">
-                        {formData.name.charAt(0).toUpperCase() || 'U'}
-                      </span>
-                    </div>
-                  )}
+                    ) : null}
+                  </div>
                   <div className="flex-1">
                     <input
                       type="file"

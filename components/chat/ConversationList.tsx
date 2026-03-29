@@ -3,8 +3,8 @@
 import { useState } from 'react';
 import { Conversation } from '@/types';
 import { format, formatDistanceToNow } from 'date-fns';
-import { MessageSquare, Circle } from 'lucide-react';
-import Image from 'next/image';
+import { MessageSquare } from 'lucide-react';
+import { UserAvatar } from '@/components/ui/UserAvatar';
 import { useSocket } from '@/lib/socket-context';
 
 interface ConversationListProps {
@@ -79,23 +79,13 @@ export function ConversationList({
               <div className="flex items-start gap-3">
                 {/* Avatar */}
                 <div className="relative flex-shrink-0">
-                  {otherParticipant.profileImage ? (
-                    <Image
-                      src={otherParticipant.profileImage}
-                      alt={otherParticipant.name}
-                      width={48}
-                      height={48}
-                      className="rounded-full object-cover"
-                    />
-                  ) : (
-                    <div
-                      className={`w-12 h-12 rounded-full flex items-center justify-center text-sm font-semibold ${
-                        isSelected ? 'bg-white/20 text-white' : 'bg-gradient-primary text-white'
-                      }`}
-                    >
-                      {otherParticipant.name.charAt(0).toUpperCase()}
-                    </div>
-                  )}
+                  <UserAvatar
+                    name={otherParticipant.name}
+                    profileImage={otherParticipant.profileImage}
+                    seed={otherParticipant.id}
+                    size="lg"
+                    tone={isSelected && !otherParticipant.profileImage ? 'selected-row' : 'default'}
+                  />
                   {/* Online Status Indicator */}
                   {isUserOnline(otherParticipant.id) && (
                     <div className={`absolute bottom-0 right-0 w-3 h-3 bg-accent-500 border-2 ${isSelected ? 'border-white' : 'border-white'} rounded-full`}></div>

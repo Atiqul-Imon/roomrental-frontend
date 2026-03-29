@@ -12,8 +12,8 @@ import { useChat } from '@/lib/chat-context';
 import { useNotifications } from '@/hooks/useNotifications';
 import { useQuery, useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { ArrowLeft, User, ExternalLink } from 'lucide-react';
-import Image from 'next/image';
 import Link from 'next/link';
+import { UserAvatar } from '@/components/ui/UserAvatar';
 import { useRouter } from 'next/navigation';
 
 interface ChatSidebarContentProps {
@@ -439,19 +439,12 @@ export function ChatSidebarContent({ initialConversationId }: ChatSidebarContent
                 <ArrowLeft className="w-5 h-5 text-grey-700" />
               </button>
               <div className="relative">
-                {otherParticipant.profileImage ? (
-                  <Image
-                    src={otherParticipant.profileImage}
-                    alt={otherParticipant.name}
-                    width={40}
-                    height={40}
-                    className="rounded-full object-cover"
-                  />
-                ) : (
-                  <div className="w-10 h-10 rounded-full bg-gradient-primary text-white flex items-center justify-center font-semibold text-sm">
-                    {otherParticipant.name.charAt(0).toUpperCase()}
-                  </div>
-                )}
+                <UserAvatar
+                  name={otherParticipant.name}
+                  profileImage={otherParticipant.profileImage}
+                  seed={otherParticipant.id}
+                  size="md"
+                />
                 {isUserOnline(otherParticipant.id) && (
                   <span className="absolute bottom-0 right-0 w-3 h-3 bg-accent-500 border-2 border-white rounded-full"></span>
                 )}

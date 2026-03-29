@@ -2,8 +2,8 @@
 
 import Link from 'next/link';
 import { useAuth } from '@/lib/auth-context';
-import { User, Edit, Settings } from 'lucide-react';
-import Image from 'next/image';
+import { Edit, Settings } from 'lucide-react';
+import { UserAvatar } from '@/components/ui/UserAvatar';
 
 export function ProfileQuickView() {
   const { user } = useAuth();
@@ -15,21 +15,14 @@ export function ProfileQuickView() {
     >
       <div className="flex items-center gap-4">
         <div className="relative flex-shrink-0">
-          {user?.profileImage ? (
-            <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full overflow-hidden border-2 border-white/30 shadow-lg">
-              <Image
-                src={user.profileImage}
-                alt={user.name || 'Profile'}
-                width={80}
-                height={80}
-                className="w-full h-full object-cover"
-              />
-            </div>
-          ) : (
-            <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-white/20 flex items-center justify-center border-2 border-white/30 shadow-lg">
-              <User className="w-8 h-8 sm:w-10 sm:h-10 text-white" />
-            </div>
-          )}
+          <UserAvatar
+            name={user?.name}
+            profileImage={user?.profileImage}
+            seed={user?.id}
+            size="2xl"
+            tone={user?.profileImage ? 'default' : 'glass-on-blue'}
+            className="border-2 border-white/30 shadow-lg"
+          />
           <div className="absolute -bottom-1 -right-1 bg-white rounded-full p-1.5 shadow-md">
             <Edit className="w-3 h-3 sm:w-4 sm:h-4 text-primary-600" />
           </div>

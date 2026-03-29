@@ -7,6 +7,7 @@ import { useQuery } from '@tanstack/react-query';
 import { api } from '@/lib/api';
 import { User } from '@/types';
 import { Button } from '@/components/ui/Button';
+import { UserAvatar } from '@/components/ui/UserAvatar';
 import { Search, Edit, Building2, DollarSign, TrendingUp, CheckCircle, XCircle, Mail, Phone, Calendar, Home } from 'lucide-react';
 import Link from 'next/link';
 
@@ -180,9 +181,13 @@ export default function LandlordsPage() {
                     <tr key={landlord.id} className="hover:bg-gray-50 transition-colors">
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 bg-emerald-600 rounded-full flex items-center justify-center text-white font-bold shadow-md">
-                            {landlord.name.charAt(0).toUpperCase()}
-                          </div>
+                          <UserAvatar
+                            name={landlord.name}
+                            profileImage={landlord.profileImage}
+                            seed={landlord.id}
+                            size="md"
+                            className="shadow-md ring-1 ring-gray-200"
+                          />
                           <div>
                             <p className="font-semibold text-gray-900">{landlord.name}</p>
                             <p className="text-sm text-gray-500">{landlord.email}</p>

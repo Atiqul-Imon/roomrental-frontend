@@ -7,6 +7,7 @@ import { useQuery } from '@tanstack/react-query';
 import { api } from '@/lib/api';
 import { User } from '@/types';
 import { Button } from '@/components/ui/Button';
+import { UserAvatar } from '@/components/ui/UserAvatar';
 import { Search, Filter, MoreVertical, Edit, Trash2, User as UserIcon, Mail, Phone, CheckCircle, Users } from 'lucide-react';
 import Link from 'next/link';
 
@@ -120,9 +121,13 @@ export default function UsersPage() {
                     <tr key={user.id} className={`hover:bg-emerald-50 transition-colors duration-150 ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'}`}>
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 bg-emerald-600 rounded-full flex items-center justify-center text-white font-bold shadow-md">
-                            {user.name.charAt(0).toUpperCase()}
-                          </div>
+                          <UserAvatar
+                            name={user.name}
+                            profileImage={user.profileImage}
+                            seed={user.id}
+                            size="md"
+                            className="shadow-md ring-1 ring-emerald-700/15"
+                          />
                           <div>
                             <p className="font-semibold text-gray-900">{user.name}</p>
                             <p className="text-sm text-gray-500">{user.email}</p>

@@ -4,6 +4,7 @@ import { ReactNode, useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
+import { UserAvatar } from '@/components/ui/UserAvatar';
 import {
   LayoutDashboard,
   Users,
@@ -195,9 +196,14 @@ export function AdminLayout({ children }: AdminLayoutProps) {
               </button>
             </div>
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white font-bold shadow-lg border-2 border-white/30">
-                {user?.name.charAt(0).toUpperCase()}
-              </div>
+              <UserAvatar
+                name={user?.name}
+                profileImage={user?.profileImage}
+                seed={user?.id}
+                size="md"
+                tone={user?.profileImage ? 'default' : 'glass-dark'}
+                className={user?.profileImage ? 'border-2 border-white/30 shadow-lg' : ''}
+              />
               <div className="flex-1 min-w-0">
                 <p className="font-semibold text-sm text-white truncate">{user?.name}</p>
                 <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-medium border border-white/30 bg-white/20 backdrop-blur-sm text-white mt-1`}>
