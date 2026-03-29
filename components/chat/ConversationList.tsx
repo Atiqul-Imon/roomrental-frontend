@@ -84,7 +84,7 @@ export function ConversationList({
                     profileImage={otherParticipant.profileImage}
                     seed={otherParticipant.id}
                     size="lg"
-                    tone={isSelected && !otherParticipant.profileImage ? 'selected-row' : 'default'}
+                    tone={isSelected ? 'selected-row' : 'default'}
                   />
                   {/* Online Status Indicator */}
                   {isUserOnline(otherParticipant.id) && (

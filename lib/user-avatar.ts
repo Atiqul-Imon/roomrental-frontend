@@ -1,3 +1,32 @@
+const PLACEHOLDER_STRINGS = new Set(['null', 'undefined', 'none', 'n/a']);
+
+/**
+ * Returns a usable absolute URL for a profile image, or null when there is no real image.
+ * Handles whitespace-only values, literal "null" strings, and relative `/...` paths (API base).
+ */
+export function normalizeProfileImageUrl(
+  raw: string | null | undefined,
+  apiBaseUrl?: string | null,
+): string | null {
+  if (raw == null) return null;
+  const trimmed = String(raw).trim();
+  if (!trimmed) return null;
+  const lower = trimmed.toLowerCase();
+  if (PLACEHOLDER_STRINGS.has(lower)) return null;
+
+  if (trimmed.startsWith('data:image')) return trimmed;
+
+  if (trimmed.startsWith('//')) return `https:${trimmed}`;
+
+  if (trimmed.startsWith('/')) {
+    const base = (apiBaseUrl || '').replace(/\/$/, '');
+    if (!base) return null;
+    return `${base}${trimmed}`;
+  }
+
+  return trimmed;
+}
+
 /** First meaningful letter for display (skips spaces; supports Unicode letters). */
 export function getAvatarInitial(name: string | undefined | null): string {
   if (!name?.trim()) return '?';
