@@ -126,11 +126,8 @@ export function MessageInput({
         const formData = new FormData();
         formData.append('image', attachment.file);
 
-        const response = await api.post('/upload/image', formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        });
+        // Let axios/browser set multipart boundary (manual Content-Type breaks multer)
+        const response = await api.post('/upload/image', formData, { timeout: 120_000 });
 
         if (response.data.success) {
           // Update attachment with uploaded URL

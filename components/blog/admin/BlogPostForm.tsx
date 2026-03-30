@@ -11,6 +11,7 @@ import { emptyDoc } from '@/lib/blog/default-doc';
 import { parseAdminContentJson } from '@/lib/blog/parse-content-json';
 import { BLOG_POST_STATUSES, type BlogPostStatus } from '@/lib/blog/blog-constants';
 import { Button } from '@/components/ui/Button';
+import { useToast } from '@/components/ui/ToastProvider';
 import { BlogAdminPageHeader } from '@/components/blog/admin/BlogAdminPageHeader';
 import {
   ImagePlus,
@@ -102,9 +103,12 @@ const inputBase =
 
 const labelBase = 'mb-1.5 block text-xs font-semibold uppercase tracking-wide text-slate-500';
 
+const MAX_HERO_BYTES = 10 * 1024 * 1024;
+
 export function BlogPostForm({ postId }: { postId?: string }) {
   const router = useRouter();
   const qc = useQueryClient();
+  const toast = useToast();
   const isEdit = Boolean(postId);
   const [tab, setTab] = useState<ComposerTab>('content');
 
@@ -145,6 +149,7 @@ export function BlogPostForm({ postId }: { postId?: string }) {
   const [robotsFollow, setRobotsFollow] = useState(true);
   const [isFeatured, setIsFeatured] = useState(false);
   const [tagsText, setTagsText] = useState('');
+  const [coverUploading, setCoverUploading] = useState(false);
 
   /** Composer is interactive only after server snapshot is applied (avoids empty first paint). */
   const [composerReady, setComposerReady] = useState(!isEdit);
@@ -258,11 +263,31 @@ export function BlogPostForm({ postId }: { postId?: string }) {
   });
 
   const uploadCover = async (file: File) => {
+    if (!file.type.startsWith('image/')) {
+      toast.error('Please choose an image file (JPEG, PNG, WebP, etc.).');
+      return;
+    }
+    if (file.size > MAX_HERO_BYTES) {
+      toast.error('Image is too large. Maximum size is 10MB.');
+      return;
+    }
     const form = new FormData();
     form.append('image', file);
-    const res = await api.post('/upload/image', form);
-    const url = res.data?.data?.url;
-    if (url) setCoverImageUrl(url);
+    setCoverUploading(true);
+    try {
+      const res = await api.post('/upload/image', form, { timeout: 120_000 });
+      const url = res.data?.data?.url as string | undefined;
+      if (url) {
+        setCoverImageUrl(url);
+        toast.success('Hero image uploaded. Remember to save the post.');
+      } else {
+        toast.error('Upload finished but no valid image URL was returned.');
+      }
+    } catch (err) {
+      toast.error(formatSaveError(err), { title: 'Hero image upload' });
+    } finally {
+      setCoverUploading(false);
+    }
   };
 
   const metaDescLen = metaDescription.length;
@@ -538,16 +563,27 @@ export function BlogPostForm({ postId }: { postId?: string }) {
                     )}
                   </div>
                   <div className="flex flex-wrap gap-2">
-                    <label className="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 shadow-sm transition hover:border-emerald-300 hover:bg-emerald-50/50">
-                      <ImagePlus className="h-4 w-4 text-emerald-600" />
-                      Upload
+                    <label
+                      className={cn(
+                        'inline-flex cursor-pointer items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 shadow-sm transition hover:border-emerald-300 hover:bg-emerald-50/50',
+                        coverUploading && 'pointer-events-none opacity-60',
+                      )}
+                    >
+                      {coverUploading ? (
+                        <Loader2 className="h-4 w-4 animate-spin text-emerald-600" />
+                      ) : (
+                        <ImagePlus className="h-4 w-4 text-emerald-600" />
+                      )}
+                      {coverUploading ? 'Uploading…' : 'Upload'}
                       <input
                         type="file"
                         accept="image/*"
                         className="hidden"
+                        disabled={coverUploading}
                         onChange={(e) => {
                           const f = e.target.files?.[0];
                           if (f) uploadCover(f);
+                          e.target.value = '';
                         }}
                       />
                     </label>
