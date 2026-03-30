@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { AxiosHeaders } from 'axios';
 import { ErrorHandler } from './error-handler';
 import { trackApiCall } from './performance';
 
@@ -24,9 +24,15 @@ api.interceptors.request.use(
       (config as any).__startTime = performance.now();
     }
     
-    // Don't set Content-Type for FormData - let browser set it with boundary
-    if (config.data instanceof FormData) {
-      delete config.headers['Content-Type'];
+    // FormData must NOT use application/json — Axios v1 uses AxiosHeaders where `delete` key may not work.
+    // Let the runtime set multipart/form-data with the correct boundary.
+    if (config.data instanceof FormData && config.headers) {
+      if (config.headers instanceof AxiosHeaders) {
+        config.headers.delete('Content-Type');
+      } else {
+        delete (config.headers as Record<string, unknown>)['Content-Type'];
+        delete (config.headers as Record<string, unknown>)['content-type'];
+      }
     }
     
     return config;
