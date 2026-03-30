@@ -116,11 +116,13 @@ export function BlogRichTextEditor({
     editor.setEditable(!disabled);
   }, [editor, disabled]);
 
+  // Keep editor in sync when parent replaces content (load from server, remount, etc.).
+  // Do not compare to lastEmitted — that blocked legitimate external updates.
   useEffect(() => {
     if (!editor) return;
     const incoming = JSON.stringify(value);
     const current = JSON.stringify(editor.getJSON());
-    if (incoming !== current && incoming !== lastEmitted.current) {
+    if (incoming !== current) {
       editor.commands.setContent(value, { emitUpdate: false });
       lastEmitted.current = incoming;
     }
