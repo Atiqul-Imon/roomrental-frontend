@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { JSONContent } from '@tiptap/core';
@@ -8,6 +8,7 @@ import axios from 'axios';
 import { api } from '@/lib/api';
 import { BlogRichTextEditor } from '@/components/blog/editor/BlogRichTextEditor';
 import { emptyDoc } from '@/lib/blog/default-doc';
+import { parseAdminContentJson } from '@/lib/blog/parse-content-json';
 import { BLOG_POST_STATUSES, type BlogPostStatus } from '@/lib/blog/blog-constants';
 import { Button } from '@/components/ui/Button';
 import { BlogAdminPageHeader } from '@/components/blog/admin/BlogAdminPageHeader';
@@ -78,6 +79,7 @@ interface AdminPost {
   slug: string;
   excerpt: string | null;
   contentJson: JSONContent;
+  updatedAt: string;
   status: BlogPostStatus;
   publishedAt: string | null;
   scheduledFor: string | null;
@@ -113,6 +115,7 @@ export function BlogPostForm({ postId }: { postId?: string }) {
       const res = await api.get(`/admin/blog/posts/${postId}`);
       return res.data.data.post as AdminPost;
     },
+    staleTime: 30_000,
   });
 
   const { data: categoriesRes } = useQuery({
@@ -143,12 +146,36 @@ export function BlogPostForm({ postId }: { postId?: string }) {
   const [isFeatured, setIsFeatured] = useState(false);
   const [tagsText, setTagsText] = useState('');
 
+  /** Composer is interactive only after server snapshot is applied (avoids empty first paint). */
+  const [composerReady, setComposerReady] = useState(!isEdit);
+  /** Bump when applying a new server version so TipTap mounts with correct doc. */
+  const [editorRemountKey, setEditorRemountKey] = useState(0);
+  const appliedServerVersionRef = useRef<string | null>(null);
+
   useEffect(() => {
-    if (!loaded) return;
+    appliedServerVersionRef.current = null;
+    setComposerReady(isEdit ? false : true);
+    setEditorRemountKey((k) => k + 1);
+  }, [postId, isEdit]);
+
+  useEffect(() => {
+    if (!isEdit) {
+      setComposerReady(true);
+      return;
+    }
+    if (loadingPost || !loaded || loaded.id !== postId) return;
+
+    const version = loaded.updatedAt || loaded.id;
+    if (appliedServerVersionRef.current === version) {
+      setComposerReady(true);
+      return;
+    }
+    appliedServerVersionRef.current = version;
+
     setTitle(loaded.title);
     setSlug(loaded.slug);
     setExcerpt(loaded.excerpt || '');
-    setContentJson(loaded.contentJson || emptyDoc());
+    setContentJson(parseAdminContentJson(loaded.contentJson as unknown));
     setStatus(loaded.status);
     setPublishedAt(loaded.publishedAt ? loaded.publishedAt.slice(0, 16) : '');
     setScheduledFor(loaded.scheduledFor ? loaded.scheduledFor.slice(0, 16) : '');
@@ -160,11 +187,14 @@ export function BlogPostForm({ postId }: { postId?: string }) {
     setOgImageUrl(loaded.ogImageUrl || '');
     setFocusKeyword(loaded.focusKeyword || '');
     setKeywordsText((loaded.keywords || []).join(', '));
-    setRobotsIndex(loaded.robotsIndex);
-    setRobotsFollow(loaded.robotsFollow);
-    setIsFeatured(loaded.isFeatured);
+    setRobotsIndex(loaded.robotsIndex ?? true);
+    setRobotsFollow(loaded.robotsFollow ?? true);
+    setIsFeatured(loaded.isFeatured ?? false);
     setTagsText((loaded.tags || []).map((t) => t.name).join(', '));
-  }, [loaded]);
+
+    setEditorRemountKey((k) => k + 1);
+    setComposerReady(true);
+  }, [isEdit, postId, loadingPost, loaded]);
 
   const saveMutation = useMutation({
     mutationFn: async () => {
@@ -179,19 +209,26 @@ export function BlogPostForm({ postId }: { postId?: string }) {
       const payload = {
         title,
         slug: slug.trim() || undefined,
-        excerpt: excerpt.trim() || undefined,
+        // Always send null (not omit) so PATCH clears fields when the author empties them.
+        excerpt: excerpt.trim() ? excerpt.trim() : null,
         contentJson,
         status,
         publishedAt:
           status === 'published' || status === 'archived'
             ? publishedAt
               ? new Date(publishedAt).toISOString()
-              : undefined
-            : undefined,
+              : isEdit
+                ? null
+                : undefined
+            : isEdit
+              ? null
+              : undefined,
         scheduledFor:
           status === 'scheduled' && scheduledFor
             ? new Date(scheduledFor).toISOString()
-            : undefined,
+            : isEdit
+              ? null
+              : undefined,
         categoryId: categoryId || null,
         coverImageUrl: coverImageUrl.trim() || null,
         metaTitle: metaTitle.trim() || null,
@@ -215,7 +252,7 @@ export function BlogPostForm({ postId }: { postId?: string }) {
     },
     onSuccess: (post) => {
       qc.invalidateQueries({ queryKey: ['admin-blog-posts'] });
-      qc.invalidateQueries({ queryKey: ['admin-blog-post', post.id] });
+      qc.setQueryData(['admin-blog-post', post.id], post);
       if (!isEdit) router.push(`/admin/blog/${post.id}/edit`);
     },
   });
@@ -248,7 +285,7 @@ export function BlogPostForm({ postId }: { postId?: string }) {
     return [...base, { label: isEdit ? 'Edit' : 'New article' }];
   }, [isEdit, loaded]);
 
-  if (isEdit && loadingPost) {
+  if (isEdit && (loadingPost || !loaded || loaded.id !== postId || !composerReady)) {
     return (
       <div className="flex min-h-[40vh] flex-col items-center justify-center gap-3 text-slate-500">
         <Loader2 className="h-8 w-8 animate-spin text-emerald-600" />
@@ -450,6 +487,7 @@ export function BlogPostForm({ postId }: { postId?: string }) {
                   Rich text with headings, lists, links, and inline images—optimized for long-form reading.
                 </p>
                 <BlogRichTextEditor
+                  key={editorRemountKey}
                   value={contentJson}
                   onChange={setContentJson}
                   className="rounded-2xl border-slate-200/90 shadow-inner"
