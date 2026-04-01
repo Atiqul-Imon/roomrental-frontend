@@ -97,6 +97,13 @@ function filterChipClass(active: boolean, compact?: boolean) {
   ].join(' ');
 }
 
+function safeFormattedDate(input: string | null | undefined, pattern: string): string | null {
+  if (!input) return null;
+  const parsed = new Date(input);
+  if (Number.isNaN(parsed.getTime())) return null;
+  return format(parsed, pattern);
+}
+
 export default async function BlogIndexPage({
   searchParams,
 }: {
@@ -292,11 +299,10 @@ export default async function BlogIndexPage({
                               </Link>
                             ) : null}
                             {featuredPost.readingTimeMinutes ? <span>{featuredPost.readingTimeMinutes} min</span> : null}
-                            {featuredPost.publishedAt ? (
-                              <time dateTime={featuredPost.publishedAt}>
-                                {format(new Date(featuredPost.publishedAt), 'MMM d, yyyy')}
-                              </time>
-                            ) : null}
+                            {(() => {
+                              const label = safeFormattedDate(featuredPost.publishedAt, 'MMM d, yyyy');
+                              return label ? <time dateTime={featuredPost.publishedAt!}>{label}</time> : null;
+                            })()}
                           </div>
                           <h2 className="font-heading text-2xl font-bold leading-tight tracking-[-0.02em] text-slate-950 sm:text-3xl line-clamp-3">
                             <Link href={`/blog/${featuredPost.slug}`} className="hover:text-emerald-700">
@@ -348,11 +354,10 @@ export default async function BlogIndexPage({
                                   </Link>
                                 ) : null}
                                 {post.readingTimeMinutes ? <span>{post.readingTimeMinutes} min</span> : null}
-                                {post.publishedAt ? (
-                                  <time dateTime={post.publishedAt}>
-                                    {format(new Date(post.publishedAt), 'MMM d, yyyy')}
-                                  </time>
-                                ) : null}
+                                {(() => {
+                                  const label = safeFormattedDate(post.publishedAt, 'MMM d, yyyy');
+                                  return label ? <time dateTime={post.publishedAt!}>{label}</time> : null;
+                                })()}
                               </div>
                               <h3 className="font-heading text-xl font-bold leading-snug tracking-[-0.018em] text-slate-950 line-clamp-2">
                                 <Link href={`/blog/${post.slug}`} className="hover:text-emerald-700">
