@@ -20,6 +20,7 @@ import {
 import { format } from 'date-fns';
 
 export const revalidate = 300;
+const DEFAULT_BYLINE = 'RoomRental Desk';
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -47,15 +48,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title,
     description: description.slice(0, 160),
     keywords: post.keywords?.length ? post.keywords : undefined,
-    authors: post.author?.name
-      ? [
-          {
-            name: post.author.name,
-            url: post.author.id ? `${origin}/profile/${post.author.id}` : undefined,
-          },
-        ]
-      : [{ name: 'RoomRentalUSA', url: origin }],
-    creator: post.author?.name ?? 'RoomRentalUSA',
+    authors: [{ name: DEFAULT_BYLINE, url: origin }],
+    creator: DEFAULT_BYLINE,
     publisher: 'RoomRentalUSA',
     category: post.category?.name,
     robots: {
@@ -79,7 +73,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       description: description.slice(0, 200),
       publishedTime: post.publishedAt || undefined,
       modifiedTime: post.updatedAt,
-      authors: post.author?.name ? [post.author.name] : ['RoomRentalUSA'],
+      authors: [DEFAULT_BYLINE],
       section: post.category?.name,
       tags: post.tags?.map((t) => t.name),
       images: ogImagesAbs.map((u) => ({
@@ -122,8 +116,8 @@ export default async function BlogArticlePage({ params }: Props) {
     datePublished: post.publishedAt || post.createdAt,
     dateModified: post.updatedAt,
     imageUrls: imageUrlsAbs.length ? imageUrlsAbs : [`${origin}/logo/rrlogo-optimized.png`],
-    authorName: post.author?.name || undefined,
-    authorUrl: post.author?.id ? `${origin}/profile/${post.author.id}` : undefined,
+    authorName: DEFAULT_BYLINE,
+    authorUrl: origin,
     keywords: post.keywords,
     publisherName: 'RoomRentalUSA',
     publisherLogoUrl: `${origin}/logo/rrlogo-optimized.png`,
@@ -193,14 +187,12 @@ export default async function BlogArticlePage({ params }: Props) {
               </h1>
 
               <div className="mt-10 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-neutral-600">
-                {post.author?.name ? (
-                  <span>
-                    <span className="text-neutral-400 uppercase text-[10px] tracking-widest mr-2">
-                      By
-                    </span>
-                    <span className="font-medium text-black">{post.author.name}</span>
+                <span>
+                  <span className="text-neutral-400 uppercase text-[10px] tracking-widest mr-2">
+                    By
                   </span>
-                ) : null}
+                  <span className="font-medium text-black">{DEFAULT_BYLINE}</span>
+                </span>
                 {post.publishedAt ? (
                   <time dateTime={post.publishedAt} className="tabular-nums">
                     {format(new Date(post.publishedAt), 'MMMM d, yyyy')}
