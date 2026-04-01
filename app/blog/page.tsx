@@ -90,10 +90,10 @@ function blogListHref(opts: {
 function filterChipClass(active: boolean, compact?: boolean) {
   return [
     compact ? 'block w-full text-left px-4 py-3' : 'inline-flex items-center px-4 py-2.5',
-    'text-xs font-semibold uppercase tracking-[0.14em] transition-colors border rounded-none',
+    'text-xs font-semibold uppercase tracking-[0.12em] transition-all border rounded-xl',
     active
-      ? 'border-black bg-black text-white'
-      : 'border-neutral-300 bg-white text-black hover:border-black hover:bg-neutral-50',
+      ? 'border-slate-900 bg-slate-900 text-white shadow-sm'
+      : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50',
   ].join(' ');
 }
 
@@ -151,9 +151,13 @@ export default async function BlogIndexPage({
     })),
   });
 
+  const featuredPost = posts[0];
+  const secondaryPosts = posts.slice(1);
+  const hasAnyFilters = Boolean(category || tag || featuredOnly);
+
   const FilterNav = ({ className }: { className?: string }) => (
     <nav className={className} aria-label="Blog categories">
-      <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-neutral-400 mb-4">
+      <p className="mb-4 text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-400">
         Browse
       </p>
       <div className="flex flex-col gap-2">
@@ -191,39 +195,44 @@ export default async function BlogIndexPage({
         dangerouslySetInnerHTML={{ __html: JSON.stringify(indexJsonLd) }}
       />
       <Header />
-      <main id="main-content" className="min-h-screen bg-white text-black antialiased">
-        <header className="border-b border-black">
-          <div className="mx-auto max-w-7xl px-5 sm:px-10 lg:px-14 pt-16 pb-12 md:pt-20 md:pb-16">
-            <div className="max-w-3xl">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-neutral-500 mb-5">
-                RoomRentalUSA · Journal
+      <main id="main-content" className="min-h-screen bg-slate-50 text-slate-900 antialiased">
+        <header className="border-b border-slate-200 bg-gradient-to-b from-white via-slate-50 to-slate-50">
+          <div className="mx-auto max-w-7xl px-5 py-14 sm:px-10 md:py-16 lg:px-14 lg:py-20">
+            <div className="max-w-4xl">
+              <p className="mb-4 text-[11px] font-semibold uppercase tracking-[0.26em] text-slate-500">
+                RoomRentalUSA · Editorial
               </p>
-              <h1 className="font-heading text-[clamp(2.75rem,7vw,5rem)] font-bold leading-[0.95] tracking-[-0.045em] text-black">
-                Blog
+              <h1 className="font-heading text-[clamp(2.4rem,6vw,4.4rem)] font-bold leading-[0.95] tracking-[-0.04em] text-slate-950">
+                Housing stories that help people rent smarter
               </h1>
-              <p className="mt-8 text-lg md:text-xl leading-[1.65] text-neutral-600 font-light max-w-xl">
-                Practical guides for finding rooms, working with landlords, and making the most of
-                student and young-professional housing.
+              <p className="mt-6 max-w-2xl text-base leading-7 text-slate-600 md:text-lg">
+                Practical guides for finding rooms, working with landlords, and making the most of student and
+                young-professional housing.
               </p>
-              <div className="mt-10 flex items-center gap-6">
-                <div className="h-px w-20 bg-black shrink-0" aria-hidden />
-                <p className="text-sm text-neutral-500">
-                  <span className="text-neutral-400 uppercase tracking-wider text-[10px] mr-2">Viewing</span>
-                  <span className="font-medium text-black">{filterLabel}</span>
-                  {tag ? ` · ${tag}` : null}
-                </p>
+              <div className="mt-8 flex flex-wrap items-center gap-3">
+                <span className="inline-flex items-center rounded-full border border-slate-300 bg-white px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-700">
+                  {filterLabel}
+                </span>
+                {tag ? (
+                  <span className="inline-flex items-center rounded-full bg-slate-900 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-white">
+                    #{tag}
+                  </span>
+                ) : null}
+                <span className="text-xs text-slate-500">
+                  {pagination?.total ?? posts.length} article{(pagination?.total ?? posts.length) === 1 ? '' : 's'}
+                </span>
               </div>
             </div>
           </div>
         </header>
 
-        <div className="mx-auto max-w-7xl px-5 sm:px-10 lg:px-14 py-12 md:py-16 lg:py-20">
-          <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_min(100%,260px)] lg:gap-x-16 xl:gap-x-24 lg:items-start">
-            <div className="min-w-0">
-              <div className="mb-10 pb-10 border-b border-black lg:hidden">
+        <div className="mx-auto max-w-7xl px-5 py-10 sm:px-10 lg:px-14 lg:py-14">
+          <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_280px]">
+            <div className="min-w-0 space-y-8">
+              <div className="lg:hidden">
                 <nav className="flex flex-wrap gap-2" aria-label="Blog categories">
                   <Link href={blogListHref({})} className={filterChipClass(!category && !tag && !featuredOnly)}>
-                    All
+                    All stories
                   </Link>
                   <Link href={blogListHref({ featured: true })} className={filterChipClass(featuredOnly && !category && !tag)}>
                     Featured
@@ -234,214 +243,208 @@ export default async function BlogIndexPage({
                       href={blogListHref({ category: c.slug, featured: featuredOnly })}
                       className={filterChipClass(category === c.slug)}
                     >
-                      <span>{c.name}</span>
-                      {typeof c._count?.posts === 'number' ? (
-                        <span className="ml-2 tabular-nums opacity-70">({c._count.posts})</span>
-                      ) : null}
+                      {c.name}
                     </Link>
                   ))}
                 </nav>
               </div>
 
-              <ul className="border-t border-black">
-                {posts.map((post, index) => {
-                  const globalIndex = (page - 1) * (pagination?.limit ?? 12) + index + 1;
-                  const isLead = index === 0 && page === 1 && !category && !tag && !featuredOnly;
-
-                  return (
-                    <li key={post.id} className="border-b border-neutral-200">
-                      <article
-                        className={`group py-12 md:py-16 ${
-                          isLead ? 'md:py-20' : ''
-                        } grid gap-8 md:grid-cols-[3.25rem_minmax(0,1fr)] md:gap-x-8 lg:gap-x-12`}
-                      >
-                        <div className="hidden md:flex md:flex-col md:items-end md:pt-1">
-                          <span className="text-[2.25rem] md:text-[2.75rem] font-light text-neutral-200 tabular-nums leading-none tracking-tight">
-                            {String(globalIndex).padStart(2, '0')}
-                          </span>
-                        </div>
-
-                        <div
-                          className={`grid gap-8 min-w-0 ${
-                            isLead
-                              ? 'lg:grid-cols-12 lg:gap-10 lg:items-center'
-                              : 'lg:grid-cols-12 lg:gap-10 lg:items-start'
-                          }`}
+              {posts.length === 0 ? (
+                <div className="rounded-2xl border border-slate-200 bg-white p-10 text-center shadow-sm">
+                  <p className="text-lg font-medium text-slate-700">No articles for this filter yet.</p>
+                  <p className="mt-2 text-sm text-slate-500">Try a different category or check back soon.</p>
+                </div>
+              ) : (
+                <>
+                  {featuredPost ? (
+                    <article className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+                      <div className="grid gap-0 md:grid-cols-2">
+                        <Link
+                          href={`/blog/${featuredPost.slug}`}
+                          className="relative block h-full min-h-[250px] overflow-hidden bg-slate-100"
                         >
-                          {post.coverImageUrl ? (
-                            <Link
-                              href={`/blog/${post.slug}`}
-                              className={`block overflow-hidden bg-neutral-100 border border-black shrink-0 rounded-none ${
-                                isLead ? 'lg:col-span-6 aspect-[5/4] lg:aspect-[4/5]' : 'lg:col-span-5 aspect-[16/10] lg:aspect-[5/4]'
-                              }`}
-                            >
-                              {/* eslint-disable-next-line @next/next/no-img-element */}
-                              <img
-                                src={post.coverImageUrl}
-                                alt=""
-                                className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.02] rounded-none"
-                                loading="lazy"
-                                decoding="async"
-                              />
-                            </Link>
-                          ) : (
-                            <div
-                              className={`hidden lg:block border border-dashed border-neutral-300 bg-neutral-50 rounded-none shrink-0 ${
-                                isLead ? 'lg:col-span-6 aspect-[5/4]' : 'lg:col-span-5 aspect-[5/4]'
-                              }`}
-                              aria-hidden
+                          {featuredPost.coverImageUrl ? (
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img
+                              src={featuredPost.coverImageUrl}
+                              alt=""
+                              className="h-full w-full object-cover transition-transform duration-700 hover:scale-[1.03]"
+                              loading="lazy"
+                              decoding="async"
                             />
+                          ) : (
+                            <div className="h-full w-full bg-gradient-to-br from-slate-100 to-slate-200" />
                           )}
-
-                          <div
-                            className={`flex flex-col justify-center min-w-0 ${
-                              isLead
-                                ? post.coverImageUrl
-                                  ? 'lg:col-span-6'
-                                  : 'lg:col-span-12'
-                                : post.coverImageUrl
-                                  ? 'lg:col-span-7'
-                                  : 'lg:col-span-12'
-                            }`}
-                          >
-                            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-neutral-500 mb-4">
-                              {post.isFeatured ? (
-                                <span className="border border-black px-2 py-0.5 text-black rounded-none">
-                                  Featured
-                                </span>
-                              ) : null}
-                              {post.category ? (
-                                <Link
-                                  href={blogListHref({ category: post.category.slug })}
-                                  className="text-black underline decoration-1 underline-offset-[3px] hover:no-underline"
-                                >
-                                  {post.category.name}
-                                </Link>
-                              ) : null}
-                              {post.readingTimeMinutes ? (
-                                <span className="text-neutral-400">{post.readingTimeMinutes} min</span>
-                              ) : null}
-                              {post.publishedAt ? (
-                                <time dateTime={post.publishedAt} className="text-neutral-400">
-                                  {format(new Date(post.publishedAt), 'MMM d, yyyy')}
-                                </time>
-                              ) : null}
-                            </div>
-
-                            <h2
-                              className={`font-heading font-bold tracking-[-0.035em] text-black ${
-                                isLead ? 'text-3xl sm:text-4xl lg:text-[2.75rem] leading-[1.12]' : 'text-2xl sm:text-3xl lg:text-[1.85rem] leading-snug'
-                              }`}
+                        </Link>
+                        <div className="flex flex-col justify-center p-6 sm:p-8">
+                          <div className="mb-3 flex flex-wrap items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-500">
+                            {featuredPost.isFeatured ? (
+                              <span className="rounded-full border border-emerald-300 bg-emerald-50 px-2.5 py-1 text-emerald-700">
+                                Featured
+                              </span>
+                            ) : null}
+                            {featuredPost.category ? (
+                              <Link
+                                href={blogListHref({ category: featuredPost.category.slug })}
+                                className="hover:text-slate-900"
+                              >
+                                {featuredPost.category.name}
+                              </Link>
+                            ) : null}
+                            {featuredPost.readingTimeMinutes ? <span>{featuredPost.readingTimeMinutes} min</span> : null}
+                            {featuredPost.publishedAt ? (
+                              <time dateTime={featuredPost.publishedAt}>
+                                {format(new Date(featuredPost.publishedAt), 'MMM d, yyyy')}
+                              </time>
+                            ) : null}
+                          </div>
+                          <h2 className="font-heading text-2xl font-bold leading-tight tracking-[-0.02em] text-slate-950 sm:text-3xl line-clamp-3">
+                            <Link href={`/blog/${featuredPost.slug}`} className="hover:text-emerald-700">
+                              {featuredPost.title}
+                            </Link>
+                          </h2>
+                          {featuredPost.excerpt ? (
+                            <p className="mt-3 line-clamp-2 text-[15px] leading-6 text-slate-600 sm:text-base">
+                              {featuredPost.excerpt}
+                            </p>
+                          ) : null}
+                          <div className="mt-5">
+                            <Link
+                              href={`/blog/${featuredPost.slug}`}
+                              className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.14em] text-emerald-700"
                             >
-                              <Link
-                                href={`/blog/${post.slug}`}
-                                className="hover:underline decoration-1 underline-offset-[6px]"
-                              >
-                                {post.title}
-                              </Link>
-                            </h2>
-
-                            {post.excerpt ? (
-                              <p
-                                className={`mt-5 text-neutral-600 leading-relaxed font-light ${
-                                  isLead ? 'text-lg line-clamp-4 max-w-2xl' : 'text-[17px] line-clamp-3'
-                                }`}
-                              >
-                                {post.excerpt}
-                              </p>
-                            ) : null}
-
-                            {post.tags?.length ? (
-                              <ul className="mt-6 flex flex-wrap gap-2">
-                                {post.tags.map((t) => (
-                                  <li key={t.slug}>
-                                    <Link
-                                      href={blogListHref({
-                                        tag: t.slug,
-                                        category,
-                                        featured: featuredOnly,
-                                      })}
-                                      className="text-[10px] font-semibold uppercase tracking-wider px-2.5 py-1.5 border border-neutral-400 text-neutral-700 hover:border-black hover:text-black transition-colors rounded-none"
-                                    >
-                                      {t.name}
-                                    </Link>
-                                  </li>
-                                ))}
-                              </ul>
-                            ) : null}
-
-                            <div className="mt-8">
-                              <Link
-                                href={`/blog/${post.slug}`}
-                                className="inline-flex items-center text-xs font-semibold uppercase tracking-[0.16em] text-black border-b-2 border-black pb-1 hover:border-transparent transition-colors"
-                              >
-                                Read article
-                                <span className="ml-2 transition-transform duration-300 group-hover:translate-x-1" aria-hidden>
-                                  →
-                                </span>
-                              </Link>
-                            </div>
+                              Read article <span aria-hidden>→</span>
+                            </Link>
                           </div>
                         </div>
-                      </article>
-                    </li>
-                  );
-                })}
-              </ul>
+                      </div>
+                    </article>
+                  ) : null}
 
-              {posts.length === 0 ? (
-                <div className="py-28 text-center border-t border-black">
-                  <p className="text-neutral-500 text-lg font-light tracking-wide">No articles here yet.</p>
-                  <p className="mt-3 text-sm text-neutral-400">Check back soon.</p>
-                </div>
-              ) : null}
+                  {secondaryPosts.length > 0 ? (
+                    <ul className="grid gap-6 md:grid-cols-2">
+                      {secondaryPosts.map((post) => (
+                        <li key={post.id}>
+                          <article className="group h-full overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:shadow-md">
+                            <Link href={`/blog/${post.slug}`} className="block aspect-[16/10] overflow-hidden bg-slate-100">
+                              {post.coverImageUrl ? (
+                                // eslint-disable-next-line @next/next/no-img-element
+                                <img
+                                  src={post.coverImageUrl}
+                                  alt=""
+                                  className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
+                                  loading="lazy"
+                                  decoding="async"
+                                />
+                              ) : (
+                                <div className="h-full w-full bg-gradient-to-br from-slate-100 to-slate-200" />
+                              )}
+                            </Link>
+                            <div className="p-5 sm:p-6">
+                              <div className="mb-2.5 flex flex-wrap items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-500">
+                                {post.category ? (
+                                  <Link href={blogListHref({ category: post.category.slug })} className="hover:text-slate-900">
+                                    {post.category.name}
+                                  </Link>
+                                ) : null}
+                                {post.readingTimeMinutes ? <span>{post.readingTimeMinutes} min</span> : null}
+                                {post.publishedAt ? (
+                                  <time dateTime={post.publishedAt}>
+                                    {format(new Date(post.publishedAt), 'MMM d, yyyy')}
+                                  </time>
+                                ) : null}
+                              </div>
+                              <h3 className="font-heading text-xl font-bold leading-snug tracking-[-0.018em] text-slate-950 line-clamp-2">
+                                <Link href={`/blog/${post.slug}`} className="hover:text-emerald-700">
+                                  {post.title}
+                                </Link>
+                              </h3>
+                              {post.excerpt ? (
+                                <p className="mt-2.5 line-clamp-2 text-sm leading-6 text-slate-600">{post.excerpt}</p>
+                              ) : null}
+                              {post.tags?.length ? (
+                                <ul className="mt-3.5 flex flex-wrap gap-1.5">
+                                  {post.tags.slice(0, 3).map((t) => (
+                                    <li key={t.slug}>
+                                      <Link
+                                        href={blogListHref({
+                                          tag: t.slug,
+                                          category,
+                                          featured: featuredOnly,
+                                        })}
+                                        className="inline-flex rounded-full border border-slate-200 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.1em] text-slate-600 hover:border-slate-300 hover:text-slate-900"
+                                      >
+                                        {t.name}
+                                      </Link>
+                                    </li>
+                                  ))}
+                                </ul>
+                              ) : null}
+                            </div>
+                          </article>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : null}
 
-              {pagination && pagination.totalPages > 1 ? (
-                <div className="flex flex-wrap items-center justify-center gap-3 mt-16 pt-14 border-t border-black">
-                  {page > 1 ? (
-                    <Link
-                      href={blogListHref({
-                        page: page - 1,
-                        category,
-                        tag,
-                        featured: featuredOnly,
-                      })}
-                      className="px-8 py-3.5 text-xs font-semibold uppercase tracking-[0.14em] border-2 border-black bg-white text-black hover:bg-black hover:text-white transition-colors rounded-none"
-                    >
-                      Previous
-                    </Link>
-                  ) : (
-                    <span className="px-8 py-3.5 text-xs text-neutral-300 border border-neutral-200 cursor-not-allowed uppercase tracking-[0.14em] rounded-none">
-                      Previous
-                    </span>
-                  )}
-                  <span className="text-xs text-neutral-500 tabular-nums px-4 tracking-widest">
-                    {pagination.page} / {pagination.totalPages}
-                  </span>
-                  {page < pagination.totalPages ? (
-                    <Link
-                      href={blogListHref({
-                        page: page + 1,
-                        category,
-                        tag,
-                        featured: featuredOnly,
-                      })}
-                      className="px-8 py-3.5 text-xs font-semibold uppercase tracking-[0.14em] border-2 border-black bg-white text-black hover:bg-black hover:text-white transition-colors rounded-none"
-                    >
-                      Next
-                    </Link>
-                  ) : (
-                    <span className="px-8 py-3.5 text-xs text-neutral-300 border border-neutral-200 cursor-not-allowed uppercase tracking-[0.14em] rounded-none">
-                      Next
-                    </span>
-                  )}
-                </div>
-              ) : null}
+                  {pagination && pagination.totalPages > 1 ? (
+                    <div className="mt-10 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3 sm:px-5">
+                      {page > 1 ? (
+                        <Link
+                          href={blogListHref({
+                            page: page - 1,
+                            category,
+                            tag,
+                            featured: featuredOnly,
+                          })}
+                          className="inline-flex items-center rounded-xl border border-slate-300 px-4 py-2 text-xs font-semibold uppercase tracking-[0.12em] text-slate-700 hover:bg-slate-50"
+                        >
+                          Previous
+                        </Link>
+                      ) : (
+                        <span className="inline-flex cursor-not-allowed items-center rounded-xl border border-slate-200 px-4 py-2 text-xs font-semibold uppercase tracking-[0.12em] text-slate-300">
+                          Previous
+                        </span>
+                      )}
+                      <span className="text-xs font-medium tracking-wide text-slate-500">
+                        Page {pagination.page} of {pagination.totalPages}
+                      </span>
+                      {page < pagination.totalPages ? (
+                        <Link
+                          href={blogListHref({
+                            page: page + 1,
+                            category,
+                            tag,
+                            featured: featuredOnly,
+                          })}
+                          className="inline-flex items-center rounded-xl border border-slate-900 bg-slate-900 px-4 py-2 text-xs font-semibold uppercase tracking-[0.12em] text-white hover:bg-slate-800"
+                        >
+                          Next
+                        </Link>
+                      ) : (
+                        <span className="inline-flex cursor-not-allowed items-center rounded-xl border border-slate-200 px-4 py-2 text-xs font-semibold uppercase tracking-[0.12em] text-slate-300">
+                          Next
+                        </span>
+                      )}
+                    </div>
+                  ) : null}
+                </>
+              )}
             </div>
 
             <aside className="hidden lg:block">
-              <div className="sticky top-28 border border-black p-6 bg-neutral-50/30 rounded-none">
+              <div className="sticky top-28 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
                 <FilterNav />
+                {!hasAnyFilters ? null : (
+                  <div className="mt-6 border-t border-slate-100 pt-4">
+                    <Link
+                      href={blogListHref({})}
+                      className="inline-flex text-xs font-semibold uppercase tracking-[0.12em] text-emerald-700 hover:text-emerald-800"
+                    >
+                      Clear filters
+                    </Link>
+                  </div>
+                )}
               </div>
             </aside>
           </div>
