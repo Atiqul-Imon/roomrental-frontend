@@ -22,6 +22,13 @@ import { format } from 'date-fns';
 export const revalidate = 300;
 const DEFAULT_BYLINE = 'RoomRental Desk';
 
+function safeFormattedDate(input: string | null | undefined, pattern: string): string | null {
+  if (!input) return null;
+  const parsed = new Date(input);
+  if (Number.isNaN(parsed.getTime())) return null;
+  return format(parsed, pattern);
+}
+
 type Props = { params: Promise<{ slug: string }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -193,11 +200,14 @@ export default async function BlogArticlePage({ params }: Props) {
                   </span>
                   <span className="font-medium text-black">{DEFAULT_BYLINE}</span>
                 </span>
-                {post.publishedAt ? (
-                  <time dateTime={post.publishedAt} className="tabular-nums">
-                    {format(new Date(post.publishedAt), 'MMMM d, yyyy')}
-                  </time>
-                ) : null}
+                {(() => {
+                  const label = safeFormattedDate(post.publishedAt, 'MMMM d, yyyy');
+                  return label ? (
+                    <time dateTime={post.publishedAt!} className="tabular-nums">
+                      {label}
+                    </time>
+                  ) : null;
+                })()}
                 {post.readingTimeMinutes ? (
                   <span className="text-neutral-400">{post.readingTimeMinutes} min read</span>
                 ) : null}
