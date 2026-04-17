@@ -42,9 +42,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 
   const origin = getSiteOrigin();
-  const title = post.metaTitle || post.title;
+  const safeTitle = typeof post.title === 'string' && post.title.trim() ? post.title : 'RoomRentalUSA Blog';
+  const title = (typeof post.metaTitle === 'string' && post.metaTitle.trim()) || safeTitle;
   const description =
-    post.metaDescription || post.excerpt || `${post.title} — RoomRentalUSA blog.`;
+    (typeof post.metaDescription === 'string' && post.metaDescription.trim()) ||
+    (typeof post.excerpt === 'string' && post.excerpt.trim()) ||
+    `${safeTitle} — RoomRentalUSA blog.`;
+  const keywords = Array.isArray(post.keywords) ? post.keywords.filter((k) => typeof k === 'string') : [];
+  const tags = Array.isArray(post.tags) ? post.tags.filter((t) => t && typeof t.name === 'string') : [];
   const defaultCanonical = `${origin}/blog/${encodeURIComponent(post.slug)}`;
   const canonical = sanitizeBlogCanonical(post.canonicalUrl, defaultCanonical, origin);
   const ogImage =
@@ -54,11 +59,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title,
     description: description.slice(0, 160),
-    keywords: post.keywords?.length ? post.keywords : undefined,
+    keywords: keywords.length ? keywords : undefined,
     authors: [{ name: DEFAULT_BYLINE, url: origin }],
     creator: DEFAULT_BYLINE,
     publisher: 'RoomRentalUSA',
-    category: post.category?.name,
+    category: typeof post.category?.name === 'string' ? post.category.name : undefined,
     robots: {
       index: post.robotsIndex,
       follow: post.robotsFollow,
@@ -81,13 +86,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       publishedTime: post.publishedAt || undefined,
       modifiedTime: post.updatedAt,
       authors: [DEFAULT_BYLINE],
-      section: post.category?.name,
-      tags: post.tags?.map((t) => t.name),
+      section: typeof post.category?.name === 'string' ? post.category.name : undefined,
+      tags: tags.map((t) => t.name),
       images: ogImagesAbs.map((u) => ({
         url: u,
         width: 1200,
         height: 630,
-        alt: post.title,
+        alt: safeTitle,
         type: u.endsWith('.png') ? 'image/png' : undefined,
       })),
     },
@@ -108,16 +113,22 @@ export default async function BlogArticlePage({ params }: Props) {
   if (!post) notFound();
 
   const origin = getSiteOrigin();
+  const safeTitle = typeof post.title === 'string' && post.title.trim() ? post.title : 'RoomRentalUSA Blog';
   const url = `${origin}/blog/${encodeURIComponent(post.slug)}`;
   const description =
-    post.metaDescription || post.excerpt || `${post.title} — RoomRentalUSA blog.`;
+    (typeof post.metaDescription === 'string' && post.metaDescription.trim()) ||
+    (typeof post.excerpt === 'string' && post.excerpt.trim()) ||
+    `${safeTitle} — RoomRentalUSA blog.`;
+  const keywords = Array.isArray(post.keywords) ? post.keywords.filter((k) => typeof k === 'string') : [];
+  const tags = Array.isArray(post.tags) ? post.tags.filter((t) => t && typeof t.name === 'string') : [];
+  const categoryName = typeof post.category?.name === 'string' ? post.category.name : undefined;
   const schemaDescription =
     stripHtmlToPlainText(description).slice(0, 320) || description.slice(0, 320);
   const imageUrls = [post.ogImageUrl, post.coverImageUrl].filter(Boolean) as string[];
   const imageUrlsAbs = imageUrls.map((u) => toAbsoluteUrl(u, origin));
 
   const blogPosting = generateBlogPostingSchema({
-    headline: post.title,
+    headline: safeTitle,
     description: schemaDescription,
     url,
     datePublished: post.publishedAt || post.createdAt,
@@ -125,10 +136,10 @@ export default async function BlogArticlePage({ params }: Props) {
     imageUrls: imageUrlsAbs.length ? imageUrlsAbs : [`${origin}/logo/rrlogo-optimized.png`],
     authorName: DEFAULT_BYLINE,
     authorUrl: origin,
-    keywords: post.keywords,
+    keywords,
     publisherName: 'RoomRentalUSA',
     publisherLogoUrl: `${origin}/logo/rrlogo-optimized.png`,
-    articleSection: post.category?.name,
+    articleSection: categoryName,
     inLanguage: 'en-US',
     wordCount: estimateWordCount(post.readingTimeMinutes),
   });
@@ -137,7 +148,7 @@ export default async function BlogArticlePage({ params }: Props) {
     items: [
       { name: 'Home', url: origin },
       { name: 'Blog', url: `${origin}/blog` },
-      { name: post.title, url },
+      { name: safeTitle, url },
     ],
   });
 
@@ -173,7 +184,7 @@ export default async function BlogArticlePage({ params }: Props) {
                     /
                   </li>
                   <li className="text-neutral-600 max-w-[min(100%,14rem)] sm:max-w-none truncate font-normal normal-case tracking-normal">
-                    {post.title}
+                    {safeTitle}
                   </li>
                 </ol>
               </nav>
@@ -190,7 +201,7 @@ export default async function BlogArticlePage({ params }: Props) {
               ) : null}
 
               <h1 className="font-heading text-[clamp(1.875rem,5vw,3.25rem)] font-bold leading-[1.08] tracking-[-0.04em] text-black">
-                {post.title}
+                {safeTitle}
               </h1>
 
               <div className="mt-10 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-neutral-600">
@@ -220,7 +231,7 @@ export default async function BlogArticlePage({ params }: Props) {
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={post.coverImageUrl}
-                      alt={post.title}
+                      alt={safeTitle}
                       className="h-full w-full object-cover rounded-none"
                       loading="eager"
                       decoding="async"
@@ -235,13 +246,13 @@ export default async function BlogArticlePage({ params }: Props) {
           <div className="mx-auto max-w-3xl px-5 sm:px-8 py-14 md:py-20">
             <BlogPostBody html={post.contentHtml} />
 
-            {post.tags?.length ? (
+            {tags.length ? (
               <footer className="mt-20 pt-12 border-t border-black">
                 <h2 className="text-[11px] font-semibold uppercase tracking-[0.2em] text-neutral-500 mb-5">
                   Tags
                 </h2>
                 <ul className="flex flex-wrap gap-2">
-                  {post.tags.map((t) => (
+                  {tags.map((t) => (
                     <li key={t.slug}>
                       <Link
                         href={`/blog?tag=${encodeURIComponent(t.slug)}`}

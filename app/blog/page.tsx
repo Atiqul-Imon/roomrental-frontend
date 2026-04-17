@@ -127,9 +127,9 @@ export default async function BlogIndexPage({
     serverFetchBlogCategories(),
   ]);
 
-  const posts = postsPayload?.posts ?? [];
+  const posts = Array.isArray(postsPayload?.posts) ? postsPayload.posts : [];
   const pagination = postsPayload?.pagination;
-  const categories = categoriesPayload?.categories ?? [];
+  const categories = Array.isArray(categoriesPayload?.categories) ? categoriesPayload.categories : [];
 
   const filterLabel =
     featuredOnly && !category && !tag
